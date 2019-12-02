@@ -68,4 +68,4 @@ clean_up
 if [ $_ERROR -ne 0 ]; then
     echo "ERROR: an error occured during setup ($_ERROR)"
 fi
-return $_ERROR
+exit $_ERROR
