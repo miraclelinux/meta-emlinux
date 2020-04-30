@@ -1,31 +1,28 @@
 # Raspberry Pi
 
-EMLinux for Raspberry Pi is __not__ officlally supported. However Raspberry Pi is popular device so it would be nice to test EMLinux on it.
+EMLinux for Raspberry Pi is __not__ officially supported. However Raspberry Pi is a popular device so it would be nice to test and evaluate EMLinux on it.
 This document describe how to setup EMLinux for Raspberry Pi 3 model B+.
-
-## Directory structures
-
-In this document, following directory structure is used.
-
-```
-build/
-downloads/
-emlinux/repos/meta-debian
-emlinux/repos/meta-debian-extended
-emlinux/repos/meta-emlinux
-emlinux/repos/poky
-firmware
-linux-firmware
-```
 
 ## Build EMLinux
 
 1. Basic setup
 
-Run following command.
+Run following command if you have an EMLinux commercial release.
 
 ```
-$ source repos/meta-emlinux/scripts/setup-emlinux build
+$ tar zxf emlinux-2.1-202005.tar.gz
+$ cd emlinux-2.1-202005/
+$ source setup-emlinux build
+```
+
+Otherwise, run following command instead.
+
+```
+$ mkdir emlinux
+$ cd emlinux/
+$ mkdir repos
+$ git clone -b warrior https://github.com/miraclelinux/meta-emlinux.git repos/meta-emlinux
+$ source setup-emlinux build
 ```
 
 2. Build image
@@ -33,7 +30,8 @@ $ source repos/meta-emlinux/scripts/setup-emlinux build
 In the build directroy, you can build image. You needs to set raspberrypi3-64 to MACHINE variable.
 
 ```
-$ MACHINE=raspberrypi3-64 bitbake core-image-minimal
+$ echo 'MACHINE = "raspberrypi3-64"' >> conf/local.conf
+$ bitbake core-image-minimal
 ```
 
 ## Create sdcard image
@@ -196,9 +194,9 @@ root@raspberrypi3-64:~# ip a
     link/ether b8:27:eb:70:fa:87 brd ff:ff:ff:ff:ff:ff
 ```
 
-## Use network
+## Use of network
 
-### Use eth0
+### Use of eth0
 
 You can setup ip address as usual.
 
@@ -213,7 +211,7 @@ root@raspberrypi3-64:~# ip addr show  eth0
        valid_lft forever preferred_lft forever
 ```
 
-### Use wlan0
+### Use of wlan0
 
 1. Add wpa-supplicant to image
 You need to add following option in your conf/local.conf.
@@ -249,4 +247,4 @@ network={
 
 5. Setup ip address to device
 
-This setup is same as eth0 use wlan0 instead of eth0.
+This setup is almost same as eth0 case. Use wlan0 instead of eth0.
