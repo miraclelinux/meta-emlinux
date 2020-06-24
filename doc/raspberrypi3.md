@@ -76,7 +76,7 @@ $ sudo mount /dev/sde2 /mnt/rootfs
 1. Clone firmware repository
 
 ```
-$ git clone git@github.com:raspberrypi/firmware.git
+$ git clone git@github.com:raspberrypi/firmware.git -b 1.20190709
 ```
 
 2. Copy files to fat32 partition
