@@ -11,3 +11,5 @@ LINUX_DEFCONFIG_raspberrypi3-64 = "defconfig"
 KERNEL_IMAGETYPE_raspberrypi3-64 = "Image"
 KERNEL_DEVICETREE_raspberrypi3-64 = "broadcom/bcm2837-rpi-3-b-plus.dtb \
                                      broadcom/bcm2837-rpi-3-b.dtb"
+
+CVE_VERSION = "${LINUX_CVE_VERSION}"
