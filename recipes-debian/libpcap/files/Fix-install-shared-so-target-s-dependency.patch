@@ -1,0 +1,42 @@
+From fb25034bc33c1c9b1a23bd7920bc8fac014bae56 Mon Sep 17 00:00:00 2001
+From: Yuki Hoshino <yuki.hoshino@miraclelinux.com>
+Date: Fri, 17 Jul 2020 04:41:50 +0000
+Subject: [PATCH] Fix 'install-shared-so' target's dependency
+
+because debian patch replaced 'libpcap.so' target to '$(SHARDLIB)' target to set soname as 0.8.
+Here are details about libcap soname:
+https://people.debian.org/~rfrancoise/libpcap-faq.html
+
+---
+ Makefile.in | 9 +--------
+ 1 file changed, 1 insertion(+), 8 deletions(-)
+
+diff --git a/Makefile.in b/Makefile.in
+index d8562f1..c1a9756 100644
+--- a/Makefile.in
++++ b/Makefile.in
+@@ -381,13 +381,6 @@ libpcap.a: $(OBJ)
+ 
+ shared: $(SHAREDLIB)
+ 
+-libpcap.so: $(OBJ)
+-	@rm -f $@
+-	VER=`cat $(srcdir)/VERSION`; \
+-	MAJOR_VER=`sed 's/\([0-9][0-9]*\)\..*/\1/' $(srcdir)/VERSION`; \
+-	@V_SHLIB_CMD@ @V_SHLIB_OPT@ @V_SONAME_OPT@$@.$$MAJOR_VER $(LDFLAGS) \
+-	    -o $@.$$VER $(OBJ) $(ADDLOBJS) $(LIBS)
+-
+ #
+ # The following rule succeeds, but the result is untested.
+ #
+@@ -657,7 +650,7 @@ install: install-shared install-archive pcap-config
+ 		    $(DESTDIR)$(mandir)/man@MAN_MISC_INFO@/`echo $$i | sed 's/.manmisc.in/.@MAN_MISC_INFO@/'`; done
+ 
+ install-shared: install-shared-$(DYEXT)
+-install-shared-so: libpcap.so
++install-shared-so: $(SHAREDLIB)
+ 	[ -d $(DESTDIR)$(libdir) ] || \
+ 	    (mkdir -p $(DESTDIR)$(libdir); chmod 755 $(DESTDIR)$(libdir))
+ 	$(INSTALL_DATA) $(SHAREDLIB) $(DESTDIR)$(libdir)/
+-- 
+2.7.4
