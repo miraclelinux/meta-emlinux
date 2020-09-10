@@ -1,0 +1,46 @@
+From 6be5850858be91d750d4a7830607212f1c10cb76 Mon Sep 17 00:00:00 2001
+From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
+Date: Wed, 3 Jul 2019 10:12:17 +0900
+Subject: [PATCH] tests: fix test failed on busybox environment
+
+Remove \r from expected file to ignore newline code difference error.
+Add -B option to diff to ignore empty lines.
+
+Signed-off-by: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
+---
+ tests/expected/script/options-size | 4 ++--
+ tests/functions.sh                 | 2 +-
+ 2 files changed, 3 insertions(+), 3 deletions(-)
+
+diff --git a/tests/expected/script/options-size b/tests/expected/script/options-size
+index c984dfa..dcea580 100644
+--- a/tests/expected/script/options-size
++++ b/tests/expected/script/options-size
+@@ -1,9 +1,9 @@
+ Script started on 2015-05-24 17:43:18+00:00 [<not executed on terminal>]
+-1:1234567890
++1:1234567890
+ 
+ Script done on 2015-05-24 17:43:18+00:00 [<max output size exceeded>]
+ Script started on 2015-05-24 17:43:18+00:00 [<not executed on terminal>]
+-2:1234567890
++2:1234567890
+ 
+ Script done on 2015-05-24 17:43:18+00:00 [<max output size exceeded>]
+ 0
+diff --git a/tests/functions.sh b/tests/functions.sh
+index 2fb0ddb..e3b5f3b 100644
+--- a/tests/functions.sh
++++ b/tests/functions.sh
+@@ -421,7 +421,7 @@ function ts_gen_diff {
+ 	sed --in-place 's/^lt\-\(.*\: \)/\1/g' $TS_OUTPUT
+ 
+ 	[ -d "$TS_DIFFDIR" ] || mkdir -p "$TS_DIFFDIR"
+-	diff -u $TS_EXPECTED $TS_OUTPUT > $TS_DIFF
++	diff -uB $TS_EXPECTED $TS_OUTPUT > $TS_DIFF
+ 
+ 	if [ $? -ne 0 ] || [ -s $TS_DIFF ]; then
+ 		res=1
+-- 
+2.20.1
+

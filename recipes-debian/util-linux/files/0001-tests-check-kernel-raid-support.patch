@@ -1,0 +1,48 @@
+From 873f903e7fbd74b4c955eab8d10199a5077dab61 Mon Sep 17 00:00:00 2001
+From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
+Date: Wed, 3 Jul 2019 17:12:26 +0900
+Subject: [PATCH] tests: check kernel raid support
+
+To check kernel raid support for ignore test error when kernel doesn't
+support raid.
+
+Signed-off-by: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
+---
+ tests/ts/blkid/md-raid0-whole | 4 ++++
+ tests/ts/blkid/md-raid1-whole | 5 +++++
+ 2 files changed, 9 insertions(+)
+
+diff --git a/tests/ts/blkid/md-raid0-whole b/tests/ts/blkid/md-raid0-whole
+index 45c6ee5..f873be4 100755
+--- a/tests/ts/blkid/md-raid0-whole
++++ b/tests/ts/blkid/md-raid0-whole
+@@ -48,6 +48,10 @@ ts_log "Create RAID device"
+ mdadm -q --create ${MD_DEVICE} --metadata=0.90 --chunk=64 --level=0 \
+ 	    --raid-devices=2 ${DEVICE1} ${DEVICE2} >> $TS_OUTPUT 2>&1
+ 
++if [ ! -d "/sys/module/md_mod/parameters/new_array" ]; then
++  ts_skip "kernel doesn't support raid"
++fi
++
+ ts_log "Create partitions on RAID device"
+ $TS_CMD_FDISK ${MD_DEVICE} >> $TS_OUTPUT 2>&1 <<EOF
+ n
+diff --git a/tests/ts/blkid/md-raid1-whole b/tests/ts/blkid/md-raid1-whole
+index ddf4a69..a4f3364 100755
+--- a/tests/ts/blkid/md-raid1-whole
++++ b/tests/ts/blkid/md-raid1-whole
+@@ -49,6 +49,11 @@ udevadm settle
+ ts_log "Create RAID device"
+ mdadm -q --create ${MD_DEVICE} --metadata=0.90 --chunk=64 --level=1 \
+ 	    --raid-devices=2 ${DEVICE1} ${DEVICE2} >> $TS_OUTPUT 2>&1
++
++if [ ! -d "/sys/module/md_mod/parameters/new_array" ]; then
++  ts_skip "kernel doesn't support raid"
++fi
++
+ udevadm settle
+ 
+ ts_log "Create partitions on RAID device"
+-- 
+2.20.1
+
