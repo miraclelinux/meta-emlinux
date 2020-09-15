@@ -1,0 +1,32 @@
+From 26cd9bcbc3e6b8a19930bf4560ba2b5cad0ddfa4 Mon Sep 17 00:00:00 2001
+From: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
+Date: Tue, 2 Jul 2019 14:43:39 +0900
+Subject: [PATCH] tests: check kernel btrfs support
+
+Check kernel supports btrfs or not before run tests.
+
+Signed-off-by: Masami Ichikawa <masami.ichikawa@miraclelinux.com>
+---
+ tests/ts/mount/fstab-btrfs | 6 ++++++
+ 1 file changed, 6 insertions(+)
+
+diff --git a/tests/ts/mount/fstab-btrfs b/tests/ts/mount/fstab-btrfs
+index 54c6bb8..aa419ca 100755
+--- a/tests/ts/mount/fstab-btrfs
++++ b/tests/ts/mount/fstab-btrfs
+@@ -21,6 +21,12 @@ TS_DESC="btrfs (fstab)"
+ . $TS_TOPDIR/functions.sh
+ ts_init "$*"
+ 
++# btrfs kernel support check
++grep btrfs /proc/filesystems &>/dev/null
++if [ $? -ne 0 ]; then
++    ts_skip "kernel does not support btrfs"
++fi
++
+ ts_check_test_command "$TS_CMD_MOUNT"
+ ts_check_test_command "$TS_CMD_UMOUNT"
+ 
+-- 
+2.20.1
+

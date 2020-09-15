@@ -1,0 +1,258 @@
+diff --git a/tests/ts/cramfs/mkfs-endianness b/tests/ts/cramfs/mkfs-endianness
+index c5110867e..5c5c7ab8b 100755
+--- a/tests/ts/cramfs/mkfs-endianness
++++ b/tests/ts/cramfs/mkfs-endianness
+@@ -44,10 +44,10 @@ test_image() {
+ #generate test data, must be owner root
+ rm -rf "$IMAGE_DATA"
+ mkdir -p $IMAGE_DATA/dirA/dirB
+-yes "Testing cramfs 1234567890 Endianness check 1234567890 Endianness check" \
+-	| dd of=$IMAGE_DATA/dirA/dirB/a bs=512 count=1 &> /dev/null
+-yes "Testing cramfs 1234567890 Endianness check 1234567890 Endianness check" \
+-	| dd of=$IMAGE_DATA/dirA/dirB/b bs=512 count=30 &> /dev/null
++
++cp $TS_SELF/mkfs-endianness_testdata_a $IMAGE_DATA/dirA/dirB/a
++cp $TS_SELF/mkfs-endianness_testdata_b $IMAGE_DATA/dirA/dirB/b
++
+ # sudo may use whatever group
+ chgrp -R 0 $IMAGE_DATA
+ 
+diff --git a/tests/ts/cramfs/mkfs-endianness_testdata_a b/tests/ts/cramfs/mkfs-endianness_testdata_a
+new file mode 100644
+index 000000000..d6c57b768
+--- /dev/null
++++ b/tests/ts/cramfs/mkfs-endianness_testdata_a
+@@ -0,0 +1,8 @@
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 
+\ No newline at end of file
+diff --git a/tests/ts/cramfs/mkfs-endianness_testdata_b b/tests/ts/cramfs/mkfs-endianness_testdata_b
+new file mode 100644
+index 000000000..30f9faf0a
+--- /dev/null
++++ b/tests/ts/cramfs/mkfs-endianness_testdata_b
+@@ -0,0 +1,217 @@
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 1234567890 Endianness check 1234567890 Endianness check
++Testing cramfs 123456789
+\ No newline at end of file
