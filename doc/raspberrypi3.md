@@ -145,6 +145,7 @@ Entry Point:  00000000
 Contents:
    Image 0: 248 Bytes = 0.24 KiB = 0.00 MiB
 ```
+_note: If command 'mkimage' not found, type_ `sudo apt-get install -y u-boot-tools`
 
 3. (optional) Enable early UART support
 
