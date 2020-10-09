@@ -22,7 +22,7 @@ $ mkdir emlinux
 $ cd emlinux/
 $ mkdir repos
 $ git clone -b warrior https://github.com/miraclelinux/meta-emlinux.git repos/meta-emlinux
-$ source setup-emlinux build
+$ source repos/meta-emlinux/scripts/setup-emlinux build
 ```
 
 2. Build image
