@@ -1,7 +1,7 @@
 # Raspberry Pi
 
 EMLinux for Raspberry Pi is __not__ officially supported. However Raspberry Pi is a popular device so it would be nice to test and evaluate EMLinux on it.
-This document describe how to setup EMLinux for Raspberry Pi 3 model B+.
+This document describes how to setup EMLinux for Raspberry Pi 3 model B+.
 
 ## Build EMLinux
 
@@ -248,4 +248,4 @@ network={
 
 5. Setup ip address to device
 
-This setup is almost same as eth0 case. Use wlan0 instead of eth0.
+This setup is almost the same as eth0 case. Use wlan0 instead of eth0.
