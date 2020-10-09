@@ -167,7 +167,7 @@ $ sudo tar xvf tmp-glibc/deploy/images/raspberrypi3-64/core-image-minimal-raspbe
 
 ## Boot EMLinux
 
-unmount sdcard and insert sdcart to your Raspberry Pi then start it. You can login to console via UART.
+unmount sdcard and insert sdcard to your Raspberry Pi then start it. You can login to console via UART.
 
 ```
 EMLinux 2.0 raspberrypi3-64 /dev/ttyS1
@@ -181,7 +181,7 @@ raspberrypi3-64 login: root
 root@raspberrypi3-64:~#
 ```
 
-If firmwares are loaded correctlly, you'll see wlan0 and eth0 devices.
+If firmwares are loaded correctly, you'll see wlan0 and eth0 devices.
 
 ```
 root@raspberrypi3-64:~# ip a
