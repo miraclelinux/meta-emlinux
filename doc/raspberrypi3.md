@@ -36,7 +36,7 @@ $ bitbake core-image-minimal
 
 ## Create sdcard image
 
-This document uses parted to create partions and /dev/sde as sdcard device.
+This document uses parted to create partitions and /dev/sde as sdcard device.
 
 1. Create fat32 partition for boot.
 
