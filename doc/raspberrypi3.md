@@ -1,7 +1,7 @@
 # Raspberry Pi
 
 EMLinux for Raspberry Pi is __not__ officially supported. However Raspberry Pi is a popular device so it would be nice to test and evaluate EMLinux on it.
-This document describe how to setup EMLinux for Raspberry Pi 3 model B+.
+This document describes how to setup EMLinux for Raspberry Pi 3 model B+.
 
 ## Build EMLinux
 
@@ -22,7 +22,7 @@ $ mkdir emlinux
 $ cd emlinux/
 $ mkdir repos
 $ git clone -b warrior https://github.com/miraclelinux/meta-emlinux.git repos/meta-emlinux
-$ source setup-emlinux build
+$ source repos/meta-emlinux/scripts/setup-emlinux build
 ```
 
 2. Build image
@@ -145,6 +145,7 @@ Entry Point:  00000000
 Contents:
    Image 0: 248 Bytes = 0.24 KiB = 0.00 MiB
 ```
+_note: If command 'mkimage' not found, type_ `sudo apt-get install -y u-boot-tools`
 
 3. (optional) Enable early UART support
 
@@ -166,7 +167,7 @@ $ sudo tar xvf tmp-glibc/deploy/images/raspberrypi3-64/core-image-minimal-raspbe
 
 ## Boot EMLinux
 
-unmount sdcard and insert sdcart to your Raspberry Pi then start it. You can login to console via UART.
+unmount sdcard and insert sdcard to your Raspberry Pi then start it. You can login to console via UART.
 
 ```
 EMLinux 2.0 raspberrypi3-64 /dev/ttyS1
@@ -180,7 +181,7 @@ raspberrypi3-64 login: root
 root@raspberrypi3-64:~#
 ```
 
-If firmwares are loaded correctlly, you'll see wlan0 and eth0 devices.
+If firmwares are loaded correctly, you'll see wlan0 and eth0 devices.
 
 ```
 root@raspberrypi3-64:~# ip a
@@ -247,4 +248,4 @@ network={
 
 5. Setup ip address to device
 
-This setup is almost same as eth0 case. Use wlan0 instead of eth0.
+This setup is almost the same as eth0 case. Use wlan0 instead of eth0.
