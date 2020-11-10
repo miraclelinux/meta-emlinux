@@ -1,3 +1,5 @@
+Author: Masami Ichikawa
+
 --- bash-5.0/tests/run-all	2019-07-16 09:09:58.418420476 +0900
 +++ bash-5.0.new/tests/run-all	2019-07-16 09:15:16.408987795 +0900
 @@ -43,7 +43,12 @@
