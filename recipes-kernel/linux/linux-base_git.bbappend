@@ -12,4 +12,10 @@ KERNEL_IMAGETYPE_raspberrypi3-64 = "Image"
 KERNEL_DEVICETREE_raspberrypi3-64 = "broadcom/bcm2837-rpi-3-b-plus.dtb \
                                      broadcom/bcm2837-rpi-3-b.dtb"
 
+SRC_URI_append_beaglebone += "file://beaglebone.config"
+KERNEL_DEVICETREE_beaglebone ?= " \
+    am335x-boneblack.dtb \
+    am335x-boneblack-wireless.dtb \
+"
+
 CVE_VERSION = "${LINUX_CVE_VERSION}"
