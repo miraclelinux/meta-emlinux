@@ -2,24 +2,24 @@
 
 clean_up()
 {
-    unset BUILDDIR BUILDDIR_SETUP_DONE REPOS HOOKS
+    unset EML_BUILDDIR EML_BUILDDIR_SETUP_DONE REPOS EML_HOOKS
 }
 
 # save error during 'source setup-emlinux'
 _ERROR=0
 trap '_ERROR=$?' ERR
 
-BUILDDIR="build"
+EML_BUILDDIR="build"
 if [ -n "$1" ]; then
-    BUILDDIR=$1
+    EML_BUILDDIR=$1
 fi
 
-BUILDDIR_SETUP_DONE="true"
-if [ ! -e ${BUILDDIR}/conf/local.conf ]; then
-    BUILDDIR_SETUP_DONE="false"
+EML_BUILDDIR_SETUP_DONE="true"
+if [ ! -e ${EML_BUILDDIR}/conf/local.conf ]; then
+    EML_BUILDDIR_SETUP_DONE="false"
 fi
 
-HOOKS=${PWD}/setup-hooks
+EML_HOOKS=${PWD}/setup-hooks
 REPOS=${PWD}/repos
 if [ ! -d ${REPOS}/poky ]; then
     git clone -b warrior https://git.yoctoproject.org/git/poky ${REPOS}/poky
@@ -34,10 +34,10 @@ if [ ! -d ${REPOS}/meta-debian-extended ]; then
 	${REPOS}/meta-debian-extended
 fi
 
-source ${REPOS}/poky/oe-init-build-env ${BUILDDIR}
+source ${REPOS}/poky/oe-init-build-env ${EML_BUILDDIR}
 
 # We skip configurations when TEMPLATECONF is set.
-if [ -z "$TEMPLATECONF" ] && [ "${BUILDDIR_SETUP_DONE}" = "false" ]; then
+if [ -z "$TEMPLATECONF" ] && [ "${EML_BUILDDIR_SETUP_DONE}" = "false" ]; then
     # delete layer
     bitbake-layers remove-layer meta-poky
     bitbake-layers remove-layer meta-yocto-bsp
@@ -56,9 +56,9 @@ if [ -z "$TEMPLATECONF" ] && [ "${BUILDDIR_SETUP_DONE}" = "false" ]; then
     echo "BBMASK .= \"|meta-debian/recipes-debian/base-files/base-files_debian.bb\"" >> conf/local.conf
     echo "DL_DIR = \"\${TOPDIR}/../downloads\"" >> conf/local.conf
 
-    if [ -d "$HOOKS" ]; then
-	for hook in $(\ls $HOOKS); do
-	    source $HOOKS/$hook
+    if [ -d "${EML_HOOKS}" ]; then
+	for hook in $(\ls ${EML_HOOKS}); do
+	    source ${EML_HOOKS}/$hook
 	done
     fi
 fi
