@@ -21,3 +21,11 @@ do_install_raspberrypi3-64() {
 backend=fbdev-backend.so
 EOF
 }
+
+do_install_beaglebone() {
+        mkdir -p ${D}/${sysconfdir}/xdg/weston
+        cat << EOF > ${D}/${sysconfdir}/xdg/weston/weston.ini
+[core]
+backend=fbdev-backend.so
+EOF
+}
