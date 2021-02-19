@@ -31,6 +31,7 @@ In the build directroy, you can build image. You needs to set raspberrypi3-64 to
 
 ```
 $ echo 'MACHINE = "raspberrypi3-64"' >> conf/local.conf
+$ echo 'IMAGE_INSTALL_append = " kernel-modules" >> conf/local.conf
 $ bitbake core-image-minimal
 ```
 
