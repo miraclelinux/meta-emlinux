@@ -1,0 +1,8 @@
+# short-description: Create SD card image for Raspberry Pi.
+# long-description: Creates a partitioned SD card image for Raspberry Pi.
+# SD card is partitioned as follows,
+#  1st partition: fat32, 65MB for u-boot and kernel image, dtb, firmware.
+#  2nd partition: ext4, 1GB for rootfs.
+
+part /boot --source bootimg-partition --ondisk mmcblk0 --fstype=vfat --label boot --active --align 1024 --fixed-size 65
+part / --source rootfs --ondisk mmcblk0 --fstype=ext4 --label root --align 1024 --fixed-size 1024
