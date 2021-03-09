@@ -39,6 +39,16 @@ $ bitbake core-image-minimal
 
 This document uses parted to create partitions and /dev/sde as sdcard device.
 
+## Using SD card image
+
+Write the following image to the SD card with the dd command.
+tmp-glibc/deploy/images/raspberrypi3-64/core-image-minimal-raspberrypi3-64.wic
+```
+$ sudo dd if=core-image-minimal-raspberrypi3-64.wic of=/dev/sde bs=1G
+```
+
+## Write kernel image and rootfs manually
+
 1. Create fat32 partition for boot.
 
 ```
@@ -72,7 +82,7 @@ $ sudo mount /dev/sde1 /mnt/rpi
 $ sudo mount /dev/sde2 /mnt/rootfs
 ```
 
-## Copy Raspberry Pi firmwares
+### Copy Raspberry Pi firmwares
 
 1. Clone firmware repository
 
@@ -90,7 +100,7 @@ $ sudo cp -r boot/overlays /mnt/rpi/.
 $ sudo cp boot/bootcode.bin /mnt/rpi/.
 ```
 
-## Copy kernel, dtb and u-boot
+### Copy kernel, dtb and u-boot
 
 Go to your build directory. Then,
 
@@ -100,7 +110,7 @@ $ sudo cp tmp-glibc/deploy/images/raspberrypi3-64/bcm2837-rpi-3-b-plus.dtb /mnt/
 $ sudo cp tmp-glibc/deploy/images/raspberrypi3-64/u-boot.bin /mnt/rpi/.
 ```
 
-##  Create config.txt
+###  Create config.txt
 
 1. Create config.txt on /mnt/rpi
 
@@ -122,7 +132,7 @@ gpu_mem=16
 mask_gpu_interrupt1=0x100
 ```
 
-## Setup u-boot
+### Setup u-boot
 
 1. Create boot.cmd file on any directory.
 
@@ -156,7 +166,7 @@ If you want see u-boot's message by uart, you needs to run following command.
 $ sudo sed -i -e "s/BOOT_UART=0/BOOT_UART=1/" /mnt/rpi/bootcode.bin
 ```
 
-## Setup root file system
+### Setup root file system
 
 1. Extract root file system files to sdcard
 
