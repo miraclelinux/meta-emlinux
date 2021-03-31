@@ -41,11 +41,13 @@ if [ -z "$TEMPLATECONF" ] && [ "${EML_BUILDDIR_SETUP_DONE}" = "false" ]; then
     # delete layer
     bitbake-layers remove-layer meta-poky
     bitbake-layers remove-layer meta-yocto-bsp
+    bitbake-layers remove-layer meta
 
     # add layer
-    bitbake-layers add-layer ${REPOS}/meta-debian
-    bitbake-layers add-layer ${REPOS}/meta-debian-extended
-    bitbake-layers add-layer ${REPOS}/meta-emlinux
+    echo "BBLAYERS += \"\${TOPDIR}/../repos/poky/meta\"" >> conf/bblayers.conf
+    echo "BBLAYERS += \"\${TOPDIR}/../repos/meta-debian\"" >> conf/bblayers.conf
+    echo "BBLAYERS += \"\${TOPDIR}/../repos/meta-debian-extended\"" >> conf/bblayers.conf
+    echo "BBLAYERS += \"\${TOPDIR}/../repos/meta-emlinux\"" >> conf/bblayers.conf
 
     # Add config
     echo "DISTRO = \"emlinux\"" >> conf/local.conf
