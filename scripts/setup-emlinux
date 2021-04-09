@@ -45,6 +45,7 @@ if [ -z "$TEMPLATECONF" ] && [ "${EML_BUILDDIR_SETUP_DONE}" = "false" ]; then
 
     # add layer
     echo "BBLAYERS += \"\${TOPDIR}/../repos/poky/meta\"" >> conf/bblayers.conf
+    echo "BBLAYERS += \"\${TOPDIR}/../repos/poky/meta-yocto-bsp\"" >> conf/bblayers.conf
     echo "BBLAYERS += \"\${TOPDIR}/../repos/meta-debian\"" >> conf/bblayers.conf
     echo "BBLAYERS += \"\${TOPDIR}/../repos/meta-debian-extended\"" >> conf/bblayers.conf
     echo "BBLAYERS += \"\${TOPDIR}/../repos/meta-emlinux\"" >> conf/bblayers.conf
