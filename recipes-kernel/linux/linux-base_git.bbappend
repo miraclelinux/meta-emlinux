@@ -14,4 +14,6 @@ KERNEL_DEVICETREE_raspberrypi3-64 = "broadcom/bcm2837-rpi-3-b-plus.dtb \
 
 SRC_URI_append_beaglebone += "file://beaglebone.config"
 
+LINUX_DEFCONFIG_genericx86-64 = "x86_64_defconfig"
+
 CVE_VERSION = "${LINUX_CVE_VERSION}"
