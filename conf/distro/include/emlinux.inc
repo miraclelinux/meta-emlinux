@@ -53,6 +53,7 @@ https://.*/.*    http://downloads.yoctoproject.org/mirror/sources/ \n"
 
 SANITY_TESTED_DISTROS ?= " \
             ubuntu-18.04 \n \
+            ubuntu-20.04 \n \
             "
 
 #
