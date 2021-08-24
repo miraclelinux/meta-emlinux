@@ -1,5 +1,5 @@
 # interfaces file is based on commit 733ae41f20983a7e6f1c147188aa6b4db951d05b.
-FILESEXTRAPATHS_append := "${THISDIR}/${PN}-${PV}"
+FILESEXTRAPATHS_prepend := "${THISDIR}/${PN}-${PV}:"
 
 SRC_URI += "file://wait-iface.sh"
 
