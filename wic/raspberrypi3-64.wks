@@ -5,4 +5,4 @@
 #  2nd partition: ext4, 1GB for rootfs.
 
 part /boot --source bootimg-partition --ondisk mmcblk0 --fstype=vfat --label boot --active --align 1024 --fixed-size 65
-part / --source rootfs --ondisk mmcblk0 --fstype=ext4 --label root --align 1024 --fixed-size 1024
+part / --source rootfs --ondisk mmcblk0 --fstype=ext4 --label root --align 1024
