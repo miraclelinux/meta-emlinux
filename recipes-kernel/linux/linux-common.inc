@@ -1,3 +1,7 @@
+SRC_URI += " \
+        ${@oe.utils.conditional("VIRTUAL-RUNTIME_init_manager", "systemd",\
+                                "file://systemd-dependencies.config", "", d)}"
+
 SRC_URI_append_qemuall += "file://qemu-emlinux.config"
 SRC_URI_append_qemuarm += "file://qemuarm.config"
 
