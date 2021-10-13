@@ -1,6 +1,8 @@
 require linux-common.inc
 require recipes-kernel/linux/linux-base_git.bb
 
+PV = "5.10"
+
 PROVIDES += " linux-k510"
 LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"
 
