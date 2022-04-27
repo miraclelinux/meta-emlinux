@@ -7,9 +7,6 @@ PROVIDES += " linux-k510"
 LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"
 
 FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
-SRC_URI_append = " \
-	file://base.config \
-"
 
 FILESEXTRAPATHS_append := ":${LAYERDIR_DEBIAN_debian}/recipes-kernel/linux/files/"
 
