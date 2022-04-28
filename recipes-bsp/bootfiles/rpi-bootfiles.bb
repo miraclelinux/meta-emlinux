@@ -13,7 +13,7 @@ include recipes-bsp/common/raspberrypi-firmware.inc
 
 INHIBIT_DEFAULT_DEPS = "1"
 
-COMPATIBLE_MACHINE = "^ras"
+COMPATIBLE_MACHINE = "^rpi$"
 
 PR = "r1"
 
