@@ -8,6 +8,7 @@ RPi-Distro obtains these directly from Cypress; they are not submitted \
 to linux-firmware for general use."
 HOMEPAGE = "https://github.com/RPi-Distro/firmware-nonfree"
 SECTION = "kernel"
+COMPATIBLE_MACHINE = "^rpi$"
 
 # In maintained upstream linux-firmware:
 # * brcmfmac43430-sdio falls under LICENCE.cypress
