@@ -56,6 +56,9 @@ if [ -z "$TEMPLATECONF" ] && [ "${EML_BUILDDIR_SETUP_DONE}" = "false" ]; then
     echo "DL_DIR = \"\${TOPDIR}/../downloads\"" >> conf/local.conf
     cat ${REPOS}/meta-emlinux/scripts/bbmask.conf >> conf/local.conf
 
+    # Add debian security updates repository
+    echo "DEBIAN_SECURITY_UPDATE_MIRROR=\"http://security.debian.org/debian-security/pool/updates\"" >> conf/local.conf
+
     if [ -d "${EML_HOOKS}" ]; then
 	for hook in $(\ls ${EML_HOOKS}); do
 	    source ${EML_HOOKS}/$hook
