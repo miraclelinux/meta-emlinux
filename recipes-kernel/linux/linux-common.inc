@@ -19,3 +19,7 @@ SRC_URI_append_genericx86-64 += "file://nvme.config"
 SRC_URI_append = " \
     ${@oe.utils.conditional("EMLINUX_SECURITY_HARDENED", "1", " file://emlinux-security-hardened.config", "", d)} \
 "
+
+SRC_URI_append = " \
+    ${@oe.utils.conditional("EMLINUX_ENABLE_KERNEL_DEBUG", "1", " file://kernel-debug.config", "", d)} \
+"
