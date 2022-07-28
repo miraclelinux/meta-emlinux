@@ -24,9 +24,12 @@ SDKPATH = "/opt/${DISTRO}/${SDK_VERSION}"
 
 DISTRO_EXTRA_RDEPENDS += " ${EMLINUX_DEFAULT_EXTRA_RDEPENDS}"
 
+# Common values for git access of Linux Kernel
 LINUX_GIT_URI ?= "git://git.kernel.org/pub/scm/linux/kernel/git/cip"
 LINUX_GIT_PROTOCOL ?= "https"
 LINUX_GIT_PREFIX ?= ""
+LINUX_GIT_REPO ?= "linux-cip.git"
+
 # use toolchain mode for Debian instead of the default
 TCMODE ?= "emlinux"
 
