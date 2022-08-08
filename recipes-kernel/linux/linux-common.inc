@@ -23,3 +23,7 @@ SRC_URI_append = " \
 SRC_URI_append = " \
     ${@oe.utils.conditional("EMLINUX_ENABLE_KERNEL_DEBUG", "1", " file://kernel-debug.config", "", d)} \
 "
+
+SRC_URI_append = " \
+    ${@oe.utils.conditional("EMLINUX_ENABLE_NFS_ACL", "1", " file://kernel-nfs-acl.config", "", d)} \
+"
