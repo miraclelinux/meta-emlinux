@@ -28,3 +28,6 @@ do_shared_workdir_prepend () {
         cd ${B}
         touch Module.symvers
 }
+
+# CVE-2021-43057: This issue was introduced in 5.13-rc1. 5.10.y is not affected.
+CVE_CHECK_WHITELIST = "CVE-2021-43057"
