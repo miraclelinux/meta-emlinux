@@ -76,4 +76,6 @@ ERROR_QA_append = " ${WARN_TO_ERROR_QA}"
 
 BB_HASHBASE_WHITELIST_append = " DEBIAN_UNPACK_DIR"
 
+require conf/distro/include/yocto-uninative.inc
 require conf/distro/include/no-static-libs.inc
+INHERIT += "uninative"
