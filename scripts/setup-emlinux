@@ -1,0 +1,72 @@
+#!/bin/bash
+
+clean_up()
+{
+  unset EML_BUILDDIR EML_BUILDDIR_SETUP_DONE REPOS EML_HOOKS ENV_TOPDIR REPOS
+}
+
+# save error during 'source setup-emlinux'
+_ERROR=0
+trap '_ERROR=$?' ERR
+
+ENV_BUILDDIR="build"
+
+if [ -n "$1" ]; then
+  ENV_BUILDDIR="$1"
+fi
+
+EML_HOOKS="${PWD}/setup-hooks"
+REPOS="${PWD}/repos"
+
+ENV_BUILD_SETUP="false"
+if [ ! -f "${ENV_BUILDDIR}/conf/local.conf" ]; then
+  ENV_BUILD_SETUP="true"
+fi
+
+if [ ! -d "${REPOS}/isar" ]; then
+  git clone -b master https://github.com/ilbers/isar.git "${REPOS}/isar"
+fi
+
+source "${REPOS}/isar/isar-init-build-env" "${ENV_BUILDDIR}"
+
+ENV_TOPDIR=$(dirname $(pwd))
+
+if [ "${ENV_BUILD_SETUP}" = "true"  ]; then
+  cat <<EOF >"${ENV_TOPDIR}/${ENV_BUILDDIR}/conf/local.conf"
+# EMLinux configuration
+
+## ISAR Basic configuratons
+LCONF_VERSION = "6"
+CONF_VERSION = "1"
+ISAR_CROSS_COMPILE = "1"
+
+## EMLinux user configurations
+USERS += "root"
+USER_root[password] = "root"
+USER_root[flags] = "clear-text-password"
+
+## EMLinux distribution configuratons
+MACHINE ??= "qemuamd64"
+DISTRO = "emlinux-bookworm"
+
+EOF
+
+  # Replace from absolute path to relative path.
+  sed -i "s:${ENV_TOPDIR}:\${TOPDIR}/..:g" conf/bblayers.conf
+
+  # Add meta-emlinux layer.
+  echo "BBLAYERS += \"\${TOPDIR}/../repos/meta-emlinux\"" >> conf/bblayers.conf
+
+  if [ -d "${EML_HOOKS}" ]; then
+    for hook in $(\ls ${EML_HOOKS}); do
+      source ${EML_HOOKS}/$hook
+    done
+  fi
+fi
+
+clean_up
+if [ $_ERROR -ne 0 ]; then
+    echo "ERROR: an error occurred during setup ($_ERROR)"
+fi
+return $_ERROR
+
