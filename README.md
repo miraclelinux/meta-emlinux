@@ -24,7 +24,6 @@ $ sudo apt install \
   quilt \
   qemu-user-static \
   reprepro \
-  sudo \
   git-buildpackage \
   pristine-tar \
   sbuild \
