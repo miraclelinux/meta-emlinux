@@ -46,7 +46,7 @@ USER_root[password] = "root"
 USER_root[flags] = "clear-text-password"
 
 ## EMLinux distribution configuratons
-MACHINE ??= "qemuamd64"
+MACHINE ??= "qemu-amd64"
 DISTRO = "emlinux-bookworm"
 
 EOF
