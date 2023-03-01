@@ -9,8 +9,8 @@
 # SPDX-License-Identifier: MIT
 #
 
-DISTRO_KERNELS = "linux-cip"
-KERNEL_NAME = "cip"
+DISTRO_KERNELS ?= "linux-cip"
+KERNEL_NAME ?= "cip"
 
 WIC_IMAGER_INSTALL = "parted \
   gdisk \
