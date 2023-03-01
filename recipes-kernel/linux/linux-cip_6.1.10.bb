@@ -17,7 +17,7 @@ SRC_URI += " \
     file://${MACHINE}_defconfig \
 "
 
-KERNEL_DEFCONFIG ?= "${MACHINE}_defconfig"
+KERNEL_DEFCONFIG = "${MACHINE}_defconfig"
 SRC_URI[sha256sum] = "003176045aaddb245e5b64cd88c34846b8265f1197ca14baa43c91c9ec7d5e23"
 
 S = "${WORKDIR}/linux-${PV}"
