@@ -27,6 +27,10 @@ if [ ! -d "${REPOS}/isar" ]; then
   git clone -b master https://github.com/ilbers/isar.git "${REPOS}/isar"
 fi
 
+if [ ! -d "${REPOS}/isar-cip-core" ]; then
+  git clone -b master https://gitlab.com/cip-project/cip-core/isar-cip-core.git "${REPOS}/isar-cip-core"
+fi
+
 source "${REPOS}/isar/isar-init-build-env" "${ENV_BUILDDIR}"
 
 ENV_TOPDIR=$(dirname $(pwd))
@@ -57,7 +61,8 @@ EOF
   # remove meta-isar layer
   sed -i '/meta-isar/d' conf/bblayers.conf
 
-  # Add meta-emlinux layer.
+  # Add layers.
+  echo "BBLAYERS += \"\${TOPDIR}/../repos/isar-cip-core\"" >> conf/bblayers.conf
   echo "BBLAYERS += \"\${TOPDIR}/../repos/meta-emlinux\"" >> conf/bblayers.conf
 
   if [ -d "${EML_HOOKS}" ]; then
