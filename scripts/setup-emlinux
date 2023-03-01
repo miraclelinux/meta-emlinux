@@ -53,6 +53,9 @@ EOF
 
   # Replace from absolute path to relative path.
   sed -i "s:${ENV_TOPDIR}:\${TOPDIR}/..:g" conf/bblayers.conf
+  
+  # remove meta-isar layer
+  sed -i '/meta-isar/d' conf/bblayers.conf
 
   # Add meta-emlinux layer.
   echo "BBLAYERS += \"\${TOPDIR}/../repos/meta-emlinux\"" >> conf/bblayers.conf
