@@ -135,5 +135,6 @@ $ qemu-system-aarch64 \
 
 EMLinux currently supports following machines.
 
-- qemuamd64
-- qemuarm64
+- qemu-amd64
+- qemu-arm64
+- generic-x86-64
