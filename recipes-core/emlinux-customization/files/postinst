@@ -1,0 +1,15 @@
+#
+# EMLinux customization package
+#
+# Copyright (c) Cybertrust Japan Co., Ltd. 
+#
+# Authors:
+#  Masami Ichikawa <masami.ichikawa@miraclelinux.com>
+#
+# SPDX-License-Identifier: MIT
+#
+set -e
+
+echo "EMLinux 3.0 \\\n \\\l" > /etc/issue
+echo "EMLinux 3.0" > /etc/issue.net
+
