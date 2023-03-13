@@ -12,12 +12,13 @@
 
 DESCRIPTION = "EMLinux target filesystem"
 
-LICENSE = "gpl-2.0"
-LIC_FILES_CHKSUM = "file://${LAYERDIR_core}/licenses/COPYING.GPLv2;md5=751419260aa954499f7abaabaa882bbe"
+LICENSE = "MIT"
+LIC_FILES_CHKSUM = "file://${LAYERDIR_core}/licenses/COPYING.MIT;md5=838c366f69b72c5df05c96dff79b35f2"
 
 PV = "1.0"
 
 ISAR_RELEASE_CMD = "git -C ${LAYERDIR_emlinux} describe --tags --dirty --always --match 'v[0-9].[0-9]*'"
 
+IMAGE_INSTALL_append = " emlinux-customization"
 inherit image
 
