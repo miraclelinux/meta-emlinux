@@ -90,10 +90,10 @@ $ bitbake emlinux-image-base
 #### Run qemuadm64 image
 
 ```
-$ qemu-system-x86_64 \
- -drive file=./tmp/deploy/images/qemuamd64/emlinux-image-base-emlinux-bookworm-qemuamd64.wic,discard=unmap,if=none,id=disk,format=raw \
- -kernel ./tmp/deploy/images/qemuamd64/emlinux-image-base-emlinux-bookworm-qemuamd64-vmlinuz \
- -initrd ./tmp/deploy/images/qemuamd64/emlinux-image-base-emlinux-bookworm-qemuamd64-initrd.img \
+qemu-system-x86_64 \
+ -drive file=./tmp/deploy/images/qemu-amd64/emlinux-image-base-emlinux-bookworm-qemu-amd64.ext4,discard=unmap,if=none,id=disk,format=raw \
+ -kernel ./tmp/deploy/images/qemu-amd64/emlinux-image-base-emlinux-bookworm-qemu-amd64-vmlinuz \
+ -initrd ./tmp/deploy/images/qemu-amd64/emlinux-image-base-emlinux-bookworm-qemu-amd64-initrd.img \
  -m 1G \
  -serial mon:stdio \
  -netdev user,id=net,hostfwd=tcp:127.0.0.1:22222-:22 \
@@ -104,7 +104,7 @@ $ qemu-system-x86_64 \
  -device virtio-net-pci,netdev=net \
  -device ide-hd,drive=disk \
  -nographic \
- -append "root=/dev/sda2 rw console=ttyS0 ip=dhcp"
+ -append "root=/dev/sda rw console=ttyS0 ip=dhcp"
 ```
 
 #### Run qemuarm64 image
