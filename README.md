@@ -87,7 +87,7 @@ $ bitbake emlinux-image-base
 
 ### Run image by qemu
 
-#### Run qemuadm64 image
+#### Run qemu-amd64 image
 
 ```
 qemu-system-x86_64 \
@@ -107,13 +107,13 @@ qemu-system-x86_64 \
  -append "root=/dev/sda rw console=ttyS0 ip=dhcp"
 ```
 
-#### Run qemuarm64 image
+#### Run qemu-arm64 image
 
 ```
-$ qemu-system-aarch64 \
+qemu-system-aarch64 \
  -device virtio-net-device,netdev=net0,mac=52:54:00:12:35:02 \
  -netdev user,id=net0,hostfwd=tcp::2222-:22,hostfwd=tcp::2323-:23,tftp=./tmp/deploy/images/qemuarm64 \
- -drive id=disk0,file=./tmp/deploy/images/qemuarm64/emlinux-image-base-emlinux-bookworm-qemuarm64.ext4,if=none,format=raw \
+ -drive id=disk0,file=./tmp/deploy/images/qemu-arm64/emlinux-image-base-emlinux-bookworm-qemu-arm64.ext4,if=none,format=raw \
  -device virtio-blk-device,drive=disk0 -show-cursor -device VGA,edid=on \
  -device qemu-xhci \
  -device usb-tablet \
@@ -126,8 +126,8 @@ $ qemu-system-aarch64 \
  -m 512 \
  -serial mon:stdio \
  -serial null \
- -kernel ./tmp/deploy/images/qemuarm64/emlinux-image-base-emlinux-bookworm-qemuarm64-vmlinux \
- -initrd ./tmp/deploy/images/qemuarm64/emlinux-image-base-emlinux-bookworm-qemuarm64-initrd.img \
+ -kernel ./tmp/deploy/images/qemu-arm64/emlinux-image-base-emlinux-bookworm-qemu-arm64-vmlinux \
+ -initrd ./tmp/deploy/images/qemu-arm64/emlinux-image-base-emlinux-bookworm-qemu-arm64-initrd.img \
  -append 'root=/dev/vda rw highres=off  console=ttyS0 mem=512M ip=dhcp console=ttyAMA0 '
 ```
 
