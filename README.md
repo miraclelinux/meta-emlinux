@@ -4,9 +4,35 @@
 
 ELinux supported build host OS is Debian 11 or greater.
 
-## Setup
+# Build environment setup 
+
+## Build by docker
+
+### Install the docker engine and docker-compose command
+
+You can build and image by docker. If you want to build image, you need docker engine and docker-compose. Please refer to official web site to install the docker engine (https://docs.docker.com/engine/install/) and the docker-compose command (https://docs.docker.com/compose/install/other/).
+
+### Build a docker image
+
+The docker/ directory contains build script and docker-compose.yml file.
+
+1. Goto docker/ directory
+
+```
+$ cd docker
+```
+
+Then, build docker image and logged into docker container.
+
+```
+$ ./run.sh
+```
+
+## Build directory
 
 ### Setup host os development environment
+
+If you want to set up directly on your build host, please refer to following steps.
 
 Run following command to install required packages.
 
@@ -47,7 +73,9 @@ Please follow "Setup Sudo" section in ISAR user manual.
 
 https://github.com/ilbers/isar/blob/master/doc/user_manual.md#setup-sudo
 
-### Setup repositories
+## Setup repositories
+
+Download laysers to your build environment.
 
 1. Create a directory
 
@@ -67,7 +95,7 @@ $ git clone -b bookworm https://github.com/miraclelinux/meta-emlinux.git repos/m
 $ source repos/meta-emlinux/scripts/setup-emlinux build
 ```
 
-### Build image
+## Build image
 
 1.  Edit conf/local.conf
 
@@ -85,9 +113,9 @@ IMAGE_PREINSTALL = "iproute2"
 $ bitbake emlinux-image-base
 ```
 
-### Run image by qemu
+## Run image by qemu
 
-#### Run qemu-amd64 image
+### Run qemu-amd64 image
 
 ```
 qemu-system-x86_64 \
@@ -107,7 +135,7 @@ qemu-system-x86_64 \
  -append "root=/dev/sda rw console=ttyS0 ip=dhcp"
 ```
 
-#### Run qemu-arm64 image
+### Run qemu-arm64 image
 
 ```
 qemu-system-aarch64 \

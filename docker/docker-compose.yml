@@ -1,0 +1,31 @@
+version: '3.8'
+
+services:
+  emlinux3-build:
+    image: emlinux3-build
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        uid: $host_user_id
+        http_proxy: $http_proxy
+        https_proxy: $https_proxy
+        ftp_proxy: $ftp_proxy
+        no_proxy: $no_proxy
+    environment:
+      - http_proxy=$http_proxy
+      - https_proxy=$https_proxy
+      - ftp_proxy=$ftp_proxy
+      - no_proxy=$no_proxy
+    volumes:
+      - /proc:/proc:rw
+      - /dev/shm:/dev/shm:rw
+      - ../../../:/home/build/work:rw
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    user: build
+    command: /bin/bash
+
