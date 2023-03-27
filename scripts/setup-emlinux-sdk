@@ -1,0 +1,44 @@
+#!/bin/bash
+
+if [ $# != 3 ]; then
+  echo "[*] Usage: source $0 <architecture> <path to sdk file> <path to sdk install dir>"
+  echo "e.g. source ../repos/meta-emlinux/scripts/setup-emlinux-sdk x86_64 ./tmp/deploy/images/qemu-amd64/emlinux-image-base-sdk-emlinux-bookworm-qemu-amd64.tar.xz ./emlinux-sdk"
+  echo "available architectures:"
+  echo "- x86_64"
+  echo "- aarch64"
+
+  return 1
+fi
+
+arch="$1"
+sdk_file="$2"
+sdk_install_dir="$3"
+
+if [ ! -f "${sdk_file}" ]; then
+  echo "[*] sdk file is not found."
+  return 1
+fi
+
+if [ ! -d "${sdk_install_dir}" ]; then
+   mkdir "${sdk_install_dir}"
+   sudo tar xf "${sdk_file}" -C "${sdk_install_dir}"
+   sudo "${sdk_install_dir}"/relocate-sdk.sh
+fi
+
+sdk_install_dir_real=$(realpath ${sdk_install_dir})
+SDK_USR_BIN="${sdk_install_dir_real}/usr/bin"
+
+export PATH="${SDK_USR_BIN}:${PATH}"
+
+export CC="${SDK_USR_BIN}/${arch}-linux-gnu-gcc"
+export CXX="${SDK_USR_BIN}/${arch}-linux-gnu-g++"
+export CPP="${SDK_USR_BIN}/${arch}-linux-gnu-cpp"
+export AS="${SDK_USR_BIN}/${arch}-linux-gnu-as"
+export LD="${SDK_USR_BIN}/${arch}-linux-gnu-ld@"
+export STRIP="${SDK_USR_BIN}/${arch}-linux-gnu-strip"
+export RANLIB="${SDK_USR_BIN}/${arch}-linux-gnu-ranlib"
+export OBJCOPY="${SDK_USR_BIN}/${arch}-linux-gnu-objcopy"
+export OBJDUMP="${SDK_USR_BIN}/${arch}-linux-gnu-objdump"
+export AR="${SDK_USR_BIN}/${arch}-linux-gnu-ar"
+export NM="${SDK_USR_BIN}/${arch}-linux-gnu-nm"
+
