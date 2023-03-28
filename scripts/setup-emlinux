@@ -49,7 +49,7 @@ USERS += "root"
 USER_root[password] = "root"
 USER_root[flags] = "clear-text-password"
 
-## EMLinux distribution configuratons
+## EMLinux distribution configurations
 MACHINE ??= "qemu-amd64"
 DISTRO = "emlinux-bookworm"
 
