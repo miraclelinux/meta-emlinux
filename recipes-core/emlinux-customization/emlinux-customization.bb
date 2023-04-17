@@ -8,7 +8,7 @@
 #
 # SPDX-License-Identifier: MIT
 #
-FILESEXTRAPATHS_prepend := "${FILE_DIRNAME}/files:"
+FILESEXTRAPATHS:prepend := "${FILE_DIRNAME}/files:"
 
 DESCRIPTION = "EMLinux 3.x specific customization"
 
