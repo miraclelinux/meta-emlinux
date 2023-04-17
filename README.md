@@ -54,6 +54,7 @@ $ sudo apt install \
   pristine-tar \
   sbuild \
   schroot \
+  zstd \
   python3-distutils
 ```
 

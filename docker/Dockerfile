@@ -29,6 +29,7 @@ RUN apt-get install --fix-missing -y \
   pristine-tar \
   sbuild \
   schroot \
+  zstd \
   python3-distutils \
   python3-yaml \
   python3-html5lib \
