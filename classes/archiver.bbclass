@@ -393,7 +393,8 @@ python do_unpack_and_patch() {
     if d.getVarFlag('ARCHIVER_MODE', 'diff') == '1':
         bb.note('Creating diff gz...')
         create_diff_gz(d, src_orig, src, ar_outdir)
-        bb.utils.remove(src_orig, recurse=True)
+        if not is_work_shared(d):
+            bb.utils.remove(src_orig, recurse=True)
 }
 
 # BBINCLUDED is special (excluded from basehash signature
