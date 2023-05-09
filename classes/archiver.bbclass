@@ -383,6 +383,10 @@ python do_unpack_and_patch() {
 
     # Make sure gcc and kernel sources are patched only once
     if not (d.getVar('SRC_URI') == "" or is_work_shared(d)):
+        if d.getVar('do_debian_unpack_extra', False):
+            bb.build.exec_func('do_debian_unpack_extra', d)
+        if d.getVar('do_debian_patch', False):
+            bb.build.exec_func('do_debian_patch', d)
         bb.build.exec_func('do_patch', d)
 
     # Create the patches
