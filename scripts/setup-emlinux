@@ -62,8 +62,8 @@ EOF
   sed -i '/meta-isar/d' conf/bblayers.conf
 
   # Add layers.
-  echo "BBLAYERS += \"\${TOPDIR}/../repos/isar-cip-core\"" >> conf/bblayers.conf
   echo "BBLAYERS += \"\${TOPDIR}/../repos/meta-emlinux\"" >> conf/bblayers.conf
+  echo "BBLAYERS += \"\${TOPDIR}/../repos/isar-cip-core\"" >> conf/bblayers.conf
 
   if [ -d "${EML_HOOKS}" ]; then
     for hook in $(\ls ${EML_HOOKS}); do
