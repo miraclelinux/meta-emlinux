@@ -20,5 +20,12 @@ PV = "1.0"
 ISAR_RELEASE_CMD = "git -C ${LAYERDIR_emlinux} describe --tags --dirty --always --match 'v[0-9].[0-9]*'"
 
 IMAGE_INSTALL:append = " emlinux-customization"
+
+IMAGE_PREINSTALL:append = "\
+  iproute2 \
+  iputils-ping \
+  procps \
+  vim-tiny \
+"
 inherit image
 
