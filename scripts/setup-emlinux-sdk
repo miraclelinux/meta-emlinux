@@ -19,13 +19,15 @@ if [ ! -f "${sdk_file}" ]; then
   return 1
 fi
 
+sdkfile_name=$(basename  -s .tar.xz "${sdk_file}")
+
 if [ ! -d "${sdk_install_dir}" ]; then
    mkdir "${sdk_install_dir}"
    sudo tar xf "${sdk_file}" -C "${sdk_install_dir}"
-   sudo "${sdk_install_dir}"/relocate-sdk.sh
+   sudo "${sdk_install_dir}/${sdkfile_name}/relocate-sdk.sh"
 fi
 
-sdk_install_dir_real=$(realpath ${sdk_install_dir})
+sdk_install_dir_real=$(realpath "${sdk_install_dir}/${sdkfile_name}")
 SDK_USR_BIN="${sdk_install_dir_real}/usr/bin"
 
 export PATH="${SDK_USR_BIN}:${PATH}"
