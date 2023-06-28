@@ -167,3 +167,4 @@ EMLinux currently supports following machines.
 - qemu-amd64
 - qemu-arm64
 - generic-x86-64
+- raspberrypi3bplus-64

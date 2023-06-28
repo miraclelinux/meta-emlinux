@@ -1,0 +1,15 @@
+[all]
+boot_delay=1
+kernel=u-boot.bin
+
+# Put the RPi3 into 64 bit mode
+arm_64bit=1
+
+upstream_kernel=1
+audio_pwm_mode=0
+
+# Enable UART
+enable_uart=1
+
+gpu_mem=16
+mask_gpu_interrupt1=0x100
