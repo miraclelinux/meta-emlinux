@@ -29,3 +29,4 @@ IMAGE_PREINSTALL:append = "\
 "
 inherit image
 
+DEPENDS:class-sdk:append = " ${IMAGE_INSTALL}"
