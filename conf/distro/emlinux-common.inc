@@ -8,6 +8,7 @@
 #
 # SPDX-License-Identifier: MIT
 #
+INHERIT += "sdk-installer"
 
 DISTRO_KERNELS ?= "linux-cip"
 KERNEL_NAME ?= "cip"
