@@ -1,10 +1,15 @@
 #!/bin/bash
 
-which docker-compose >/dev/null
+docker_compose_cmd="docker compose"
+docker compose version >/dev/null
 if [ $? != 0 ]; then
-  echo "[*] docker-compose command is not found. Please install it."
-  exit 1
-fi  
+    docker-compose version >/dev/null
+    if [ $? != 0 ]; then
+	echo "[*] docker compose or docker-compose command is not found. Please install newer version of docker engine (or docker-compose)."
+	exit 1
+    fi
+    docker_compose_cmd="docker-compose"
+fi
 
 mode="run"
 if [ $# = 1 ]; then
@@ -15,7 +20,7 @@ host_user_id=$(id -u)
 export host_user_id="${host_user_id}"
 
 if [ "${mode}" = "build" ]; then
-  docker-compose build --no-cache
+  $docker_compose_cmd build --no-cache
 elif [ "${mode}" = "run" ]; then
-  docker-compose run --rm emlinux3-build
+  $docker_compose_cmd run --rm emlinux3-build
 fi
