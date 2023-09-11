@@ -57,6 +57,10 @@ if [ "$answer" != "y" ] && [ "$answer" != "Y" ]; then
     exit 0
 fi
 
+if [ ! -d "${target_sdk_dir}" ]; then
+    mkdir -p "${target_sdk_dir}"
+fi
+
 sdk_install_target_dir=$(realpath ${target_sdk_dir})
 sdk_installed_dir="${sdk_install_target_dir}/${EMLINUX_SDK_BASE_NAME}"
 
