@@ -1,0 +1,31 @@
+#
+# Copyright (c) Cybertrust Japan Co., Ltd. 
+#
+# Authors:
+#  Yoshihiro Okada <yoshihiro.okada@miraclelinux.com>
+#
+# SPDX-License-Identifier: MIT
+#
+
+SUMMARY = "Secure Socket Layer"
+DESCRIPTION = "Secure Socket Layer (SSL) binary and related cryptographic tools."
+HOMEPAGE = "http://www.openssl.org/"
+BUGTRACKER = "http://www.openssl.org/news/vulnerabilities.html"
+SECTION = "libs/network"
+
+LICENSE = "Apache License"
+LIC_FILES_CHKSUM = "file://LICENSE.txt;md5=c75985e733726beaba57bc5253e96d04"
+
+inherit dpkg-gbp
+
+DEBIAN_BUILD_DEPENDS += "perl-base"
+
+SRC_URI = " \
+    git://salsa.debian.org/debian/openssl.git;protocol=https;branch=debian/unstable \
+    file://0001-Enable-fips-module.patch \
+"
+
+SRCREV = "f8342c651edd69a43705394dff8b5c1a471037ae"
+
+GBP_EXTRA_OPTIONS = ""
+DEB_BUILD_PROFILES += "nocheck"

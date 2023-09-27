@@ -1,0 +1,33 @@
+#
+# Copyright (c) Cybertrust Japan Co., Ltd. 
+#
+# Authors:
+#  Yoshihiro Okada <yoshihiro.okada@miraclelinux.com>
+#
+# SPDX-License-Identifier: MIT
+#
+
+SUMMARY = "Secure Socket Layer"
+DESCRIPTION = "Secure Socket Layer (SSL) binary and related cryptographic tools."
+HOMEPAGE = "http://www.openssl.org/"
+BUGTRACKER = "http://www.openssl.org/news/vulnerabilities.html"
+SECTION = "libs/network"
+
+LICENSE = "Apache License"
+LIC_FILES_CHKSUM = "file://LICENSE.txt;md5=c75985e733726beaba57bc5253e96d04"
+
+inherit dpkg
+
+SRC_URI = " \
+    apt://${PN}/bookworm \
+    file://custom-debian \
+"
+
+DEB_BUILD_PROFILES += "nocheck"
+
+do_move_debian_files() {
+    cp -r ${WORKDIR}/custom-debian/* ${S}/debian/
+}
+
+addtask move_debian_files after do_prepare_build before do_dpkg_build
+
