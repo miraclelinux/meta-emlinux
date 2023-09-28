@@ -32,12 +32,16 @@ In the build directroy, you can build image. You need to set necessary variables
 Building for Raspberry Pi 3B+:
 ```
 $ echo 'MACHINE = "raspberrypi3bplus-64"' >> conf/local.conf
-$ echo 'BBLAYERS += "${TOPDIR}/../repos/isar/meta-isar"' >> conf/bblayers.conf
 ```
 
 Building for Raspberry Pi 4B:
 ```
 $ echo 'MACHINE = "raspberrypi4-64"' >> conf/local.conf
+```
+
+You also need to add the following to build image.
+
+```
 $ echo 'BBLAYERS += "${TOPDIR}/../repos/isar/meta-isar"' >> conf/bblayers.conf
 ```
 
