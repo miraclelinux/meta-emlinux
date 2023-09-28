@@ -1,0 +1,38 @@
+From db2350d27eca385ab71a3787f54664e70cca68de Mon Sep 17 00:00:00 2001
+From: Yoshihiro Okada <yoshihiro.okada@miraclelinux.com>
+Date: Wed, 19 Jul 2023 18:13:26 +0900
+Subject: [PATCH] Enable fips module.
+
+---
+ debian/openssl.install | 1 +
+ debian/rules           | 2 +-
+ 2 files changed, 2 insertions(+), 1 deletion(-)
+
+diff --git a/debian/openssl.install b/debian/openssl.install
+index 1f270a7..e834009 100644
+--- a/debian/openssl.install
++++ b/debian/openssl.install
+@@ -4,6 +4,7 @@ usr/lib/ssl/cert.pem
+ usr/lib/ssl/certs 
+ usr/lib/ssl/private
+ usr/lib/ssl/misc/*
++usr/lib/ssl/fipsmodule.cnf
+ usr/lib/ssl/openssl.cnf
+ usr/share/man/man1/*
+ usr/share/man/man5/*
+diff --git a/debian/rules b/debian/rules
+index 9078f4f..ee5ad21 100755
+--- a/debian/rules
++++ b/debian/rules
+@@ -29,7 +29,7 @@ ifneq (,$(filter parallel=%,$(DEB_BUILD_OPTIONS)))
+ 	MAKEFLAGS += -j$(NUMJOBS)
+ endif
+ 
+-CONFARGS  = --prefix=/usr --openssldir=/usr/lib/ssl --libdir=lib/$(DEB_HOST_MULTIARCH) no-idea no-mdc2 no-rc5 no-zlib no-ssl3 enable-unit-test no-ssl3-method enable-rfc3779 enable-cms no-capieng no-rdrand
++CONFARGS  = --prefix=/usr --openssldir=/usr/lib/ssl --libdir=lib/$(DEB_HOST_MULTIARCH) no-idea no-mdc2 no-rc5 no-zlib no-ssl3 enable-unit-test no-ssl3-method enable-rfc3779 enable-cms no-capieng no-rdrand enable-fips
+ #OPT_alpha = ev4 ev5
+ ARCHOPTS  = OPT_$(DEB_HOST_ARCH)
+ OPTS      = $($(ARCHOPTS))
+-- 
+2.30.2
+

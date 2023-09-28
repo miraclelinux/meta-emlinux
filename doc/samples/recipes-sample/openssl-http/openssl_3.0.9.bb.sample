@@ -1,0 +1,43 @@
+#
+# Copyright (c) Cybertrust Japan Co., Ltd. 
+#
+# Authors:
+#  Yoshihiro Okada <yoshihiro.okada@miraclelinux.com>
+#
+# SPDX-License-Identifier: MIT
+#
+
+SUMMARY = "Secure Socket Layer"
+DESCRIPTION = "Secure Socket Layer (SSL) binary and related cryptographic tools."
+HOMEPAGE = "http://www.openssl.org/"
+BUGTRACKER = "http://www.openssl.org/news/vulnerabilities.html"
+SECTION = "libs/network"
+
+LICENSE = "Apache License"
+LIC_FILES_CHKSUM = "file://LICENSE.txt;md5=c75985e733726beaba57bc5253e96d04"
+
+inherit dpkg
+
+SRC_TGZ = "openssl_3.0.9.orig.tar.gz"
+DEB_HELPER_SRC = "openssl_3.0.9-1.debian.tar.xz"
+PKG_URL = "http://deb.debian.org/debian/pool/main/o/openssl"
+
+SRC_URI = " \
+    ${PKG_URL}/${SRC_TGZ};name=openssl-src \
+    ${PKG_URL}/${DEB_HELPER_SRC};name=debhelper-src \
+    file://custom-debian \
+"
+
+SRC_URI[openssl-src.sha256sum] = "eb1ab04781474360f77c318ab89d8c5a03abc38e63d65a603cabbf1b00a1dc90"
+SRC_URI[debhelper-src.sha256sum] = "e2d357313d50b244727c37aceae3c1e69b0d03a6e911d73de5382515a27647f1"
+
+DEB_BUILD_PROFILES += "nocheck"
+
+do_move_debian_files() {
+    cp -r ${WORKDIR}/debian ${S}/
+    cp -r ${WORKDIR}/custom-debian/* ${S}/debian/
+    cp ${DL_DIR}/${SRC_TGZ} ${WORKDIR}/
+}
+
+addtask move_debian_files after do_prepare_build before do_dpkg_build
+

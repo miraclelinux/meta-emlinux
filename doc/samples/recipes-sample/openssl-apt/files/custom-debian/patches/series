@@ -1,0 +1,10 @@
+debian-targets.patch
+man-section.patch
+no-symbolic.patch
+pic.patch
+c_rehash-compat.patch
+Configure-allow-to-enable-ktls-if-target-does-not-start-w.patch
+Remove-the-provider-section.patch
+conf-Serialize-allocation-free-of-ssl_names.patch
+Fix-tests-for-new-default-security-level.patch
+0001-for-checking-customization-test.patch

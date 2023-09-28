@@ -1,0 +1,25 @@
+From 0608047c4585ba93f84fa0e7d91bbecf5299a07c Mon Sep 17 00:00:00 2001
+From: Yoshihiro Okada <yoshihiro.okada@miraclelinux.com>
+Date: Tue, 25 Jul 2023 02:41:56 +0000
+Subject: [PATCH] for checking customization test
+
+---
+ ssl/ssl_init.c | 2 ++
+ 1 file changed, 2 insertions(+)
+
+diff --git a/ssl/ssl_init.c b/ssl/ssl_init.c
+index db0234d..418fd11 100644
+--- a/ssl/ssl_init.c
++++ b/ssl/ssl_init.c
+@@ -17,6 +17,8 @@
+ #include "sslerr.h"
+ #include "internal/thread_once.h"
+ 
++#define TEST_MODIFY 1 /* for customization test */
++
+ static int stopped;
+ 
+ static void ssl_library_stop(void);
+-- 
+2.30.2
+
