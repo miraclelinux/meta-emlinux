@@ -36,7 +36,7 @@ $ echo 'MACHINE = "raspberrypi3bplus-64"' >> conf/local.conf
 
 Building for Raspberry Pi 4B:
 ```
-$ echo 'MACHINE = "raspberrypi4-64"' >> conf/local.conf
+$ echo 'MACHINE = "raspberrypi4b-64"' >> conf/local.conf
 ```
 
 You also need to add the following to build image.
@@ -61,7 +61,7 @@ $ xz -d tmp/deploy/images/raspberrypi3bplus-64/emlinux-image-base-emlinux-bookwo
 ```
 For Raspberry Pi 4B:
 ```
-$ xz -d tmp/deploy/images/raspberrypi4-64/emlinux-image-base-emlinux-bookworm-raspberrypi4-64.wic.xz
+$ xz -d tmp/deploy/images/raspberrypi4b-64/emlinux-image-base-emlinux-bookworm-raspberrypi4b-64.wic.xz
 ```
 
 Then, a wic image will be output to the following location.
@@ -72,7 +72,7 @@ tmp/deploy/images/raspberrypi3bplus-64/emlinux-image-base-emlinux-bookworm-raspb
 ```
 For Raspberry Pi 4B:
 ```
-tmp/deploy/images/raspberrypi4-64/emlinux-image-base-emlinux-bookworm-raspberrypi4-64.wic
+tmp/deploy/images/raspberrypi4b-64/emlinux-image-base-emlinux-bookworm-raspberrypi4b-64.wic
 ```
 
 Write the wic image to a SD card with the dd command.
@@ -83,7 +83,7 @@ $ sudo dd if=emlinux-image-base-emlinux-bookworm-raspberrypi3bplus-64.wic of=/de
 ```
 For Raspberry Pi 4B:
 ```
-$ sudo dd if=emlinux-image-base-emlinux-bookworm-raspberrypi4-64.wic of=/dev/sdX bs=4k conv=fsync
+$ sudo dd if=emlinux-image-base-emlinux-bookworm-raspberrypi4b-64.wic of=/dev/sdX bs=4k conv=fsync
 ```
 
 Output device name "of=*/dev/sdX*" depends on your PC environment. Please replace appropriate device name.
