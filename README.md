@@ -168,3 +168,14 @@ EMLinux currently supports following machines.
 - qemu-arm64
 - generic-x86-64
 - raspberrypi3bplus-64
+
+## Sample Recipe
+
+There are some sample recipes under doc/samples/recipes-sample/ directory. Currently you can see following sample recipes.
+
+- openssl-apt  
+This recipe downloads openssl source package using _apt://_. This recipe shows how to change build option and how to add new patch for source code.
+- openssl-http  
+This recipe downloads openssl source package using _http://_. This recipe shows how to change build option and how to add new patch for source code.
+- openssl-git  
+This recipe downloads openssl source package using _git://_. This recipe shows how to change build option.
