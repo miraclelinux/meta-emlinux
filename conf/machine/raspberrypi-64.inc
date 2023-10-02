@@ -11,7 +11,7 @@ DISTRO_APT_SOURCES:append = " conf/distro/emlinux-bookworm-full.list"
 
 # wic file settings
 IMAGE_FSTYPES ?= "wic wic.xz"
-WKS_FILE ?= "emlinux-rpi-sdimg"
+WKS_FILE ?= "emlinux-rpi-sdimg.wks.in"
 
 IMAGE_PREINSTALL += "\
   firmware-brcm80211 \
