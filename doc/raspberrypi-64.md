@@ -1,7 +1,7 @@
-# Raspberry Pi 3 Model Series
+# Raspberry Pi 3 and 4 Model Series
 
 EMLinux for Raspberry Pi is __not__ officially supported. However Raspberry Pi is a popular device so it would be nice to test and evaluate EMLinux on it.
-This document describes how to setup EMLinux for the Raspberry Pi 3 model series. The current description is about Raspberry Pi 3 model B+ only.
+This document describes how to setup EMLinux for the Raspberry Pi 3 and 4 model series. The current description is concerning Raspberry Pi 3 model B+ and Raspberry Pi 4 model B.
 
 ## Build EMLinux
 
@@ -29,8 +29,14 @@ $ source repos/meta-emlinux/scripts/setup-emlinux build
 
 In the build directroy, you can build image. You need to set necessary variables in the relevant .conf files.
 
+Building for Raspberry Pi 3B+:
 ```
 $ echo 'MACHINE = "raspberrypi3bplus-64"' >> conf/local.conf
+```
+
+Building for Raspberry Pi 4B:
+```
+$ echo 'MACHINE = "raspberrypi4b-64"' >> conf/local.conf
 ```
 
 Start the image creation as below.
@@ -43,20 +49,35 @@ $ bitbake emlinux-image-base
 
 Decompress the output SD card image.
 
+For Raspberry Pi 3B+:
 ```
 $ xz -d tmp/deploy/images/raspberrypi3bplus-64/emlinux-image-base-emlinux-bookworm-raspberrypi3bplus-64.wic.xz
+```
+For Raspberry Pi 4B:
+```
+$ xz -d tmp/deploy/images/raspberrypi4b-64/emlinux-image-base-emlinux-bookworm-raspberrypi4b-64.wic.xz
 ```
 
 Then, a wic image will be output to the following location.
 
+For Raspberry Pi 3B+:
 ```
 tmp/deploy/images/raspberrypi3bplus-64/emlinux-image-base-emlinux-bookworm-raspberrypi3bplus-64.wic
+```
+For Raspberry Pi 4B:
+```
+tmp/deploy/images/raspberrypi4b-64/emlinux-image-base-emlinux-bookworm-raspberrypi4b-64.wic
 ```
 
 Write the wic image to a SD card with the dd command.
 
+For Raspberry Pi 3B+:
 ```
 $ sudo dd if=emlinux-image-base-emlinux-bookworm-raspberrypi3bplus-64.wic of=/dev/sdX bs=4k conv=fsync
+```
+For Raspberry Pi 4B:
+```
+$ sudo dd if=emlinux-image-base-emlinux-bookworm-raspberrypi4b-64.wic of=/dev/sdX bs=4k conv=fsync
 ```
 
 Output device name "of=*/dev/sdX*" depends on your PC environment. Please replace appropriate device name.

@@ -14,17 +14,27 @@ inherit dpkg
 
 DEBIAN_BUILD_DEPENDS = "u-boot-tools"
 
-SRC_URI = "file://debian/ file://boot.cmd"
+SRC_URI = "file://debian/"
 
 TEMPLATE_FILES = "debian/control.tmpl debian/rules.tmpl"
 TEMPLATE_VARS += "DEBIAN_BUILD_DEPENDS"
 
 S = "${WORKDIR}/rpi-u-boot-${PV}"
 
+MMC_DEV_NUM:raspberrypi3bplus-64 = "0"
+MMC_DEV_NUM:raspberrypi4b-64 = "1"
+
 do_prepare_build() {
     mkdir ${S}
     cp -r ${WORKDIR}/debian ${S}/
-    cp ${WORKDIR}/boot.cmd ${S}/
+
+    cat << EOF > ${S}/boot.cmd
+part uuid mmc ${MMC_DEV_NUM}:2 uuid
+fatload mmc ${MMC_DEV_NUM} \${kernel_addr_r} Image
+fatload mmc ${MMC_DEV_NUM} \${fdt_addr_r} ${DTB_FILES}
+setenv bootargs dwc_otg.lpm_enable=0 earlyprintk root=PARTUUID=\${uuid} rootfstype=ext4 rootwait
+booti \${kernel_addr_r} - \${fdt_addr_r}
+EOF
 
     deb_add_changelog
 }
