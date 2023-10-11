@@ -10,6 +10,8 @@
 #
 INHERIT += "sdk-installer"
 
+DISTRO_APT_SOURCES += "conf/distro/emlinux-bookworm.list"
+
 DISTRO_KERNELS ?= "linux-cip"
 KERNEL_NAME ?= "cip"
 
