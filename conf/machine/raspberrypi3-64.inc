@@ -7,7 +7,7 @@
 DISTRO_ARCH ?= "arm64"
 
 # Raspberry Pi needs non-free-firmware repository.
-DISTRO_APT_SOURCES += "conf/distro/emlinux-bookworm-full.list"
+DISTRO_APT_SOURCES:append = " conf/distro/emlinux-bookworm-full.list"
 
 # wic file settings
 IMAGE_FSTYPES ?= "wic wic.xz"
