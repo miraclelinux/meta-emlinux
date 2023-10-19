@@ -9,6 +9,7 @@
 # SPDX-License-Identifier: MIT
 #
 
+require emlinux-image-common.inc
 
 DESCRIPTION = "EMLinux target filesystem"
 
