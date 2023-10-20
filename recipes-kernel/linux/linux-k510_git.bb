@@ -31,6 +31,10 @@ do_shared_workdir_prepend () {
 
 # CVE-2021-43057: This issue was introduced in 5.13-rc1. 5.10.y is not affected.
 # CVE-2015-8955: It's false positive because it was fixed in v4.1-rc1.
+# CVE-2020-8834: It's false positive because 5.10.y is not affected.
+# CVE-2017-6264: It's false positive because it's not a mainline flaw.
+# CVE-2017-1000377: It's false positive because it's not a mainline flaw.
 CVE_CHECK_WHITELIST = "\
-    CVE-2021-43057 CVE-2015-8955 \
+    CVE-2021-43057 CVE-2015-8955 CVE-2020-8834 \
+    CVE-2017-6264 CVE-2017-1000377 \
 "
