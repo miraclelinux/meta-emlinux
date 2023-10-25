@@ -2,7 +2,7 @@
 
 ## Supported build host
 
-ELinux supported build host OS is Debian 11 or greater.
+EMLinux supported build host OS is Debian 11 or greater.
 
 # Build environment setup 
 
