@@ -31,7 +31,6 @@ In the build directroy, you can build image. You need to set necessary variables
 
 ```
 $ echo 'MACHINE = "raspberrypi3bplus-64"' >> conf/local.conf
-$ echo 'BBLAYERS += "${TOPDIR}/../repos/isar/meta-isar"' >> conf/bblayers.conf
 ```
 
 Start the image creation as below.
