@@ -20,10 +20,15 @@ CVE_VERSION = "${LINUX_CVE_VERSION}"
 # CVE-2020-8834: It's false positive because 4.19.y is not affected.
 # CVE-2017-6264: It's false positive because it's not a mainline flaw.
 # CVE-2017-1000377: It's false positive because it's not a mainline flaw.
+# CVE-2007-2764: It's false positive due to a SunOS issue.
+# CVE-2007-4998: It's false positive due to a coreutils issue.
+# CVE-2008-2544: It's false positive because the replication way is not proper.
+# CVE-2016-3699: It's false positive because it's not a mainline flaw.
 CVE_CHECK_WHITELIST = "\
     CVE-2021-26934 CVE-2021-43057 CVE-2022-29582 \
     CVE-2021-42327 CVE-2021-45402 CVE-2022-0168 \
     CVE-2022-1508 CVE-2022-1789 CVE-2023-1872 \
     CVE-2015-8955 CVE-2022-2327 CVE-2020-8834 \
-    CVE-2017-6264 CVE-2017-1000377 \
+    CVE-2017-6264 CVE-2017-1000377 CVE-2007-2764 \
+    CVE-2007-4998 CVE-2008-2544 CVE-2016-3699 \
 "
