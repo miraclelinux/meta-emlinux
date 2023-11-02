@@ -1,0 +1,30 @@
+From 140cd8ada3fac53a0e6c6634e59e77ae0311253e Mon Sep 17 00:00:00 2001
+From: Kazunori Kobayashi <kazunori.kobayashi@cybertrust.co.jp>
+Date: Thu, 29 Jun 2023 16:47:50 +0000
+Subject: [PATCH 2/2] arm64: dts: broadcom: Add a compilation flag to include
+ symbols in dtb
+
+Symbols in dtb are necessary to enable dtoverlay on Raspberry Pi.
+This flag has been ported from the following code of Raspberry Pi Kernel.
+
+https://github.com/raspberrypi/linux/blob/rpi-6.1.y/arch/arm/boot/dts/Makefile#L1665
+---
+ arch/arm64/boot/dts/broadcom/Makefile | 5 +++++
+ 1 file changed, 5 insertions(+)
+
+diff --git a/arch/arm64/boot/dts/broadcom/Makefile b/arch/arm64/boot/dts/broadcom/Makefile
+index 05d8c5ecf3b0..f8101603c1ed 100644
+--- a/arch/arm64/boot/dts/broadcom/Makefile
++++ b/arch/arm64/boot/dts/broadcom/Makefile
+@@ -11,3 +11,8 @@ dtb-$(CONFIG_ARCH_BCM2835) += bcm2711-rpi-400.dtb \
+ subdir-y	+= bcmbca
+ subdir-y	+= northstar2
+ subdir-y	+= stingray
++
++# Enable fixups to support overlays on BCM2835 platforms
++ifeq ($(CONFIG_ARCH_BCM2835),y)
++DTC_FLAGS += -@
++endif
+-- 
+2.39.2
+

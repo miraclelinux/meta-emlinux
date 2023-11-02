@@ -1,0 +1,88 @@
+From c89cbf3445e610405f7cd8d31b7e340ccb0fae2e Mon Sep 17 00:00:00 2001
+From: Kazunori Kobayashi <kazunori.kobayashi@cybertrust.co.jp>
+Date: Thu, 29 Jun 2023 14:06:16 +0000
+Subject: [PATCH 1/2] ARM: dts: bcm2837-rpi-3-b-plus: Add an __overrides__ node
+ to declare parameters modified via dtparams
+
+The __overrides__ declaration is derived from the dts files of
+Raspberry Pi Kernel. Parameters that are not referred to by mainline
+Kernel are excluded.
+
+Missing labels are satisfied accordingly for reference from the
+__overrides__ node.
+---
+ arch/arm/boot/dts/bcm2837-rpi-3-b-plus.dts | 44 ++++++++++++++++++++--
+ 1 file changed, 41 insertions(+), 3 deletions(-)
+
+diff --git a/arch/arm/boot/dts/bcm2837-rpi-3-b-plus.dts b/arch/arm/boot/dts/bcm2837-rpi-3-b-plus.dts
+index ec721d323ac5..53bec45d53cd 100644
+--- a/arch/arm/boot/dts/bcm2837-rpi-3-b-plus.dts
++++ b/arch/arm/boot/dts/bcm2837-rpi-3-b-plus.dts
+@@ -10,7 +10,7 @@ / {
+ 	compatible = "raspberrypi,3-model-b-plus", "brcm,bcm2837";
+ 	model = "Raspberry Pi 3 Model B+";
+ 
+-	chosen {
++	chosen: chosen {
+ 		/* 8250 auxiliary UART instead of pl011 */
+ 		stdout-path = "serial1:115200n8";
+ 	};
+@@ -21,11 +21,11 @@ memory@0 {
+ 	};
+ 
+ 	leds {
+-		led-act {
++		act_led: led-act {
+ 			gpios = <&gpio 29 GPIO_ACTIVE_HIGH>;
+ 		};
+ 
+-		led-pwr {
++		pwr_led: led-pwr {
+ 			label = "PWR";
+ 			gpios = <&expgpio 2 GPIO_ACTIVE_LOW>;
+ 			default-state = "keep";
+@@ -160,3 +160,41 @@ &uart1 {
+ &wifi_pwrseq {
+ 	reset-gpios = <&expgpio 1 GPIO_ACTIVE_LOW>;
+ };
++
++/ {
++	__overrides__ {
++		audio = <&chosen>,"bootargs{on='snd_bcm2835.enable_headphones=1 snd_bcm2835.enable_hdmi=1',off='snd_bcm2835.enable_headphones=0 snd_bcm2835.enable_hdmi=0'}";
++
++		act_led_gpio = <&act_led>,"gpios:4";
++		act_led_activelow = <&act_led>,"gpios:8";
++		act_led_trigger = <&act_led>,"linux,default-trigger";
++
++		pwr_led_gpio = <&pwr_led>,"gpios:4";
++		pwr_led_activelow = <&pwr_led>,"gpios:8";
++		pwr_led_trigger = <&pwr_led>,"linux,default-trigger";
++
++		hdmi = <&hdmi>,"status";
++		i2c2_iknowwhatimdoing = <&i2c2>,"status";
++		i2c2_baudrate = <&i2c2>,"clock-frequency:0";
++		sd = <&sdhost>,"status";
++		sd_poll_once = <&sdhost>,"non-removable?";
++
++		cache_line_size;
++
++		uart0 = <&uart0>,"status";
++		uart1 = <&uart1>,"status";
++		i2s = <&i2s>,"status";
++		i2c1 = <&i2c1>,"status";
++		i2c = <&i2c1>,"status";
++		i2c_arm = <&i2c1>,"status";
++		i2c1_baudrate = <&i2c1>,"clock-frequency:0";
++		i2c_baudrate = <&i2c1>,"clock-frequency:0";
++		i2c_arm_baudrate = <&i2c1>,"clock-frequency:0";
++
++		watchdog = <&pm>,"status";
++
++		bdaddr = <&bt>,"local-bd-address[";
++		krnbt = <&bt>,"status";
++		krnbt_baudrate = <&bt>,"max-speed:0";
++        };
++};
+-- 
+2.39.2
+
