@@ -6,7 +6,7 @@
 
 include conf/machine/raspberrypi-64.inc
 
-KERNEL_DEFCONFIG = "raspberrypi3-64_defconfig"
+KERNEL_DEFCONFIG = "raspberrypi4-64_defconfig"
 
 IMAGE_BOOT_FILES ?= "${KERNEL_IMAGE} ${DTB_FILES} \
                      ${IMAGE_ROOTFS}/boot/overlays/*;overlays/ \
@@ -14,14 +14,13 @@ IMAGE_BOOT_FILES ?= "${KERNEL_IMAGE} ${DTB_FILES} \
                      ${IMAGE_ROOTFS}/boot/boot.scr;./ \
                      ${IMAGE_ROOTFS}/boot/COPYING.linux;./ \
                      ${IMAGE_ROOTFS}/boot/LICENCE.broadcom;./ \
-                     ${IMAGE_ROOTFS}/boot/bootcode.bin;./ \
                      ${IMAGE_ROOTFS}/boot/config.txt;./ \
-                     ${IMAGE_ROOTFS}/boot/start.elf;./ \
-                     ${IMAGE_ROOTFS}/boot/start_cd.elf;./ \
-                     ${IMAGE_ROOTFS}/boot/start_db.elf;./ \
-                     ${IMAGE_ROOTFS}/boot/start_x.elf;./ \
-                     ${IMAGE_ROOTFS}/boot/fixup.dat;./ \
-                     ${IMAGE_ROOTFS}/boot/fixup_cd.dat;./ \
-                     ${IMAGE_ROOTFS}/boot/fixup_db.dat;./ \
-                     ${IMAGE_ROOTFS}/boot/fixup_x.dat;./"
+                     ${IMAGE_ROOTFS}/boot/start4.elf;./ \
+                     ${IMAGE_ROOTFS}/boot/start4cd.elf;./ \
+                     ${IMAGE_ROOTFS}/boot/start4db.elf;./ \
+                     ${IMAGE_ROOTFS}/boot/start4x.elf;./ \
+                     ${IMAGE_ROOTFS}/boot/fixup4.dat;./ \
+                     ${IMAGE_ROOTFS}/boot/fixup4cd.dat;./ \
+                     ${IMAGE_ROOTFS}/boot/fixup4db.dat;./ \
+                     ${IMAGE_ROOTFS}/boot/fixup4x.dat;./"
 

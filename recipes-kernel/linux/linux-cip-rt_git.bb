@@ -21,6 +21,7 @@ SRC_URI += " \
 
 SRC_URI:append:generic-x86-64 = " file://generic-x86-64_defconfig"
 SRC_URI:append:raspberrypi3bplus-64 = " file://raspberrypi3-64_defconfig"
+SRC_URI:append:raspberrypi4b-64 = " file://raspberrypi4-64_defconfig"
 
 SRCREV = "65bd536c294e2f5356dabd805e63516e90d72628"
 
