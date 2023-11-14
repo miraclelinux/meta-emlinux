@@ -38,8 +38,10 @@ do_shared_workdir_prepend () {
 # CVE-2007-4998: It's false positive due to a coreutils issue.
 # CVE-2008-2544: It's false positive because the replication way is not proper.
 # CVE-2016-3699: It's false positive because it's not a mainline flaw.
+# CVE-1999-0524: This issue is that ICMP exists, can be filewalled if required.
 CVE_CHECK_WHITELIST = "\
     CVE-2021-43057 CVE-2015-8955 CVE-2020-8834 \
     CVE-2017-6264 CVE-2017-1000377 CVE-2007-2764 \
     CVE-2007-4998 CVE-2008-2544 CVE-2016-3699 \
+    CVE-1999-0524 \
 "
