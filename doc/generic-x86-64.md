@@ -28,7 +28,7 @@ $ source repos/meta-emlinux/scripts/setup-emlinux build
 In the build directory, you need to set "generic-x86-64" to MACHINE variable.
 
 ```
-$ echo 'MACHINE = "genericx-86-64"' >> conf/local.conf
+$ echo 'MACHINE = "generic-x86-64"' >> conf/local.conf
 $ bitbake emlinux-image-base
 ```
 
