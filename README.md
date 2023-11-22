@@ -143,7 +143,7 @@ qemu-system-aarch64 \
  -device virtio-net-device,netdev=net0,mac=52:54:00:12:35:02 \
  -netdev user,id=net0,hostfwd=tcp::2222-:22,hostfwd=tcp::2323-:23,tftp=./tmp/deploy/images/qemuarm64 \
  -drive id=disk0,file=./tmp/deploy/images/qemu-arm64/emlinux-image-base-emlinux-bookworm-qemu-arm64.ext4,if=none,format=raw \
- -device virtio-blk-device,drive=disk0 -show-cursor -device VGA,edid=on \
+ -device virtio-blk-device,drive=disk0 -device VGA,edid=on \
  -device qemu-xhci \
  -device usb-tablet \
  -device usb-kbd \
