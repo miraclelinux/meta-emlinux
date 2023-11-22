@@ -2,7 +2,7 @@
 
 ## Supported build host
 
-ELinux supported build host OS is Debian 11 or greater.
+EMLinux supported build host OS is Debian 11 or greater.
 
 # Build environment setup 
 
@@ -204,3 +204,16 @@ This recipe downloads openssl source package using _apt://_. This recipe shows h
 This recipe downloads openssl source package using _http://_. This recipe shows how to change build option and how to add new patch for source code.
 - openssl-git  
 This recipe downloads openssl source package using _git://_. This recipe shows how to change build option.
+
+# License
+
+All metadata is MIT licensed unless otherwise stated.
+Source code included in tree for individual recipes is under the LICENSE stated in the associated recipe (.bb file) unless otherwise stated.
+
+See [COPYING.MIT](COPYING.MIT) for more details about MIT license.
+
+# Community Resources
+
+#### Project home
+
+* https://github.com/miraclelinux/meta-emlinux
