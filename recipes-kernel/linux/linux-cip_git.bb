@@ -19,6 +19,7 @@ SRC_URI += " \
 "
 
 SRC_URI:append:qemu-arm64 = " file://qemu-arm64_defconfig"
+SRC_URI:append:qemu-arm = " file://qemu-arm_defconfig"
 SRC_URI:append:qemu-amd64 = " file://qemu-amd64_defconfig"
 SRC_URI:append:generic-x86-64 = " file://generic-x86-64_defconfig"
 SRC_URI:append:raspberrypi3bplus-64 = " file://raspberrypi3-64_defconfig"
