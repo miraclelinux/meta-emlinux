@@ -1,4 +1,4 @@
-FROM debian:bullseye
+FROM debian:bookworm
 
 ARG uid
 ARG http_proxy
@@ -18,7 +18,6 @@ RUN apt-get install --fix-missing -y \
   parted \
   python3 \
   quilt \
-  qemu \
   qemu-system-x86 \
   qemu-system-arm \
   qemu-user-static \
