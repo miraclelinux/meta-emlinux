@@ -33,6 +33,8 @@ cleanup_local_isarapt() {
 }
 
 rootfs_generate_manifest:append () {
+    local not_exist_resolvconf=`file '${ROOTFSDIR}'/etc/resolv.conf 2>&1 | grep "cannot open" | wc -c`
+
     ### backup apt status
     sudo sh -c "(cd ${ROOTFSDIR} && tar zcpf apt_status.tar.gz var/cache/apt var/lib/apt)"
 
@@ -44,7 +46,12 @@ rootfs_generate_manifest:append () {
     cp ${ROOTFS_MANIFEST_DEPLOY_DIR}/${ROOTFS_PACKAGE_SUFFIX}.manifest ${ROOTFSDIR}/tmp/source_dir/
 
     ### setup network & apt environment
-    sudo cp /etc/resolv.conf '${ROOTFSDIR}'/etc/resolv.conf
+    if [ ${not_exist_resolvconf} -ne 0 ]; then
+        sudo cp /etc/resolv.conf ${ROOTFSDIR}/etc/resolv.conf
+    else
+        sudo mv ${ROOTFSDIR}/etc/resolv.conf ${ROOTFSDIR}/etc/resolv.conf.orig
+        sudo cp /etc/resolv.conf ${ROOTFSDIR}/etc/resolv.conf
+    fi
     prepare_local_isarapt
     sudo sh -c "echo 'deb [trusted=yes] copy:///${LOCAL_APT_DIR} ${EML_SELF_BUILD} main' > ${ROOTFSDIR}/etc/apt/sources.list.d/${EML_SELF_BUILD}.list"
     sudo sh -c "echo 'deb-src [trusted=yes] copy:///${LOCAL_APT_DIR} ${EML_SELF_BUILD} main' >> ${ROOTFSDIR}/etc/apt/sources.list.d/${EML_SELF_BUILD}.list"
@@ -62,7 +69,11 @@ rootfs_generate_manifest:append () {
     sudo -E umount ${ROOTFSDIR}/tmp/source_dir
     sudo -E umount ${ROOTFSDIR}/tmp
     cleanup_local_isarapt
-    sudo -E rm ${ROOTFSDIR}/etc/resolv.conf
+    if [ ${not_exist_resolvconf} -ne 0 ]; then
+        sudo -E rm ${ROOTFSDIR}/etc/resolv.conf
+    else
+        sudo mv ${ROOTFSDIR}/etc/resolv.conf.orig ${ROOTFSDIR}/etc/resolv.conf
+    fi
 
     ### restore apt status
     sudo sh -c "(cd ${ROOTFSDIR} && rm -fr var/cache/apt var/lib/apt; tar zxpf apt_status.tar.gz)"
