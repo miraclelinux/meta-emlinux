@@ -20,6 +20,8 @@ create_sdk_installer_script() {
         toolchain_prefix="x86_64-linux-gnu"
     elif [ "${DISTRO_ARCH}" = "arm64" ]; then
         toolchain_prefix="aarch64-linux-gnu"
+    elif [ "${DISTRO_ARCH}" = "armhf" ]; then
+        toolchain_prefix="arm-linux-gnueabihf"
     fi
 
     cat << "EOF" > ${EMLINUX_SDK_INSTALLER_FILE_PATH}
