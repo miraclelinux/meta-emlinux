@@ -15,11 +15,11 @@ EMLINUX_SDK_INSTALLER_NAME="${PN}-${DISTRO}-${MACHINE}-sdk-installer.sh"
 EMLINUX_SDK_INSTALLER_FILE_PATH="${DEPLOY_DIR_IMAGE}/${EMLINUX_SDK_INSTALLER_NAME}"
 
 create_sdk_installer_script() {
-    arch=""
+    toolchain_prefix=""
     if [ "${DISTRO_ARCH}" = "amd64" ]; then
-        arch="x86_64"
+        toolchain_prefix="x86_64-linux-gnu"
     elif [ "${DISTRO_ARCH}" = "arm64" ]; then
-        arch="aarch64"
+        toolchain_prefix="aarch64-linux-gnu"
     fi
 
     cat << "EOF" > ${EMLINUX_SDK_INSTALLER_FILE_PATH}
@@ -70,7 +70,7 @@ tail -n +${SDK_START_LINE} $0 | sudo tar xpJ -C ${sdk_install_target_dir}
 sudo "${sdk_installed_dir}/relocate-sdk.sh" || (echo "Setup SDK environment failed." ; exit 1)
 
 sudo sed -i "s:@EMLINUX_SDK_INSTALL_DIR@:${sdk_installed_dir}:g" "${sdk_installed_dir}/environment-setup-${MACHINE}-${DISTRO}"
-sudo sed -i "s/@EMLINUX_SDK_ARCH@/${EMLINUX_SDK_TARGET_ARCH}/g" "${sdk_installed_dir}/environment-setup-${MACHINE}-${DISTRO}"
+sudo sed -i "s/@EMLINUX_SDK_TOOLCHAIN_PREFIX@/${EMLINUX_SDK_TARGET_TOOLCHAIN_PREFIX}/g" "${sdk_installed_dir}/environment-setup-${MACHINE}-${DISTRO}"
 
 echo "When you use the SDK in a new shell session, you need to run following command."
 echo "  $ source ${sdk_installed_dir}/environment-setup-${MACHINE}-${DISTRO}"
@@ -79,7 +79,7 @@ exit 0
 __SDK_BEGINS__
 EOF
 
-    sed -i -e "2a EMLINUX_SDK_TARGET_ARCH=\"${arch}\"" ${EMLINUX_SDK_INSTALLER_FILE_PATH}
+    sed -i -e "2a EMLINUX_SDK_TARGET_TOOLCHAIN_PREFIX=\"${toolchain_prefix}\"" ${EMLINUX_SDK_INSTALLER_FILE_PATH}
     cat ${EMLINUX_SDK_FILE_PATH} >> ${EMLINUX_SDK_INSTALLER_FILE_PATH}
 
     chmod 755 ${EMLINUX_SDK_INSTALLER_FILE_PATH}
