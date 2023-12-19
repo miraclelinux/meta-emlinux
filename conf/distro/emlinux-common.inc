@@ -8,6 +8,9 @@
 #
 # SPDX-License-Identifier: MIT
 #
+
+require include/security_flags.inc
+
 INHERIT += "sdk-installer"
 
 DISTRO_KERNELS ?= "linux-cip"
