@@ -35,7 +35,8 @@ RUN apt-get install --fix-missing -y \
   vim \
   screen \
   socat \
-  patchelf
+  patchelf \
+  sqlite3
 
 RUN useradd -m build -u $uid
 RUN gpasswd -a build sbuild
