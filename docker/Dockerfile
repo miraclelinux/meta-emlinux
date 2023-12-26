@@ -32,6 +32,7 @@ RUN apt-get install --fix-missing -y \
   python3-distutils \
   python3-yaml \
   python3-html5lib \
+  python3-pip \
   vim \
   screen \
   socat \
@@ -67,6 +68,10 @@ RUN bash -c 'if test -n "$http_proxy"; then git config --global http.proxy "$htt
                                             git config --global core.gitproxy gitproxy; fi'
 RUN bash -c 'if test -n "$https_proxy"; then git config --global https.proxy "$https_proxy"; fi'
 RUN bash -c 'if test -n "$no_proxy"; then git config --global core.noproxy "$no_proxy"; fi'
+
+RUN pip install --user pip install cyclonedx-python-lib --break-system-packages
+RUN pip install --user pip install jsonschema --break-system-packages
+RUN pip install --user spdx-tools --break-system-packages
 
 RUN mkdir work
 WORKDIR /home/build/work

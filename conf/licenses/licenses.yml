@@ -1,0 +1,183 @@
+# format
+# debian binary package name:
+#   licenses: [
+#     "LICENSE A",
+#     "LICENSE B"
+#   ]
+base-files:
+  licenses: [
+    GPL-3,
+  ]
+debian-archive-keyring:
+  licenses: [
+    GPL-3,
+  ]
+emlinux-customization:
+  licenses: [
+    MIT,
+  ]
+gcc-12-base:
+  licenses: [
+    Artistic,
+    GFDL-1.2,
+    GPL,
+    GPL-2,
+    GPL-3,
+    LGPL
+  ]
+initramfs-tools:
+  licenses: [
+    GPL-2
+  ]
+initramfs-tools-core:
+  licenses: [
+    GPL-2
+  ]
+klibc-utils:
+  licenses: [
+    GPL-2
+  ]
+libasound2:
+  # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1061276
+  licenses: [
+    LGPL-2.1+,
+  ]
+libasound2-data:
+  # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1061276
+  licenses: [
+    LGPL-2.1+,
+  ]
+libc-bin:
+  licenses: [
+    GPL-2,
+    LGPL-2.1
+  ]
+libc-l10n:
+  licenses: [
+    GPL-2,
+    LGPL-2.1
+  ]
+libc6:
+  licenses: [
+    GPL-2,
+    LGPL-2.1
+  ]
+libcairo-gobject2:
+  licenses: [
+    MPL-1.1,
+    LGPL-2.1-only,
+  ]
+libcairo2:
+  licenses: [
+    MPL-1.1,
+    LGPL-2.1-only,
+  ]
+libcrypt1:
+  licenses: [
+    public-domain
+  ]
+libgcc-s1:
+  licenses: [
+    Artistic,
+    GFDL-1.2,
+    GPL,
+    GPL-2,
+    GPL-3,
+    LGPL
+  ]
+libgcrypt20:
+  licenses: [
+    GPL-2,
+    LGPL
+  ]
+libgnutls30:
+  licenses: [
+    Apache-2.0,
+    GFDL-1.3,
+    GPL,
+    GPL-3,
+    LGPL,
+    LGPL-3
+  ]
+libgomp1:
+  licenses: [
+    GPL-3+,
+    gcc-exception-3.1,
+  ]
+libgssapi-krb5-2:
+  licenses: [
+    GPL-2
+  ]
+libk5crypto3:
+  licenses: [
+    GPL-2
+  ]
+libklibc:
+  licenses: [
+    GPL-2
+  ]
+libkrb5-3:
+  licenses: [
+    GPL-2
+  ]
+libkrb5support0:
+  licenses: [
+    GPL-2
+  ]
+libksba8:
+  licenses: [
+    GPL-3
+  ]
+linux-image-cip:
+  licenses: [
+    GPL-2
+  ]
+linux-image-cip-rt:
+  licenses: [
+    GPL-2
+  ]
+libselinux1:
+  licenses: [
+    GPL-2,
+    LGPL-2.1
+  ]
+libsemanage-common:
+  licenses: [
+    GPL,
+    LGPL
+  ]
+libsemanage2:
+  licenses: [
+    GPL,
+    LGPL
+  ]
+libstdc++6:
+  licenses: [
+    Artistic,
+    GFDL-1.2,
+    GPL,
+    GPL-2,
+    GPL-3,
+    LGPL
+  ]
+libtasn1-6:
+  licenses: [
+    LGPL-2.1,
+    GPL-3,
+    GFDL-1.3
+  ]
+libpangocairo-1.0-0:
+  licenses: [
+    MPL-1.1,
+    LGPL-2.1-only,
+  ]
+locales:
+  licenses: [
+    LGPL-2.1,
+    GPL-2
+  ]
+weston-init:
+  licenses: [
+    MIT,
+  ]
+
