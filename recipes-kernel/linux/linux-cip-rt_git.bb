@@ -12,8 +12,8 @@ FILESEXTRAPATHS:prepend := "${FILE_DIRNAME}/files:"
 
 require recipes-kernel/linux/linux-custom.inc
 
-LINUX_CIP_VERSION = "v6.1.59-cip8-rt4"
-PV = "6.1.59-cip8-rt4"
+LINUX_CIP_VERSION = "v6.1.67-cip12-rt7"
+PV = "6.1.67-cip12-rt7"
 SRC_URI += " \
     git://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git;branch=linux-6.1.y-cip-rt;destsuffix=${P};protocol=https \
     file://preempt-rt.cfg \
