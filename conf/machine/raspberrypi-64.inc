@@ -22,7 +22,7 @@ IMAGE_INSTALL += "\
   raspberrypi-bootfiles \
 "
 
-WIC_IMAGER_INSTALL = "\
+IMAGER_INSTALL:wic = "\
   parted \
   dosfstools \
   mtools \
