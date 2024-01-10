@@ -18,7 +18,7 @@ KERNEL_NAME ?= "cip"
 
 DISTRO_APT_SOURCES = "conf/distro/emlinux-bookworm.list"
 
-WIC_IMAGER_INSTALL = "parted \
+IMAGER_INSTALL:wic = "parted \
   gdisk \
   util-linux \
   dosfstools \
