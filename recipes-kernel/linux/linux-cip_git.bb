@@ -26,6 +26,6 @@ SRC_URI:append:raspberrypi3bplus-64 = " file://raspberrypi3-64_defconfig"
 SRC_URI:append:raspberrypi4b-64 = " file://raspberrypi4-64_defconfig"
 
 SRC_URI[sha256sum] = "1caa1b8e24bcfdd55c3cffd8f147f3d33282312989d85c82fc1bc39b808f3d6b"
-SRCREV = "5ae5d9581f44f65bc79fe7323153483f8f02a1ea"
+SRCREV = "33a81955d654c80f6f9626f5bd3def02b8e85b3a"
 
 KBUILD_DEPENDS:append = ", zstd"
