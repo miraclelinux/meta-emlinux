@@ -27,6 +27,9 @@ CVE_VERSION = "${LINUX_CVE_VERSION}"
 # CVE-1999-0524: This issue is that ICMP exists, can be filewalled if required.
 # CVE-2023-1076: It's false positive because 4.19.y is not affected.
 # CVE-2015-7312: It's false positive because aufs is not merged into mainline.
+# CVE-1999-0656: This issue is that specific to ugidd, part of the old user-mode NFS server.
+# CVE-2006-2932: Specific to RHEL. 4.19.y is not affected.
+# CVE-2023-1476: Specific to RHEL. 4.19.y is not affected.
 CVE_CHECK_WHITELIST = "\
     CVE-2021-26934 CVE-2021-43057 CVE-2022-29582 \
     CVE-2021-42327 CVE-2021-45402 CVE-2022-0168 \
@@ -35,4 +38,5 @@ CVE_CHECK_WHITELIST = "\
     CVE-2017-6264 CVE-2017-1000377 CVE-2007-2764 \
     CVE-2007-4998 CVE-2008-2544 CVE-2016-3699 \
     CVE-1999-0524 CVE-2023-1076 CVE-2015-7312 \
+    CVE-1999-0656 CVE-2006-2932 CVE-2023-1476 \
 "
