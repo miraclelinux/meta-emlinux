@@ -95,7 +95,7 @@ python do_create_sdk_installer() {
 
 do_image_tar[postfuncs] += "do_create_sdk_installer"
 
-ROOTFS_POSTPROCESS_COMMAND:append:class-sdk = " rename_installer_script setup_kernel_source_dir setup_kernel_source_dir"
+ROOTFS_POSTPROCESS_COMMAND:append:class-sdk = " rename_installer_script setup_kernel_source_dir"
 rename_installer_script() {
     setupfile="${ROOTFSDIR}/environment-setup-${MACHINE}-${DISTRO}"
     sudo mv "${ROOTFSDIR}/environment-setup-template" "${ROOTFSDIR}/environment-setup-${MACHINE}-${DISTRO}"
