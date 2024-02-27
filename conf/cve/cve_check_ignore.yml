@@ -1,0 +1,6 @@
+# format
+# debian source package name:
+#   - CVE ID
+# example.
+#linux-cip:
+#- CVE-2023-35825

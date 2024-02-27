@@ -1,0 +1,82 @@
+# format
+# debian source package name:
+#   vendor: cpe vendor name
+#   product: cpe product name
+aom:
+  vendor: aomedia
+  product: aomedia
+apt:
+  vendor: debian
+  product: apt
+cyrus-sasl2:
+  vendor: cyrusimap
+  product: cyrus-sasl
+db5.3:
+  vendor: oracle
+  product: berkeley_db
+freerdp2:
+  vendor: freerdp
+  product: freerdp
+gcc-12:
+  vendor: gnu
+  product: gcc
+glib2.0:
+  vendor: gnome
+  product: glib
+gnupg2:
+  vendor: gnupg
+  product: gnupg
+gnutls28:
+  vendor: gnu
+  product: gnutls
+icu:
+  vendor: unicode
+  product: international_components_for_unicode
+jbigkit:
+  vendor: cambridge_enterprise
+  product: jbig-kit
+krb5:
+  vendor: mit
+  product: kerberos_5
+lcms2:
+  vendor: littlecms
+  product: little_cms_color_engine
+libtasn1-6:
+  vendor: gnu
+  product: libtasn1
+libpcap2:
+  vendor: libcap_project
+  product: libcap
+libpng1.6:
+  vendor: libpng
+  product: libpng
+libsepol:
+  vendor: selinux_project
+  product: selinux
+libzstd:
+  vendor: facebook
+  product: zstandard
+linux-cip:
+  vendor: linux
+  product: linux_kernel
+linux-cip-rt:
+  vendor: linux
+  product: linux_kernel
+openjpeg2:
+  vendor: uclouvain
+  product: openjpeg
+pango1.0:
+  vendor: gnome
+  product: pango
+tar:
+  vendor: gnu
+  product: tar
+xvidcore:
+  vendor: xvid
+  product: xvid
+xz-utils:
+  vendor: tukaani
+  product: xz
+zvbi:
+  vendor: zapping
+  product: zapping_vbi_library
