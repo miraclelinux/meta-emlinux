@@ -39,7 +39,7 @@ def run_cip_kernel_sec(kernel_src_dir, kver, cip_kernel_sec_dir):
         retcode = int(proc.returncode)
 
         if not retcode == 0:
-            logger.warning('Failed to run cip-kernel-sec', file=sys.stderr, flush=True)
+            logger.warning('Failed to run cip-kernel-sec')
             for s in proc.stderr:
                 logger.warning(s.decode())
         else:
@@ -63,7 +63,7 @@ def clone_cip_kernel_sec():
         retcode = int(proc.returncode)
 
         if not retcode == 0:
-            logger.warning('Failed to clone cip-kernel-sec', file=sys.stderr, flush=True)
+            logger.warning('Failed to clone cip-kernel-sec')
             return False
 
         remotes_path = "./cip-kernel-sec/conf/remotes.yml"
@@ -80,7 +80,7 @@ def update_cip_kernel_sec():
         retcode = int(proc.returncode)
 
         if not retcode == 0:
-            logger.warning('Failed to pull cip-kernel-sec', file=sys.stderr, flush=True)
+            logger.warning('Failed to pull cip-kernel-sec')
             return False
 
     return True
