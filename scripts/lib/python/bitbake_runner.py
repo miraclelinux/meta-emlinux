@@ -33,7 +33,7 @@ def get_bitbake_information(image):
         exit(1)
 
     if not process.returncode == 0:
-        print(f"Please check image name {image}")
+        print(f"Cannot find image name {image} in build artifacts.")
         exit(1)
 
     pattern_deploy_image_dir = r'\nDEPLOY_DIR_IMAGE="([^"]*)"'
@@ -41,6 +41,10 @@ def get_bitbake_information(image):
     pattern_image_full_name = r'\nIMAGE_FULLNAME="([^"]*)"'
     pattern_dl_dir = r'\nDL_DIR="([^"]*)"'
     pattern_kernel_name = r'\nKERNEL_NAME="([^"]*)"'
+    pattern_rootfsdir = r'\nROOTFSDIR="([^"]*)"'
+    pattern_distro_arch = r'\nDISTRO_ARCH="([^"]*)"'
+    pattern_repo_isar_dir = r'\nREPO_ISAR_DIR="([^"]*)"'
+    pattern_image_distro = r'\nDISTRO="([^"]*)"'
 
     deploy_image_dir = re.findall(pattern_deploy_image_dir, output)[0]
     deploy_dir = re.findall(pattern_deploy_dir, output)[0]
@@ -48,6 +52,10 @@ def get_bitbake_information(image):
     dl_dir = re.findall(pattern_dl_dir, output)[0]
     kernel_name = re.findall(pattern_kernel_name, output)[0]
     kernel_srcdir = get_linux_source_dir(kernel_name)
+    rootfs_dir = re.findall(pattern_rootfsdir, output)[0]
+    distro_arch = re.findall(pattern_distro_arch, output)[0]
+    repo_isar_dir = re.findall(pattern_repo_isar_dir, output)[0]
+    image_distro = re.findall(pattern_image_distro, output)[0]
 
     dpkg_status = f"{deploy_image_dir}/{image_full_name}.dpkg_status"
     return {
@@ -56,4 +64,8 @@ def get_bitbake_information(image):
         "dl_dir": dl_dir,
         "dpkg_status": dpkg_status,
         "kernel_srcdir": kernel_srcdir,
+        "rootfs_dir": rootfs_dir,
+        "distro_arch": distro_arch,
+        "repo_isar_dir": repo_isar_dir,
+        "image_distro": image_distro,
     }

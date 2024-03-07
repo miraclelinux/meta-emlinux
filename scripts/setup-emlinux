@@ -17,6 +17,9 @@ fi
 
 EML_HOOKS="${PWD}/setup-hooks"
 REPOS="${PWD}/repos"
+# Add meta-emlinux/scripts to command search path.
+SCRIPT_DIR="${REPOS}/meta-emlinux/scripts"
+export PATH=$PATH:$SCRIPT_DIR:
 
 ENV_BUILD_SETUP="false"
 if [ ! -f "${ENV_BUILDDIR}/conf/local.conf" ]; then
