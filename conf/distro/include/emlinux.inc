@@ -1,5 +1,5 @@
 DISTRO_NAME = "EMLinux"
-DISTRO_VERSION = "2.8"
+DISTRO_VERSION = "2.9"
 DISTRO_CODENAME = "buster"
 SDK_VENDOR = "-emlinuxsdk"
 SDK_VERSION := "${@'${DISTRO_VERSION}'.replace('snapshot-${DATE}','snapshot')}"
