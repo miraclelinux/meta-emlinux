@@ -31,3 +31,8 @@ do_install() {
   install -d -m 0755 ${D}/usr/share/doc/${PN}/ 
   install -m 0644 ${WORKDIR}/copyright ${D}/usr/share/doc/${PN}/
 }
+
+# Keep a lower compatiblity level because file format recognition by dh_strip
+# during the dpkg build task has been added since v11 then it fails when
+# examining a particular bootloader file.
+DEBIAN_COMPAT = "10"
