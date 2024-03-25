@@ -1,4 +1,5 @@
 IMAGE_INSTALL_append = " kernel-devsrc "
+TOOLCHAIN_HOST_TASK_append = " nativesdk-bc "
 
 # Post process after installed sdk
 sdk_post_process () {
