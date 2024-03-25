@@ -17,6 +17,7 @@ LOCAL_APT_DIR="tmp/${EML_SELF_BUILD}/${DISTRO}-${DISTRO_ARCH}/apt/${DISTRO}"
 
 prepare_local_isarapt() {
     # Make a local copy of isar-apt repo
+    rm -rf /tmp/${EML_SELF_BUILD}
     rm -rf "${ROOTFSDIR}/tmp/${EML_SELF_BUILD}/${DISTRO}-${DISTRO_ARCH}/*"
     mkdir -p "${ROOTFSDIR}/${LOCAL_APT_DIR}"
     cp -Rf "${REPO_ISAR_DIR}/${DISTRO}/dists" "${ROOTFSDIR}/${LOCAL_APT_DIR}/"
@@ -32,13 +33,19 @@ cleanup_local_isarapt() {
     rm -fr /tmp/${EML_SELF_BUILD}
 }
 
-rootfs_generate_manifest:append () {
+do_install_source_package[network] = "${TASK_USE_SUDO}"
+
+do_install_source_package() {
     local not_exist_resolvconf=`file '${ROOTFSDIR}'/etc/resolv.conf 2>&1 | grep "cannot open" | wc -c`
 
     ### backup apt status
     sudo sh -c "(cd ${ROOTFSDIR} && tar zcpf apt_status.tar.gz var/cache/apt var/lib/apt)"
 
     ### prepare directory for output
+    if [ -d ${DEPLOY_DIR}/sources/${MACHINE} ]; then
+        # clean-up old directory if exist
+        rm -fr ${DEPLOY_DIR}/sources/${MACHINE}
+    fi
     mkdir -p ${DEPLOY_DIR}/sources/${MACHINE}
     sudo -E mount --bind /tmp ${ROOTFSDIR}/tmp
     mkdir -p ${ROOTFSDIR}/tmp/source_dir
@@ -79,3 +86,5 @@ rootfs_generate_manifest:append () {
     sudo sh -c "(cd ${ROOTFSDIR} && rm -fr var/cache/apt var/lib/apt; tar zxpf apt_status.tar.gz)"
     sudo rm ${ROOTFSDIR}/apt_status.tar.gz
 }
+
+addtask install_source_package before do_rootfs_wicenv after do_rootfs
