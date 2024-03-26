@@ -33,4 +33,5 @@ WKS_FILE ?= "${MACHINE}.wks"
 
 SDK_PREINSTALL += " \
     linux-headers-${KERNEL_NAME} \
+    bc \
 "
