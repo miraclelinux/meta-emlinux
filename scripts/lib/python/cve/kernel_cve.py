@@ -14,6 +14,7 @@ import shutil
 import time
 import yaml
 import logging
+import tempfile
 
 logger = logging.getLogger("emlinux-cve-check")
 
@@ -26,14 +27,23 @@ def update_remote(remotes_path):
 
 def run_cip_kernel_sec(kernel_src_dir, kver, cip_kernel_sec_dir):
     cwd =os.getcwd()
-    cves = []
+    cves = {
+        "patched": [],
+        "unpatched": [],
+    }
 
     os.chdir(cip_kernel_sec_dir)
 
     if not kver.startswith("v"):
         kver = f"v{kver}"
 
-    cmd = ["./scripts/report_affected.py", "--git-repo", kernel_src_dir, "--remote-name", "cip:origin", "--include-ignored", kver]
+    with tempfile.NamedTemporaryFile(delete=False) as f:
+        output_filename = f.name
+
+    retcode = -1
+    cmd = ["./scripts/report_affected.py", "--include-fixed", "--output-format=yaml",
+            f"--output-filename={output_filename}", "--git-repo",
+            kernel_src_dir, "--remote-name", "cip:origin", "--include-ignored", kver]
     with subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE) as proc:
         proc.wait()
         retcode = int(proc.returncode)
@@ -42,12 +52,16 @@ def run_cip_kernel_sec(kernel_src_dir, kver, cip_kernel_sec_dir):
             logger.warning('Failed to run cip-kernel-sec')
             for s in proc.stderr:
                 logger.warning(s.decode())
-        else:
-            for line in proc.stdout:
-                line = line.decode().strip().split(' ')
-                for data in line:
-                    if data.startswith("CVE-"):
-                        cves.append(data)
+
+    with open(output_filename) as f:
+        yaml_data = yaml.safe_load(f.read())
+        k = list(yaml_data)[0]
+
+        cves["patched"] = yaml_data[k]["fixed"]
+        cves["unpatched"] = yaml_data[k]["affected"]
+
+    if retcode == 0:
+        os.unlink(output_filename)
 
     os.chdir(cwd)
 

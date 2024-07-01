@@ -458,15 +458,18 @@ def check_kernel_cves_by_cip_kernel_sec(uniq_installed_pkgs, cves, kernel_src_di
 
     cip_kernel_sec_result = kernel_cve.run_cip_kernel_sec(kernel_src_dir, kver, cip_kernel_sec_dir)
 
-    for cve in cip_kernel_sec_result:
-        if cve in kernel_cves:
-            status = kernel_cves[cve]["CVE STATUS"]
-            if status == "Patched":
-                # Replace cve status by cip-kernel-sec result.
-                kernel_cves[cve]["CVE STATUS"] = "Unpatched"
-        else:
-            cveinfo = recheck_kernel_cve(db_file, pkgname, kernel_name, kver, cve)
-            kernel_cves[cve] = cveinfo
+    for k in cip_kernel_sec_result:
+        cip_kernel_sec_cves = cip_kernel_sec_result[k]
+        for cve in cip_kernel_sec_cves:
+            if not cve in kernel_cves:
+                cveinfo = recheck_kernel_cve(db_file, pkgname, kernel_name, kver, cve)
+                kernel_cves[cve] = cveinfo
+
+            # Replace cve status by cip-kernel-sec result
+            if k == "patched":
+                kernel_cves[cve]["CVE STATUS"] =  "Patched"
+            elif k == "unpatched":
+                kernel_cves[cve]["CVE STATUS"] =  "Unpatched"
 
     return cves
 
