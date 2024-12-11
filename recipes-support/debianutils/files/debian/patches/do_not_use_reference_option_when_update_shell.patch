@@ -1,0 +1,49 @@
+diff -Npur debianutils-5.7.orig/add-shell debianutils-5.7/add-shell
+--- debianutils-5.7.orig/add-shell	2022-01-21 08:58:25.000000000 +0000
++++ debianutils-5.7/add-shell	2024-10-04 05:16:31.305334563 +0000
+@@ -38,8 +38,8 @@ do
+         done
+ done
+ 
+-chmod --reference="${file}" "${tmpfile}" || chmod $(stat -c %a "${file}") "${tmpfile}"
+-chown --reference="${file}" "${tmpfile}" || chown $(stat -c %U "${file}") "${tmpfile}"
++chmod $(stat -c %a "${file}") "${tmpfile}"
++chown $(stat -c %U "${file}") "${tmpfile}"
+ 
+ mv -Z "${tmpfile}" "${file}" || mv "${tmpfile}" "${file}"
+ 
+diff -Npur debianutils-5.7.orig/remove-shell debianutils-5.7/remove-shell
+--- debianutils-5.7.orig/remove-shell	2022-01-21 08:58:25.000000000 +0000
++++ debianutils-5.7/remove-shell	2024-10-04 05:16:44.053657944 +0000
+@@ -38,8 +38,8 @@ do
+         done
+ done
+ 
+-chmod --reference="${file}" "${tmpfile}" || chmod $(stat -c %a "${file}") "${tmpfile}"
+-chown --reference="${file}" "${tmpfile}" || chown $(stat -c %U "${file}") "${tmpfile}"
++chmod $(stat -c %a "${file}") "${tmpfile}"
++chown $(stat -c %U "${file}") "${tmpfile}"
+ 
+ mv -Z "${tmpfile}" "${file}" || mv "${tmpfile}" "${file}"
+ 
+diff -Npur debianutils-5.7.orig/update-shells debianutils-5.7/update-shells
+--- debianutils-5.7.orig/update-shells	2022-01-21 08:58:25.000000000 +0000
++++ debianutils-5.7/update-shells	2024-10-04 05:17:14.731436902 +0000
+@@ -133,13 +133,13 @@ done
+ 
+ if [ "$NOACT" = 0 ]; then
+ 	if [ -e "$STATE_FILE" ]; then
+-		chmod --reference="${STATE_FILE}" "${NEW_STATE_FILE}" || chmod $(stat -c %a "${STATE_FILE}") "${NEW_STATE_FILE}"
+-		chown --reference="${STATE_FILE}" "${NEW_STATE_FILE}" || chown $(stat -c %U "${STATE_FILE}") "${NEW_STATE_FILE}"
++		chmod $(stat -c %a "${STATE_FILE}") "${NEW_STATE_FILE}"
++		chown $(stat -c %U "${STATE_FILE}") "${NEW_STATE_FILE}"
+ 	else
+ 		chmod 0644 "$NEW_STATE_FILE"
+ 	fi
+-	chmod --reference="${SOURCE_ETC_FILE}" "${NEW_ETC_FILE}" || chmod $(stat -c %a "${SOURCE_ETC_FILE}") "${NEW_ETC_FILE}"
+-	chown --reference="${SOURCE_ETC_FILE}" "${NEW_ETC_FILE}" || chown $(stat -c %U "${SOURCE_ETC_FILE}") "${NEW_ETC_FILE}"
++	chmod $(stat -c %a "${SOURCE_ETC_FILE}") "${NEW_ETC_FILE}"
++	chown $(stat -c %U "${SOURCE_ETC_FILE}") "${NEW_ETC_FILE}"
+ 	sync -d "$NEW_ETC_FILE" "$NEW_STATE_FILE"
+ 	mv -Z "${NEW_ETC_FILE}" "${TARGET_ETC_FILE}" || mv "${NEW_ETC_FILE}" "${TARGET_ETC_FILE}"
+ 	sync "$TARGET_ETC_FILE"
