@@ -8,6 +8,10 @@ base-files:
   licenses: [
     GPL-3,
   ]
+busybox:
+  licenses: [
+    GPL-2,
+  ]
 debian-archive-keyring:
   licenses: [
     GPL-3,
@@ -76,6 +80,14 @@ libcrypt1:
   licenses: [
     public-domain
   ]
+libdrm-common:
+  licenses: [
+    MIT,
+  ]
+libdrm2:
+  licenses: [
+    MIT,
+  ]
 libgcc-s1:
   licenses: [
     Artistic,
@@ -108,6 +120,10 @@ libgssapi-krb5-2:
   licenses: [
     GPL-2
   ]
+libjudydebian1:
+  licenses: [
+    LGPL-2+,
+  ]
 libk5crypto3:
   licenses: [
     GPL-2
@@ -128,6 +144,11 @@ libksba8:
   licenses: [
     GPL-3
   ]
+libmpfr6:
+  licenses: [
+    LGPL-3+,
+    GFDL-1.2,
+  ]
 linux-image-cip:
   licenses: [
     GPL-2
@@ -135,6 +156,22 @@ linux-image-cip:
 linux-image-cip-rt:
   licenses: [
     GPL-2
+  ]
+libpython3.11:
+  licenses: [
+    PSF-2.0,
+  ]
+libpython3.11-minimal:
+  licenses: [
+    PSF-2.0,
+  ]
+libpython3.11-stdlib:
+  licenses: [
+    PSF-2.0,
+  ]
+librtmp1:
+  licenses: [
+    LGPL-2.1+,
   ]
 libselinux1:
   licenses: [
@@ -170,6 +207,82 @@ libpangocairo-1.0-0:
   licenses: [
     MPL-1.1,
     LGPL-2.1-only,
+  ]
+libwayland-client0:
+  licenses: [
+    X11,
+  ]
+libwayland-server0:
+  licenses: [
+    X11,
+  ]
+libx11-6:
+  licenses: [
+    MIT,
+    BSD-1-Clause,
+    HPND,
+    HPND-sell-variant,
+    ISC,
+  ]
+libx11-data:
+  licenses: [
+    MIT,
+    BSD-1-Clause,
+    HPND,
+    HPND-sell-variant,
+    ISC,
+  ]
+libx11-xcb1:
+  licenses: [
+    MIT,
+    BSD-1-Clause,
+    HPND,
+    HPND-sell-variant,
+    ISC,
+  ]
+libxau6:
+  licenses: [
+    MIT,
+  ]
+libxcb-dri2-0:
+  licenses: [
+    MIT,
+  ]
+libxcb-dri3-0:
+  licenses: [
+    MIT,
+  ]
+libxcb-present0:
+  licenses: [
+    MIT,
+  ]
+libxcb-randr0:
+  licenses: [
+    MIT,
+  ]
+libxcb-sync1:
+  licenses: [
+    MIT,
+  ]
+libxcb-xfixes0:
+  licenses: [
+    MIT,
+  ]
+libxcb1:
+  licenses: [
+    MIT,
+  ]
+libxdmcp6:
+  licenses: [
+    MIT,
+  ]
+libxshmfence1:
+  licenses: [
+    HPND,
+  ]
+lrzsz:
+  licenses: [
+    GPL-2,
   ]
 locales:
   licenses: [
