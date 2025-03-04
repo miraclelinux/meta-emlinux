@@ -1,0 +1,36 @@
+diff -Npur debianutils-1.0.orig/add-shell debianutils-1.0/add-shell
+--- debianutils-1.0.orig/add-shell	2024-10-07 05:49:16.000000000 +0000
++++ debianutils-1.0/add-shell	2024-10-07 05:52:57.595587069 +0000
+@@ -41,7 +41,7 @@ done
+ chmod $(stat -c %a "${file}") "${tmpfile}"
+ chown $(stat -c %U "${file}") "${tmpfile}"
+ 
+-mv -Z "${tmpfile}" "${file}" || mv "${tmpfile}" "${file}"
++mv "${tmpfile}" "${file}"
+ 
+ trap "" EXIT
+ exit 0
+diff -Npur debianutils-1.0.orig/remove-shell debianutils-1.0/remove-shell
+--- debianutils-1.0.orig/remove-shell	2024-10-07 05:49:16.000000000 +0000
++++ debianutils-1.0/remove-shell	2024-10-07 05:53:23.239250075 +0000
+@@ -41,7 +41,7 @@ done
+ chmod $(stat -c %a "${file}") "${tmpfile}"
+ chown $(stat -c %U "${file}") "${tmpfile}"
+ 
+-mv -Z "${tmpfile}" "${file}" || mv "${tmpfile}" "${file}"
++mv "${tmpfile}" "${file}"
+ 
+ trap "" EXIT
+ exit 0
+diff -Npur debianutils-1.0.orig/update-shells debianutils-1.0/update-shells
+--- debianutils-1.0.orig/update-shells	2024-10-07 05:49:16.000000000 +0000
++++ debianutils-1.0/update-shells	2024-10-07 05:53:13.799005990 +0000
+@@ -144,7 +144,7 @@ if [ "$NOACT" = 0 ]; then
+ 	chmod $(stat -c %a "${SOURCE_ETC_FILE}") "${NEW_ETC_FILE}"
+ 	chown $(stat -c %U "${SOURCE_ETC_FILE}") "${NEW_ETC_FILE}"
+ 	sync -d "$NEW_ETC_FILE" "$NEW_STATE_FILE"
+-	mv -Z "${NEW_ETC_FILE}" "${TARGET_ETC_FILE}" || mv "${NEW_ETC_FILE}" "${TARGET_ETC_FILE}"
++	mv "${NEW_ETC_FILE}" "${TARGET_ETC_FILE}"
+ 	sync "$TARGET_ETC_FILE"
+ 	sync "$(dirname "$TARGET_ETC_FILE")"
+ 	mv "$NEW_STATE_FILE" "$STATE_FILE"

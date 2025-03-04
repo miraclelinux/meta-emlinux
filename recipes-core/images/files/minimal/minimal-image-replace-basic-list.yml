@@ -1,0 +1,207 @@
+adduser:
+  cmds:
+    - /usr/sbin/addgroup
+    - /usr/sbin/adduser
+    - /usr/sbin/delgroup
+    - /usr/sbin/deluser
+bsdutils:
+  cmds:
+    - /usr/bin/logger
+    - /usr/bin/renice
+coreutils:
+  cmds: 
+    - /bin/cat
+    - /bin/chgrp
+    - /bin/chmod
+    - /bin/chown
+    - /bin/cp
+    - /bin/date
+    - /bin/dd
+    - /bin/df
+    - /bin/dir
+    - /bin/echo
+    - /bin/false
+    - /bin/ln
+    - /bin/ls
+    - /bin/mkdir
+    - /bin/mknod
+    - /bin/mktemp
+    - /bin/mv
+    - /bin/pwd
+    - /bin/readlink
+    - /bin/rm
+    - /bin/rmdir
+    - /bin/sleep
+    - /bin/stty
+    - /bin/sync
+    - /bin/touch
+    - /bin/true
+    - /bin/uname
+    - /bin/vdir
+    - /bin/[
+    - /bin/arch
+    - /bin/b2sum
+    - /bin/base32
+    - /bin/base64
+    - /bin/basename
+    - /bin/basenc
+    - /bin/chcon
+    - /bin/cksum
+    - /bin/comm
+    - /bin/csplit
+    - /bin/cut
+    - /bin/dircolors
+    - /bin/dirname
+    - /bin/du
+    - /bin/env
+    - /bin/expand
+    - /bin/expr
+    - /bin/factor
+    - /bin/fmt
+    - /bin/fold
+    - /bin/groups
+    - /bin/head
+    - /bin/hostid
+    - /bin/id
+    - /bin/install
+    - /bin/join
+    - /bin/link
+    - /bin/logname
+    - /bin/md5sum
+    - /bin/mkfifo
+    - /bin/nice
+    - /bin/nl
+    - /bin/nohup 
+    - /bin/nproc
+    - /bin/numfmt
+    - /bin/od
+    - /bin/paste
+    - /bin/pathchk
+    - /bin/pinky
+    - /bin/pr
+    - /bin/printenv
+    - /bin/printf
+    - /bin/ptx
+    - /bin/realpath
+    - /bin/runcon
+    - /bin/seq
+    - /bin/sha1sum
+    - /bin/sha224sum
+    - /bin/sha256sum
+    - /bin/sha384sum
+    - /bin/sha512sum
+    - /bin/shred
+    - /bin/shuf
+    - /bin/sort
+    - /bin/split
+    - /bin/stat
+    - /bin/stdbuf
+    - /bin/sum
+    - /bin/tac
+    - /bin/tail
+    - /bin/tee
+    - /bin/test
+    - /bin/timeout
+    - /bin/tr
+    - /bin/truncate
+    - /bin/tsort
+    - /bin/tty
+    - /bin/unexpand
+    - /bin/uniq
+    - /bin/unlink
+    - /bin/users
+    - /bin/wc
+    - /bin/who
+    - /bin/whoami
+    - /bin/yes
+    - /bin/chroot
+cpio:
+  cmds:
+    - /bin/cpio
+diffutils:
+  cmds:
+    - /bin/cmp
+    - /bin/diff
+e2fsprogs:
+  cmds:
+    - /sbin/mke2fs
+grep:
+  cmds:
+    - /bin/grep
+    - /bin/egrep
+    - /bin/fgrep
+findutils:
+  cmds:
+    - /bin/find
+    - /bin/xargs
+gzip:
+  cmds:
+    - /bin/gunzip
+    - /bin/gzip
+    - /bin/uncompress
+    - /bin/zcat
+hostname:
+  cmds:
+    - /bin/hostname
+    - /bin/dnsdomainname
+login:
+  cmds:
+    - /bin/login
+    - /usr/sbin/nologin
+mawk:
+  cmds:
+    - /usr/bin/awk
+mount:
+  cmds:
+    - /bin/mount
+    - /bin/losetup
+    - /bin/umount
+    - /sbin/swapoff
+    - /sbin/swapon
+passwd:
+  cmds:
+    - /usr/bin/passwd
+procps:
+  cmds:
+    - /bin/kill
+    - /bin/ps
+    - /sbin/sysctl
+    - /usr/bin/free
+    - /usr/bin/top
+    - /usr/bin/uptime
+    - /usr/bin/w
+    - /usr/bin/watch
+sed:
+  cmds:
+    - /bin/sed
+tar:
+  cmds:
+    - /bin/tar
+util-linux:
+  cmds:
+    - /bin/dmesg
+    - /bin/more
+    - /sbin/blkdiscard
+    - /sbin/blkid
+    - /sbin/blockdev
+    - /sbin/findfs
+    - /sbin/fsfreeze
+    - /sbin/fstrim
+    - /sbin/getty
+    - /sbin/mkswap
+    - /sbin/pivot_root
+    - /sbin/switch_root
+    - /usr/bin/fallocate
+    - /usr/bin/getopt
+    - /usr/bin/ionice
+    - /usr/bin/last
+    - /usr/bin/mountpoint
+    - /usr/bin/nsenter
+    - /usr/bin/rev
+    - /usr/bin/setpriv
+    - /usr/bin/setsid
+    - /usr/bin/taskset
+    - /usr/bin/unshare
+util-linux-extra:
+  cmds:
+    - /sbin/hwclock

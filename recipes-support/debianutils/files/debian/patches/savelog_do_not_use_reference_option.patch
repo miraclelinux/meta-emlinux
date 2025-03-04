@@ -1,0 +1,18 @@
+Index: debianutils-5.7/savelog
+===================================================================
+--- debianutils-5.7.orig/savelog
++++ debianutils-5.7/savelog
+@@ -315,8 +315,11 @@ while [ $# -gt 0 ]; do
+ 	if [ -n "$preserve" ]; then
+ 		(umask 077
+ 		 touch -- "$filename.new"
+-		 chown --reference="$filename" -- "$filename.new"
+-		 chmod --reference="$filename" -- "$filename.new")
++		 u=$(stat -c "%U" "$filename")
++		 g=$(stat -c "%G" "$filename")
++		 a=$(stat -c "%a" "$filename")
++		 chown "$u:$g" -- "$filename.new"
++		 chmod "$a" -- "$filename.new")
+ 		filenew=1
+ 	elif [ -n "$touch$user$group$mode" ]; then
+ 		touch -- "$filename.new"
