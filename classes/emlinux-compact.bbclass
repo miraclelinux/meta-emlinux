@@ -1,10 +1,10 @@
-do_make_emlinux_minimal_rootfs[network] = "${TASK_USE_SUDO}"
+do_make_emlinux_compact_rootfs[network] = "${TASK_USE_SUDO}"
 
-EMLINUX_IMAGE_MINIMAL_WORK_DIR="emlinux-work"
-EMLINUX_IMAGE_MINIMAL_SETUP_SCRIPTS_DIR="${EMLINUX_IMAGE_MINIMAL_WORK_DIR}/scripts/setup"
-EMLINUX_IMAGE_MINIMAL_BUSYBOX_TMP_DIR="${EMLINUX_IMAGE_MINIMAL_WORK_DIR}/busybox-tmp"
-EMLINUX_IMAGE_MINIMAL_BUSYBOX_PREPARE_SCRIPT="prepare-busybox.sh"
-EMLINUX_MINIMAL_IMAGE_BUSYBOX_TMP_PATH="${EMLINUX_IMAGE_MINIMAL_BUSYBOX_TMP_DIR}/bin:${EMLINUX_IMAGE_MINIMAL_BUSYBOX_TMP_DIR}/sbin:${EMLINUX_IMAGE_MINIMAL_BUSYBOX_TMP_DIR}/usr/bin:${EMLINUX_IMAGE_MINIMAL_BUSYBOX_TMP_DIR}/usr/sbin"
+EMLINUX_IMAGE_COMPACT_WORK_DIR="emlinux-work"
+EMLINUX_IMAGE_COMPACT_SETUP_SCRIPTS_DIR="${EMLINUX_IMAGE_COMPACT_WORK_DIR}/scripts/setup"
+EMLINUX_IMAGE_COMPACT_BUSYBOX_TMP_DIR="${EMLINUX_IMAGE_COMPACT_WORK_DIR}/busybox-tmp"
+EMLINUX_IMAGE_COMPACT_BUSYBOX_PREPARE_SCRIPT="prepare-busybox.sh"
+EMLINUX_COMPACT_IMAGE_BUSYBOX_TMP_PATH="${EMLINUX_IMAGE_COMPACT_BUSYBOX_TMP_DIR}/bin:${EMLINUX_IMAGE_COMPACT_BUSYBOX_TMP_DIR}/sbin:${EMLINUX_IMAGE_COMPACT_BUSYBOX_TMP_DIR}/usr/bin:${EMLINUX_IMAGE_COMPACT_BUSYBOX_TMP_DIR}/usr/sbin"
 
 def create_replace_script(d):
     import yaml
@@ -15,7 +15,7 @@ def create_replace_script(d):
 
     workdir = d.getVar("WORKDIR")
     for f in os.listdir(workdir):
-         if f.startswith("minimal-image-replace-") and f.endswith(".yml"):
+         if f.startswith("compact-image-replace-") and f.endswith(".yml"):
             files.append(f"{workdir}/{f}")
 
     for f in files:
@@ -29,7 +29,7 @@ def create_replace_script(d):
     user_specified_install_pkgs = image_preinstall + image_install
     pinned_pkgs = []
 
-    remove_candidate = d.getVar("EMLINUX_MINIMAL_IMAGE_REMOVE_PAKCAGES").strip().split()
+    remove_candidate = d.getVar("EMLINUX_COMPACT_IMAGE_REMOVE_PAKCAGES").strip().split()
     remove_candidate_new = []
 
     for pkg in remove_candidate:
@@ -39,7 +39,7 @@ def create_replace_script(d):
             if not pkg in remove_candidate_new:
                 remove_candidate_new.append(pkg)
 
-    d.setVar("EMLINUX_MINIMAL_IMAGE_REMOVE_PAKCAGES", " ".join(remove_candidate_new))
+    d.setVar("EMLINUX_COMPACT_IMAGE_REMOVE_PAKCAGES", " ".join(remove_candidate_new))
 
     replace_target = []
     tmp_replace_targets = remove_candidate_new
@@ -47,8 +47,8 @@ def create_replace_script(d):
         if t in busybox_cmds:
             replace_target.append(t)
 
-    tmp_install_dir = d.getVar("EMLINUX_IMAGE_MINIMAL_BUSYBOX_TMP_DIR")
-    script = f"{d.getVar('WORKDIR')}/{d.getVar('EMLINUX_IMAGE_MINIMAL_BUSYBOX_PREPARE_SCRIPT')}"
+    tmp_install_dir = d.getVar("EMLINUX_IMAGE_COMPACT_BUSYBOX_TMP_DIR")
+    script = f"{d.getVar('WORKDIR')}/{d.getVar('EMLINUX_IMAGE_COMPACT_BUSYBOX_PREPARE_SCRIPT')}"
     with open(script, "w") as f:
         f.write("#!/bin/sh -x\n")
         for target in replace_target:
@@ -57,26 +57,26 @@ def create_replace_script(d):
                 f.write(f"ln -s /bin/busybox /{tmp_install_dir}{cmd}\n")
 
     
-setup_make_minimal_image() {
-    if [ -d "${ROOTFSDIR}/${EMLINUX_IMAGE_MINIMAL_WORK_DIR}/" ]; then
-        sudo rm -fr "${ROOTFSDIR}/${EMLINUX_IMAGE_MINIMAL_WORK_DIR}/"
+setup_make_compact_image() {
+    if [ -d "${ROOTFSDIR}/${EMLINUX_IMAGE_COMPACT_WORK_DIR}/" ]; then
+        sudo rm -fr "${ROOTFSDIR}/${EMLINUX_IMAGE_COMPACT_WORK_DIR}/"
     fi
 
-    sudo mkdir "${ROOTFSDIR}/${EMLINUX_IMAGE_MINIMAL_WORK_DIR}/"
-    sudo mkdir -p "${ROOTFSDIR}/${EMLINUX_IMAGE_MINIMAL_SETUP_SCRIPTS_DIR}/"
-    sudo mkdir "${ROOTFSDIR}/${EMLINUX_IMAGE_MINIMAL_BUSYBOX_TMP_DIR}"
-    sudo mkdir "${ROOTFSDIR}/${EMLINUX_IMAGE_MINIMAL_BUSYBOX_TMP_DIR}/bin"
-    sudo mkdir "${ROOTFSDIR}/${EMLINUX_IMAGE_MINIMAL_BUSYBOX_TMP_DIR}/sbin"
-    sudo mkdir "${ROOTFSDIR}/${EMLINUX_IMAGE_MINIMAL_BUSYBOX_TMP_DIR}/usr"
-    sudo mkdir "${ROOTFSDIR}/${EMLINUX_IMAGE_MINIMAL_BUSYBOX_TMP_DIR}/usr/bin"
-    sudo mkdir "${ROOTFSDIR}/${EMLINUX_IMAGE_MINIMAL_BUSYBOX_TMP_DIR}/usr/sbin"
+    sudo mkdir "${ROOTFSDIR}/${EMLINUX_IMAGE_COMPACT_WORK_DIR}/"
+    sudo mkdir -p "${ROOTFSDIR}/${EMLINUX_IMAGE_COMPACT_SETUP_SCRIPTS_DIR}/"
+    sudo mkdir "${ROOTFSDIR}/${EMLINUX_IMAGE_COMPACT_BUSYBOX_TMP_DIR}"
+    sudo mkdir "${ROOTFSDIR}/${EMLINUX_IMAGE_COMPACT_BUSYBOX_TMP_DIR}/bin"
+    sudo mkdir "${ROOTFSDIR}/${EMLINUX_IMAGE_COMPACT_BUSYBOX_TMP_DIR}/sbin"
+    sudo mkdir "${ROOTFSDIR}/${EMLINUX_IMAGE_COMPACT_BUSYBOX_TMP_DIR}/usr"
+    sudo mkdir "${ROOTFSDIR}/${EMLINUX_IMAGE_COMPACT_BUSYBOX_TMP_DIR}/usr/bin"
+    sudo mkdir "${ROOTFSDIR}/${EMLINUX_IMAGE_COMPACT_BUSYBOX_TMP_DIR}/usr/sbin"
 
     sudo -E chroot "${ROOTFSDIR}" \
         /usr/sbin/usermod -s /bin/sh root
 }
 
 prepare_busybox() {
-    sudo cp  "${WORKDIR}/${EMLINUX_IMAGE_MINIMAL_BUSYBOX_PREPARE_SCRIPT}" "${ROOTFSDIR}/${EMLINUX_IMAGE_MINIMAL_SETUP_SCRIPTS_DIR}/."
+    sudo cp  "${WORKDIR}/${EMLINUX_IMAGE_COMPACT_BUSYBOX_PREPARE_SCRIPT}" "${ROOTFSDIR}/${EMLINUX_IMAGE_COMPACT_SETUP_SCRIPTS_DIR}/."
 
     sudo -E chroot "${ROOTFSDIR}" /bin/sh <<EOL
 /bin/sh /emlinux-work/scripts/setup/prepare-busybox.sh
@@ -85,34 +85,34 @@ EOL
 
 remove_packages() {
     sudo -E chroot "${ROOTFSDIR}" /bin/dash <<EOL
-export PATH=${EMLINUX_MINIMAL_IMAGE_BUSYBOX_TMP_PATH}:${PATH}
-dpkg -P --force-all ${EMLINUX_MINIMAL_IMAGE_REMOVE_PAKCAGES}
+export PATH=${EMLINUX_COMPACT_IMAGE_BUSYBOX_TMP_PATH}:${PATH}
+dpkg -P --force-all ${EMLINUX_COMPACT_IMAGE_REMOVE_PAKCAGES}
 EOL
 }
 
 replace_packages() {
     sudo -E chroot "${ROOTFSDIR}" /bin/dash <<EOL
-export PATH=${EMLINUX_MINIMAL_IMAGE_BUSYBOX_TMP_PATH}:${PATH}
+export PATH=${EMLINUX_COMPACT_IMAGE_BUSYBOX_TMP_PATH}:${PATH}
 
     # Remove systemd packages 
     dpkg -P --force-all systemd libsystemd0 libsystemd-shared
 
-busybox cp -a /${EMLINUX_IMAGE_MINIMAL_BUSYBOX_TMP_DIR}/bin/* /bin/ || true
-busybox cp -a /${EMLINUX_IMAGE_MINIMAL_BUSYBOX_TMP_DIR}/sbin/* /sbin/ || true
-busybox cp -a /${EMLINUX_IMAGE_MINIMAL_BUSYBOX_TMP_DIR}/usr/bin/* /usr/bin/ || true
-busybox cp -a /${EMLINUX_IMAGE_MINIMAL_BUSYBOX_TMP_DIR}/usr/sbin/* /usr/sbin/ || true
+busybox cp -a /${EMLINUX_IMAGE_COMPACT_BUSYBOX_TMP_DIR}/bin/* /bin/ || true
+busybox cp -a /${EMLINUX_IMAGE_COMPACT_BUSYBOX_TMP_DIR}/sbin/* /sbin/ || true
+busybox cp -a /${EMLINUX_IMAGE_COMPACT_BUSYBOX_TMP_DIR}/usr/bin/* /usr/bin/ || true
+busybox cp -a /${EMLINUX_IMAGE_COMPACT_BUSYBOX_TMP_DIR}/usr/sbin/* /usr/sbin/ || true
 EOL
 
     # Replace dash to busybox shell
     sudo -E chroot "${ROOTFSDIR}" /bin/busybox sh <<EOL
-export PATH=${EMLINUX_MINIMAL_IMAGE_BUSYBOX_TMP_PATH}:${PATH}
+export PATH=${EMLINUX_COMPACT_IMAGE_BUSYBOX_TMP_PATH}:${PATH}
 /bin/busybox ln -sf /bin/busybox /bin/sh
 EOL
 
-    if [ "${EMLINUX_IMAGE_MINIMAL_REMOVE_PERL}" = "1" ]; then
+    if [ "${EMLINUX_IMAGE_COMPACT_REMOVE_PERL}" = "1" ]; then
       sudo -E chroot "${ROOTFSDIR}" /bin/busybox sh <<EOL
-        export PATH=${EMLINUX_MINIMAL_IMAGE_BUSYBOX_TMP_PATH}:${PATH}
-        dpkg -P --force-all ${EMLINUX_MINIMAL_IMAGE_REMOVE_PERL}
+        export PATH=${EMLINUX_COMPACT_IMAGE_BUSYBOX_TMP_PATH}:${PATH}
+        dpkg -P --force-all ${EMLINUX_COMPACT_IMAGE_REMOVE_PERL}
 EOL
     fi
        
@@ -125,38 +125,38 @@ EOL
     sudo sh -c "sed -i 's;^T0:23:respawn:/sbin/getty;#T0:23:respawn:/sbin/getty;' ${ROOTFSDIR}/etc/inittab"
     sudo sh -c "sed -i 's;--noclear;;g' ${ROOTFSDIR}/etc/inittab"
 
-    if [ "${EMLINUX_IMAGE_MINIMAL_REMOVE_BOOT_DIR}" = "1" ]; then
+    if [ "${EMLINUX_IMAGE_COMPACT_REMOVE_BOOT_DIR}" = "1" ]; then
       sudo -E chroot "${ROOTFSDIR}" /bin/busybox sh <<EOL
 rm -fr /boot/System.map-* /boot/config-* /boot/vmlinux-* /boot/initrd* || true
 rm -fr /initrd.img /initrd.img.old /vmlinuz /vmlinuz.old || true
 EOL
     fi
  
-    if [ "${EMLINUX_IMAGE_MINIMAL_REMOVE_MAN}" = "1" ]; then
+    if [ "${EMLINUX_IMAGE_COMPACT_REMOVE_MAN}" = "1" ]; then
       sudo rm -fr "${ROOTFSDIR}/usr/share/man"
     fi
 
-    if [ "${EMLINUX_IMAGE_MINIMAL_REMOVE_DTB}" = "1" ]; then
+    if [ "${EMLINUX_IMAGE_COMPACT_REMOVE_DTB}" = "1" ]; then
         linuxdir=$(find "${ROOTFSDIR}/usr/lib" -type d -a -name 'linux-image*')
         sudo rm -fr "${linuxdir}"
     fi
     
-    sudo rm -fr "${ROOTFSDIR}/${EMLINUX_IMAGE_MINIMAL_WORK_DIR}"
+    sudo rm -fr "${ROOTFSDIR}/${EMLINUX_IMAGE_COMPACT_WORK_DIR}"
 }
 
-python do_make_emlinux_minimal_rootfs() {
+python do_make_emlinux_compact_rootfs() {
     pn = d.getVar("PN")
     if pn.endswith("-sdk"):
         bb.note(f"pn is {pn} skip")
         return
 
-    bb.note("Create minimal image")
-    bb.build.exec_func("setup_make_minimal_image", d)
+    bb.note("Create compact image")
+    bb.build.exec_func("setup_make_compact_image", d)
     create_replace_script(d)
     bb.build.exec_func("prepare_busybox", d)
     bb.build.exec_func("remove_packages", d)
     bb.build.exec_func("replace_packages", d)
 }
 
-addtask make_emlinux_minimal_rootfs before do_rootfs_finalize after do_rootfs_postprocess
+addtask make_emlinux_compact_rootfs before do_rootfs_finalize after do_rootfs_postprocess
 
