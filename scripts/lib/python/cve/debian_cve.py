@@ -19,7 +19,7 @@ logger = logging.getLogger("emlinux-cve-check")
 DEBIAN_CVE_TRACKER_JSON_URL = "https://security-tracker.debian.org/tracker/data/json"
 
 def remove_extra_suffix_in_version_string(version_str):
-    vs = version_str
+    vs = version_str.strip()
 
     # Some version string in NVD database contains additional suffix
     # such as _ubuntu1, _exp, and so of
