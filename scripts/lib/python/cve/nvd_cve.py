@@ -93,7 +93,13 @@ def update_db(conn, elt):
     accessVector = None
     vectorString = None
     cveId = elt['cve']['id']
-    vulnStatus = elt['cve']['vulnStatus']
+    logger.debug(f"Processing CVE {cveId}")
+
+    if 'vulnStatus' in elt['cve']:
+        vulnStatus = elt['cve']['vulnStatus']
+    else:
+        vulnStatus = ""
+
     cveDesc = ""
     for desc in elt['cve']['descriptions']:
         if desc['lang'] == 'en':
