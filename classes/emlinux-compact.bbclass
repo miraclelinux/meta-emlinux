@@ -29,6 +29,12 @@ def create_replace_script(d):
     user_specified_install_pkgs = image_preinstall + image_install
     pinned_pkgs = []
 
+    if d.getVar("EMLINUX_IMAGE_COMPACT_USE_SYSTEMD") == "1":
+        d.setVar("EMLINUX_COMPACT_IMAGE_REMOVE_UTIL_LINUX", "")
+        d.setVar("EMLINUX_COMPACT_IMAGE_REMOVE_MOUNT", "")
+        d.setVar("EMLINUX_COMPACT_IMAGE_REMOVE_PAM", "")
+        d.setVar("EMLINUX_COMPACT_IMAGE_REMOVE_LIBGPG_ERROR", "")
+
     remove_candidate = d.getVar("EMLINUX_COMPACT_IMAGE_REMOVE_PAKCAGES").strip().split()
     remove_candidate_new = []
 
@@ -94,8 +100,10 @@ replace_packages() {
     sudo -E chroot "${ROOTFSDIR}" /bin/dash <<EOL
 export PATH=${EMLINUX_COMPACT_IMAGE_BUSYBOX_TMP_PATH}:${PATH}
 
-    # Remove systemd packages 
-    dpkg -P --force-all systemd libsystemd0 libsystemd-shared
+    # Remove systemd packages
+    if [ "${EMLINUX_IMAGE_COMPACT_USE_SYSTEMD}" != "1" ]; then
+        dpkg -P --force-all systemd libsystemd0 libsystemd-shared
+    fi
 
 busybox cp -a /${EMLINUX_IMAGE_COMPACT_BUSYBOX_TMP_DIR}/bin/* /bin/ || true
 busybox cp -a /${EMLINUX_IMAGE_COMPACT_BUSYBOX_TMP_DIR}/sbin/* /sbin/ || true
@@ -115,15 +123,17 @@ EOL
         dpkg -P --force-all ${EMLINUX_COMPACT_IMAGE_REMOVE_PERL}
 EOL
     fi
-       
-    # Install AMA0 setting to inittab.d/
-    sudo mkdir ${ROOTFSDIR}/etc/inittab.d
-    sudo sh -c "echo 'AMA0:12345:respawn:/sbin/getty 115200 ttyAMA0' >> ${ROOTFSDIR}/etc/inittab.d/ama0.tab"
-    sudo sh -c "echo 'S0:12345:respawn:/sbin/getty 115200 ttyS0' >> ${ROOTFSDIR}/etc/inittab.d/ttyS0.tab"
-    sudo sh -c "echo 'S1:12345:respawn:/sbin/getty 115200 ttyS1' >> ${ROOTFSDIR}/etc/inittab.d/ttyS1.tab"
-    # Comment out following line added by isar/meta/conf/distro/debian-configscript.sh
-    sudo sh -c "sed -i 's;^T0:23:respawn:/sbin/getty;#T0:23:respawn:/sbin/getty;' ${ROOTFSDIR}/etc/inittab"
-    sudo sh -c "sed -i 's;--noclear;;g' ${ROOTFSDIR}/etc/inittab"
+
+    if [ "${EMLINUX_IMAGE_COMPACT_USE_SYSTEMD}" != "1" ]; then
+        # Install AMA0 setting to inittab.d/
+        sudo mkdir ${ROOTFSDIR}/etc/inittab.d
+        sudo sh -c "echo 'AMA0:12345:respawn:/sbin/getty 115200 ttyAMA0' >> ${ROOTFSDIR}/etc/inittab.d/ama0.tab"
+        sudo sh -c "echo 'S0:12345:respawn:/sbin/getty 115200 ttyS0' >> ${ROOTFSDIR}/etc/inittab.d/ttyS0.tab"
+        sudo sh -c "echo 'S1:12345:respawn:/sbin/getty 115200 ttyS1' >> ${ROOTFSDIR}/etc/inittab.d/ttyS1.tab"
+        # Comment out following line added by isar/meta/conf/distro/debian-configscript.sh
+        sudo sh -c "sed -i 's;^T0:23:respawn:/sbin/getty;#T0:23:respawn:/sbin/getty;' ${ROOTFSDIR}/etc/inittab"
+        sudo sh -c "sed -i 's;--noclear;;g' ${ROOTFSDIR}/etc/inittab"
+    fi
 
     if [ "${EMLINUX_IMAGE_COMPACT_REMOVE_BOOT_DIR}" = "1" ]; then
       sudo -E chroot "${ROOTFSDIR}" /bin/busybox sh <<EOL

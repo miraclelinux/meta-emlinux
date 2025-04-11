@@ -44,9 +44,7 @@ EMLINUX_SYSVINIT_INSTALL_PACKAGE = "\
   busybox-syslogd \
 "
 
-IMAGE_INSTALL:append = "\
-  ${EMLINUX_SYSVINIT_INSTALL_PACKAGE} \
-"
+IMAGE_INSTALL:append = "${@oe.utils.conditional('EMLINUX_IMAGE_COMPACT_USE_SYSTEMD', '1', '', ' ${EMLINUX_SYSVINIT_INSTALL_PACKAGE}', d)}"
 
 IMAGE_INSTALL:append = "\
   busybox \
