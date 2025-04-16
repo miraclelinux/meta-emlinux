@@ -20,3 +20,10 @@ SRC_URI = " \
     file://postinst \
 "
 
+do_install[cleandirs] += "${D}/etc/profile.d"
+do_install:append() {
+    if [ -n "${EMLINUX_ENVIRONMENT_VARIABLE_PS1}" ]; then
+        echo "PS1=\"${EMLINUX_ENVIRONMENT_VARIABLE_PS1}\"" > "${D}/etc/profile.d/ps1.sh"
+    fi
+}
+
