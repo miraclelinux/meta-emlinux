@@ -150,7 +150,8 @@ EOL
         linuxdir=$(find "${ROOTFSDIR}/usr/lib" -type d -a -name 'linux-image*')
         sudo rm -fr "${linuxdir}"
     fi
-    
+ 
+    sudo mkdir -p "${ROOTFSDIR}/etc/apt/sources.list.d"
     sudo rm -fr "${ROOTFSDIR}/${EMLINUX_IMAGE_COMPACT_WORK_DIR}"
 }
 
