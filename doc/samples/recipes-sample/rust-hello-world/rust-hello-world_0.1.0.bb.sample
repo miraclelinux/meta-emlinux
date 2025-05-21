@@ -1,0 +1,37 @@
+#
+# An example for building rust project
+#
+# Copyright (c) Cyberturst Japan Co., Ltd. 2025
+#
+# Authors:
+#  Daisuke Yamane <daisuke.yamane@miraclelinux.com>
+#
+# SPDX-License-Identifier: MIT
+#
+
+inherit dpkg
+
+DEBIAN_BUILD_DEPENDS += "dh-cargo, debcargo, libstd-rust-dev"
+
+TEMPLATE_FILES = "debian/rules.tmpl debian/control.tmpl"
+TEMPLATE_VARS += "MACHINE DEBIAN_BUILD_DEPENDS DESCRIPTION BOARD_TARGETS RCWDIR RCW_FOLDER RCWQSPI RCWSD RCW_SUFFIX DEPLOYDIR BOOTTYPE CHASISTYPE BLD_OPT PLATFORM EXTRA_OEMAKE COMBINED_FEATURES DISTRO_FEATURES　MAINTAINER DEBIAN_COMPAT"
+
+SRC_URI = "\
+    git://github.com/meta-rust/rust-hello-world.git;protocol=https;branch=master \
+    file://debian/ \
+    "
+SRCREV = "e0fa23f1a3cb1eb1407165bd2fc36d2f6e6ad728"
+
+DESCRIPTION = "An example for building rust project"
+LICENSE = "MIT | Apache-2.0"
+LIC_FILES_CHKSUM="file://COPYRIGHT;md5=e6b2207ac3740d2d01141c49208c2147"
+
+MAINTAINER = "Daisuke Yamane <daisuke.yamane@miraclelinux.com>"
+
+S = "${WORKDIR}/git"
+
+do_prepare_build() {
+    cp -r ${WORKDIR}/debian ${S}/
+
+    deb_add_changelog
+}
