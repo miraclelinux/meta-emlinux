@@ -1,0 +1,16 @@
+#!/usr/bin/make -f
+
+# See debhelper(7) (uncomment to enable)
+export DH_VERBOSE = 1
+export GOOS = linux
+export GOARCH = ${DISTRO_ARCH}
+
+%:
+	dh $@ --builddirectory=_build --buildsystem=golang --with=golang
+
+override_dh_auto_install:
+	## FIXME: dh-golang's dh_auto_build installs binaries to ${GOPATH}/bin, however
+	#         dh_auto_install expects binaries to exist in ${GOPATH}/bin/${GOOS}_${GOARCH}.
+	rsync -a --mkpath --remove-source-files _build/bin/ _build/bin/${GOOS}_${GOARCH}/
+
+	dh_auto_install -- --no-source
