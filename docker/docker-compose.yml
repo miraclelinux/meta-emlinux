@@ -1,0 +1,26 @@
+services:
+  emlinux2-build:
+    image: "emlinux2-build-${host_user_name}"
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        uid: $host_user_id
+        http_proxy: $http_proxy
+        https_proxy: $https_proxy
+        ftp_proxy: $ftp_proxy
+        no_proxy: $no_proxy
+    environment:
+      - http_proxy=$http_proxy
+      - https_proxy=$https_proxy
+      - ftp_proxy=$ftp_proxy
+      - no_proxy=$no_proxy
+    volumes:
+      - ../../../:/home/build/work:rw
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    privileged: true
+    cap_add:
+      - NET_ADMIN
+    user: build
+
