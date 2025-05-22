@@ -8,7 +8,7 @@
 #
 # SPDX-License-Identifier: MIT
 #
-FILESEXTRAPATHS:prepend := "${FILE_DIRNAME}/files:"
+FILESEXTRAPATHS:prepend := "${FILE_DIRNAME}/files/6.1:"
 
 require recipes-kernel/linux/linux-custom.inc
 
