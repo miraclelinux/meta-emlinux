@@ -39,7 +39,8 @@ RUN apt-get install --fix-missing -y \
   patchelf \
   sqlite3 \
   umoci \
-  skopeo
+  skopeo \
+  mmdebstrap
 
 RUN useradd -m build -u $uid
 RUN gpasswd -a build sbuild
