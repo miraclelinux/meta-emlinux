@@ -21,11 +21,12 @@ inherit dpkg-gbp
 DEBIAN_BUILD_DEPENDS += "perl-base"
 
 SRC_URI = " \
-    git://salsa.debian.org/debian/openssl.git;protocol=https;branch=debian/unstable \
+    git://salsa.debian.org/debian/openssl.git;protocol=https;branch=debian/bookworm \
     file://0001-Enable-fips-module.patch \
 "
 
-SRCREV = "f8342c651edd69a43705394dff8b5c1a471037ae"
+# openssl-3.0.15-1_deb12u1
+SRCREV = "ec5584bae038db6927d93717d96506a25d298357"
 
 GBP_EXTRA_OPTIONS = ""
 DEB_BUILD_PROFILES += "nocheck"
