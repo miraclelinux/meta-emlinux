@@ -1,0 +1,8 @@
+deb     http://deb.debian.org/debian trixie main
+deb-src http://deb.debian.org/debian trixie main
+
+deb     http://deb.debian.org/debian-security/ trixie-security main
+deb-src http://deb.debian.org/debian-security/ trixie-security main
+
+deb     http://deb.debian.org/debian trixie-updates main
+deb-src http://deb.debian.org/debian trixie-updates main

@@ -62,7 +62,8 @@ $ sudo apt install \
   sbuild \
   schroot \
   zstd \
-  python3-distutils
+  python3-distutils \
+  mmdebstrap
 ```
 
 ### Setup user
@@ -94,7 +95,7 @@ $ mkdir repos
 2. Checkout meta-emlinux
 
 ```
-$ git clone -b bookworm https://github.com/miraclelinux/meta-emlinux.git repos/meta-emlinux
+$ git clone -b emlinux3 https://github.com/miraclelinux/meta-emlinux.git repos/meta-emlinux
 ```
 
 3. Setup build directory
@@ -114,6 +115,16 @@ For example, if you want build qemu-arm64 image that includes iproute2 package, 
 MACHINE = "qemu-arm64"
 IMAGE_PREINSTALL = "iproute2"
 ```
+
+EMLinux supports building Debian bookworm and trixie based images and you can choose distribution from them by specifying the DISTRO variable in conf/local.conf. This variable is set as emlinux-bookworm by default, so you do not have to add any changes to use bookworm. If you want to use trixie, add the following lines in conf/local.conf.
+
+```
+DISTRO = "emlinux-trixie"
+PREFERRED_PROVIDER_bootstrap-host = "isar-mmdebstrap-host"
+PREFERRED_PROVIDER_bootstrap-target = "isar-mmdebstrap-target"
+```
+
+Note: The reason to overwrite the preferred bootstrap classes is because building a trixie based image needs ISAR's newer implementation for bootstrap but migration to the newer classes for an EMLinux supported feature leveraging bootstrap is not complete yet and the old bootstrap classes stay used by default for that. These lines will be unnecessary after the migration in the future.
 
 2. Build image
 
@@ -149,6 +160,8 @@ qemu-system-x86_64 \
 
 #### On qemu-arm64
 
+##### For bookworm
+
 ```
 qemu-system-aarch64 \
  -device virtio-net-device,netdev=net0,mac=52:54:00:12:35:02 \
@@ -168,6 +181,30 @@ qemu-system-aarch64 \
  -serial null \
  -kernel ./tmp/deploy/images/qemu-arm64/emlinux-image-base-emlinux-bookworm-qemu-arm64-vmlinux \
  -initrd ./tmp/deploy/images/qemu-arm64/emlinux-image-base-emlinux-bookworm-qemu-arm64-initrd.img \
+ -append 'root=/dev/vda rw highres=off  console=ttyS0 mem=512M ip=dhcp console=ttyAMA0 '
+```
+
+##### For trixie
+
+```
+qemu-system-aarch64 \
+ -device virtio-net-device,netdev=net0,mac=52:54:00:12:35:02 \
+ -netdev user,id=net0,hostfwd=tcp::2222-:22,hostfwd=tcp::2323-:23,tftp=./tmp/deploy/images/qemu-arm64 \
+ -drive id=disk0,file=./tmp/deploy/images/qemu-arm64/emlinux-image-base-emlinux-trixie-qemu-arm64.ext4,if=none,format=raw \
+ -device virtio-blk-device,drive=disk0 -device VGA,edid=on \
+ -device qemu-xhci \
+ -device usb-tablet \
+ -device usb-kbd \
+ -object rng-random,filename=/dev/urandom,id=rng0 \
+ -device virtio-rng-pci,rng=rng0  \
+ -nographic \
+ -machine virt \
+ -cpu cortex-a57 \
+ -m 512 \
+ -serial mon:stdio \
+ -serial null \
+ -kernel ./tmp/deploy/images/qemu-arm64/emlinux-image-base-emlinux-trixie-qemu-arm64-vmlinux \
+ -initrd ./tmp/deploy/images/qemu-arm64/emlinux-image-base-emlinux-trixie-qemu-arm64-initrd.img \
  -append 'root=/dev/vda rw highres=off  console=ttyS0 mem=512M ip=dhcp console=ttyAMA0 '
 ```
 
@@ -222,6 +259,8 @@ qemu-system-x86_64 \
 
 #### On qemu-arm64
 
+##### For bookworm
+
 ```
 qemu-system-aarch64 \
  -device virtio-net-device,netdev=net0,mac=52:54:00:12:35:02 \
@@ -240,6 +279,29 @@ qemu-system-aarch64 \
  -serial null \
  -kernel ./tmp/deploy/images/qemu-arm64/emlinux-image-weston-emlinux-bookworm-qemu-arm64-vmlinux \
  -initrd ./tmp/deploy/images/qemu-arm64/emlinux-image-weston-emlinux-bookworm-qemu-arm64-initrd.img \
+ -append 'root=/dev/vda rw highres=off  console=ttyS0 mem=512M ip=dhcp console=ttyAMA0 '
+```
+
+##### For trixie
+
+```
+qemu-system-aarch64 \
+ -device virtio-net-device,netdev=net0,mac=52:54:00:12:35:02 \
+ -netdev user,id=net0,hostfwd=tcp::2222-:22,hostfwd=tcp::2323-:23,tftp=./tmp/deploy/images/qemuarm64 \
+ -drive id=disk0,file=./tmp/deploy/images/qemu-arm64/emlinux-image-weston-emlinux-trixie-qemu-arm64.ext4,if=none,format=raw \
+ -device virtio-blk-device,drive=disk0 -device VGA,edid=on \
+ -device usb-ehci,id=ehci \
+ -device usb-tablet \
+ -device usb-kbd \
+ -object rng-random,filename=/dev/urandom,id=rng0 \
+ -device virtio-rng-pci,rng=rng0 \
+ -machine virt \
+ -cpu cortex-a57 \
+ -m 512 \
+ -serial mon:stdio \
+ -serial null \
+ -kernel ./tmp/deploy/images/qemu-arm64/emlinux-image-weston-emlinux-trixie-qemu-arm64-vmlinux \
+ -initrd ./tmp/deploy/images/qemu-arm64/emlinux-image-weston-emlinux-trixie-qemu-arm64-initrd.img \
  -append 'root=/dev/vda rw highres=off  console=ttyS0 mem=512M ip=dhcp console=ttyAMA0 '
 ```
 
@@ -266,9 +328,11 @@ qemu-system-arm \
  -append 'root=/dev/vda rw highres=off  console=ttyS0 mem=512M ip=dhcp console=ttyAMA0 '
 ```
 
-## Supported machine
+## Supported machines
 
-EMLinux currently supports following machines.
+EMLinux currently supports the following machines. The supported machines are different between distributions.
+
+### Supported machines in bookworm
 
 - qemu-amd64
 - qemu-arm64
@@ -277,6 +341,10 @@ EMLinux currently supports following machines.
 - raspberrypi3bplus-64
 - raspberrypi4b-64
 - raspberrypi400-64
+
+### Supported machines in trixie
+
+- qemu-arm64
 
 ## Sample Recipe
 

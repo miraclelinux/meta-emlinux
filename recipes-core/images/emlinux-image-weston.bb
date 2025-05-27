@@ -13,6 +13,7 @@ DESCRIPTION = "EMLinux target filesystem to enable Weston"
 IMAGE_INSTALL:append = " weston-init"
 
 IMAGE_PREINSTALL:append = " weston libgl1 libpam-systemd kbd"
+IMAGE_PREINSTALL:append:trixie = " seatd"
 
 GROUPS += "weston-launch"
 GROUP_weston-launch[flags] = "system"
