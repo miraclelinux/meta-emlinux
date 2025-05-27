@@ -18,8 +18,8 @@ LIC_FILES_CHKSUM = "file://LICENSE.txt;md5=c75985e733726beaba57bc5253e96d04"
 
 inherit dpkg
 
-SRC_TGZ = "openssl_3.0.9.orig.tar.gz"
-DEB_HELPER_SRC = "openssl_3.0.9-1.debian.tar.xz"
+SRC_TGZ = "openssl_3.0.16.orig.tar.gz"
+DEB_HELPER_SRC = "openssl_3.0.16-1~deb12u1.debian.tar.xz"
 PKG_URL = "http://deb.debian.org/debian/pool/main/o/openssl"
 
 SRC_URI = " \
@@ -28,8 +28,8 @@ SRC_URI = " \
     file://custom-debian \
 "
 
-SRC_URI[openssl-src.sha256sum] = "eb1ab04781474360f77c318ab89d8c5a03abc38e63d65a603cabbf1b00a1dc90"
-SRC_URI[debhelper-src.sha256sum] = "e2d357313d50b244727c37aceae3c1e69b0d03a6e911d73de5382515a27647f1"
+SRC_URI[openssl-src.sha256sum] = "57e03c50feab5d31b152af2b764f10379aecd8ee92f16c985983ce4a99f7ef86"
+SRC_URI[debhelper-src.sha256sum] = "83a175489ae79ae0e0ed4f56b16985e16a0c9a632ba2b3d9b41cdac8f29630df"
 
 DEB_BUILD_PROFILES += "nocheck"
 
