@@ -21,6 +21,7 @@ inherit dpkg
 SRC_URI = " \
     apt://${PN}/bookworm \
     file://custom-debian \
+    file://0001-for-checking-customization-test.patch \
 "
 
 DEB_BUILD_PROFILES += "nocheck"
@@ -31,3 +32,35 @@ do_move_debian_files() {
 
 addtask move_debian_files after do_prepare_build before do_dpkg_build
 
+# returns local (absolute) path names for all valid patches in the
+# src_uri
+def find_patches(d,subdir):
+    patches = src_patches(d)
+    patch_list=[]
+    for p in patches:
+        _, _, local, _, _, parm = bb.fetch.decodeurl(p)
+        # if patchdir has been passed, we won't be able to apply it so skip
+        # the patch for now, and special processing happens later
+        patchdir = ''
+        if "patchdir" in parm:
+            patchdir = parm["patchdir"]
+        if subdir:
+            if subdir == patchdir:
+                patch_list.append(local)
+        else:
+            # skip the patch if a patchdir was supplied, it won't be handled
+            # properly
+            if not patchdir:
+                patch_list.append(local)
+
+    return patch_list
+
+do_patch[noexec] = "1"
+do_prepare_build:append() {
+    mkdir -p ${S}/debian/patches
+    patches="${@" ".join(find_patches(d,''))}"
+    for p in "${patches}" ; do
+        cp ${p} ${S}/debian/patches
+        echo ${p##*/} >> ${S}/debian/patches/series
+    done
+}
