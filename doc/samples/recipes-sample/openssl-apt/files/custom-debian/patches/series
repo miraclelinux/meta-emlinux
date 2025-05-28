@@ -7,5 +7,4 @@ Configure-allow-to-enable-ktls-if-target-does-not-start-w.patch
 Remove-the-provider-section.patch
 conf-Serialize-allocation-free-of-ssl_names.patch
 Fix-tests-for-new-default-security-level.patch
-Harden-BN_GF2m_poly2arr-against-misuse.patch
 0001-for-checking-customization-test.patch
