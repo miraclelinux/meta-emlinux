@@ -16,6 +16,9 @@ INHERIT += "sdk-installer"
 DISTRO_KERNELS ?= "linux-cip"
 KERNEL_NAME ?= "cip"
 
+PREFERRED_VERSION_linux-cip-native ?= "${PREFERRED_VERSION_linux-cip}"
+PREFERRED_VERSION_linux-cip-kbuildtarget ?= "${PREFERRED_VERSION_linux-cip}"
+
 IMAGER_INSTALL:wic = "parted \
   gdisk \
   util-linux \
