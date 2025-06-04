@@ -1,7 +1,12 @@
 Quick Start
 ===========
 
-meta-emlinux can be built on a Debian or Ubuntu systems.
+The meta-emlinux layer has been tested primarily on Ubuntu 18.04 LTS and 20.04 LTS.
+This layer probably works on Debian 10.
+
+> [!NOTE]
+> The standard support period for Ubuntu 20.04 LTS ends in April 2025.
+> If you are setting up a build environment using Docker container, see doc/build-env-docker.md.
 
 Install essential packages for poky:
 

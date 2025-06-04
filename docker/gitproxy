@@ -1,0 +1,2 @@
+#!/bin/sh
+exec socat STDIO PROXY:$http_proxy:$1:$2
