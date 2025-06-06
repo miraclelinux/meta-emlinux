@@ -106,6 +106,10 @@ do_shared_workdir_prepend () {
 # CVE-2025-22041: Vulnerable code not present.
 # CVE-2025-22038: Vulnerable code not present.
 # CVE-2025-22037: Vulnerable code not present.
+# CVE-2023-3079: This is not a kernel issue.
+# CVE-2024-49928: Vulnerable code not present.
+# CVE-2024-49931: Vulnerable code not present.
+# CVE-2024-49989: Vulnerable code not present.
 CVE_CHECK_WHITELIST = "\
     CVE-2021-43057 CVE-2015-8955 CVE-2020-8834 \
     CVE-2017-6264 CVE-2017-1000377 CVE-2007-2764 \
@@ -132,5 +136,6 @@ CVE_CHECK_WHITELIST = "\
     CVE-2023-52640 CVE-2024-26699 CVE-2024-35784 \
     CVE-2024-49968 CVE-2024-58087 CVE-2023-52589 \
     CVE-2024-26691 CVE-2025-22040 CVE-2025-22041 \
-    CVE-2025-22038 CVE-2025-22037 \
+    CVE-2025-22038 CVE-2025-22037 CVE-2023-3079 \
+    CVE-2024-49928 CVE-2024-49931 CVE-2024-49989 \
 "
