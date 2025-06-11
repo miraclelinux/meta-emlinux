@@ -34,7 +34,14 @@ IMAGE_PREINSTALL:append = " netbase"
 
 WKS_FILE ?= "${MACHINE}.wks"
 
-SDK_PREINSTALL += "bc"
+SDK_PREINSTALL += " \
+  bc \
+  libncurses-dev \
+  flex \
+  bison \
+  pkg-config \
+  libssl-dev \
+  libelf-dev"
 
 SDK_INSTALL += "linux-headers-${KERNEL_NAME}"
 
