@@ -100,11 +100,6 @@ replace_packages() {
     sudo -E chroot "${ROOTFSDIR}" /bin/dash <<EOL
 export PATH=${EMLINUX_COMPACT_IMAGE_BUSYBOX_TMP_PATH}:${PATH}
 
-    # Remove systemd packages
-    if [ "${EMLINUX_IMAGE_COMPACT_USE_SYSTEMD}" != "1" ]; then
-        dpkg -P --force-all systemd libsystemd0 libsystemd-shared
-    fi
-
 busybox cp -a /${EMLINUX_IMAGE_COMPACT_BUSYBOX_TMP_DIR}/bin/* /bin/ || true
 busybox cp -a /${EMLINUX_IMAGE_COMPACT_BUSYBOX_TMP_DIR}/sbin/* /sbin/ || true
 busybox cp -a /${EMLINUX_IMAGE_COMPACT_BUSYBOX_TMP_DIR}/usr/bin/* /usr/bin/ || true
