@@ -120,11 +120,16 @@ EMLinux supports building Debian bookworm and trixie based images and you can ch
 
 ```
 DISTRO = "emlinux-trixie"
-PREFERRED_PROVIDER_bootstrap-host = "isar-mmdebstrap-host"
-PREFERRED_PROVIDER_bootstrap-target = "isar-mmdebstrap-target"
 ```
 
-Note: The reason to overwrite the preferred bootstrap classes is because building a trixie based image needs ISAR's newer implementation for bootstrap but migration to the newer classes for an EMLinux supported feature leveraging bootstrap is not complete yet and the old bootstrap classes stay used by default for that. These lines will be unnecessary after the migration in the future.
+### bootstrap class
+
+EMLinux uses mmdebstrap as a default bootstrap class for both emlinux-bookworm and emlinux-trixie as the ISAR does. The debootstrap class doesn't support emlinux-trixie, so if you use emlinux-bookworm and wants to stay keep with debootstrap for some reason (e.g. you extend isar-bootstrap-[host|target].class), add following lines in your conf/local.conf.
+
+```
+PREFERRED_PROVIDER_bootstrap-host ?= "isar-bootstrap-host"
+PREFERRED_PROVIDER_bootstrap-target ?= "isar-bootstrap-target"
+```
 
 2. Build image
 
