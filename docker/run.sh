@@ -17,10 +17,14 @@ if [ $# = 1 ]; then
 fi
 
 host_user_id=$(id -u)
+host_user_name=$(id -un)
 export host_user_id="${host_user_id}"
+export host_user_name="${host_user_name}"
 
 if [ "${mode}" = "build" ]; then
   $docker_compose_cmd build --no-cache
 elif [ "${mode}" = "run" ]; then
   $docker_compose_cmd run --rm emlinux3-build
+elif [ "${mode}" = "clean" ]; then
+  docker rmi -f "emlinux3-build-${host_user_name}"
 fi

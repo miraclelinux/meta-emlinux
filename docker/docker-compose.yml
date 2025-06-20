@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   emlinux3-build:
-    image: emlinux3-build
+    image: "emlinux3-build-${host_user_name}"
     build:
       context: .
       dockerfile: Dockerfile
