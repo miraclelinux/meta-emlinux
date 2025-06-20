@@ -1,4 +1,6 @@
 FROM debian:bookworm
+ENV DEBIAN_FRONTEND noninteractive
+ENV DEBCONF_NOWARNINGS yes
 
 ARG uid
 ARG http_proxy
@@ -40,20 +42,19 @@ RUN apt-get install --fix-missing -y \
   sqlite3 \
   umoci \
   skopeo \
-  mmdebstrap
+  mmdebstrap \
+  locales
 
-RUN useradd -m build -u $uid
+RUN useradd -s /bin/bash -m build -u $uid
 RUN gpasswd -a build sbuild
-RUN apt-get install -y sudo
 RUN echo "build ALL=(ALL) NOPASSWD: ALL" | tee -a /etc/sudoers
 RUN echo  "Defaults env_keep += \" http_proxy https_proxy no_proxy\"" | tee -a /etc/sudoers
 
 # Fix error "Please use a locale setting which supports utf-8."
 # See https://wiki.yoctoproject.org/wiki/TipsAndTricks/ResolvingLocaleIssues
-RUN apt-get install -y locales
 RUN sed -i -e 's/# en_US.UTF-8 UTF-8/en_US.UTF-8 UTF-8/' /etc/locale.gen && \
         echo 'LANG="en_US.UTF-8"'>/etc/default/locale && \
-        dpkg-reconfigure --frontend=noninteractive locales && \
+        dpkg-reconfigure --frontend=noninteractive locales 2>/dev/null && \
         update-locale LANG=en_US.UTF-8
 
 ENV LC_ALL en_US.UTF-8
@@ -72,12 +73,9 @@ RUN bash -c 'if test -n "$http_proxy"; then git config --global http.proxy "$htt
 RUN bash -c 'if test -n "$https_proxy"; then git config --global https.proxy "$https_proxy"; fi'
 RUN bash -c 'if test -n "$no_proxy"; then git config --global core.noproxy "$no_proxy"; fi'
 
-RUN pip install --user 'cyclonedx-python-lib>=7.3.2,<=7.5.1' --break-system-packages
-RUN pip install --user jsonschema==4.21.1 --break-system-packages
-RUN pip install --user spdx-tools==0.8.2 --break-system-packages
+RUN pip install --user 'cyclonedx-python-lib>=7.3.2,<=7.5.1' --break-system-packages --no-warn-script-location
+RUN pip install --user jsonschema==4.21.1 --break-system-packages --no-warn-script-location
+RUN pip install --user spdx-tools==0.8.2 --break-system-packages --no-warn-script-location
 
 RUN mkdir work
 WORKDIR /home/build/work
-
-CMD "/bin/bash"
-
