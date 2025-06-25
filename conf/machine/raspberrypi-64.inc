@@ -28,7 +28,6 @@ IMAGER_INSTALL:wic = "\
   dosfstools \
   mtools \
   e2fsprogs \
-  python3-distutils \
   bmap-tools \
 "
 
