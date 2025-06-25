@@ -25,7 +25,7 @@ IMAGER_INSTALL:wic = "parted \
   dosfstools \
   mtools \
   e2fsprogs \
-  python3-distutils \
+  python3-setuptools \
   bmap-tools \
   tar \
   fdisk"
