@@ -350,6 +350,7 @@ EMLinux currently supports the following machines. The supported machines are di
 ### Supported machines in trixie
 
 - qemu-arm64
+- raspberrypi4b-64
 
 ## Sample Recipe
 
