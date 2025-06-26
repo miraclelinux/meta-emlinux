@@ -113,6 +113,10 @@ do_shared_workdir_prepend () {
 # CVE-2024-27297: Vulnerable code not present.
 # CVE-2024-49932: Vulnerable code not present.
 # CVE-2025-37805: Vulnerable code not present.
+# CVE-2024-50086: Vulnerable code not present.
+# CVE-2024-50112: Vulnerable code not present.
+# CVE-2024-50217: Vulnerable code not present.
+# CVE-2024-50286: Vulnerable code not present.
 CVE_CHECK_WHITELIST = "\
     CVE-2021-43057 CVE-2015-8955 CVE-2020-8834 \
     CVE-2017-6264 CVE-2017-1000377 CVE-2007-2764 \
@@ -142,4 +146,6 @@ CVE_CHECK_WHITELIST = "\
     CVE-2025-22038 CVE-2025-22037 CVE-2023-3079 \
     CVE-2024-49928 CVE-2024-49931 CVE-2024-49989 \
     CVE-2024-27297 CVE-2024-49932 CVE-2025-37805 \
+    CVE-2024-50086 CVE-2024-50112 CVE-2024-50217 \
+    CVE-2024-50286 \
 "
