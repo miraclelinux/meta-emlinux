@@ -145,11 +145,33 @@ $ bitbake <image>
 
 #### On qemu-amd64
 
+##### For bookworm
+
 ```
 qemu-system-x86_64 \
  -drive file=./tmp/deploy/images/qemu-amd64/emlinux-image-base-emlinux-bookworm-qemu-amd64.ext4,discard=unmap,if=none,id=disk,format=raw \
  -kernel ./tmp/deploy/images/qemu-amd64/emlinux-image-base-emlinux-bookworm-qemu-amd64-vmlinuz \
  -initrd ./tmp/deploy/images/qemu-amd64/emlinux-image-base-emlinux-bookworm-qemu-amd64-initrd.img \
+ -m 1G \
+ -serial mon:stdio \
+ -netdev user,id=net,hostfwd=tcp:127.0.0.1:22222-:22 \
+ -cpu qemu64 \
+ -smp 4 \
+ -machine q35,accel=kvm:tcg \
+ -global ICH9-LPC.noreboot=off \
+ -device virtio-net-pci,netdev=net \
+ -device ide-hd,drive=disk \
+ -nographic \
+ -append "root=/dev/sda rw console=ttyS0 ip=dhcp"
+```
+
+##### For trixie
+
+```
+qemu-system-x86_64 \
+ -drive file=./tmp/deploy/images/qemu-amd64/emlinux-image-base-emlinux-trixie-qemu-amd64.ext4,discard=unmap,if=none,id=disk,format=raw \
+ -kernel ./tmp/deploy/images/qemu-amd64/emlinux-image-base-emlinux-trixie-qemu-amd64-vmlinuz \
+ -initrd ./tmp/deploy/images/qemu-amd64/emlinux-image-base-emlinux-trixie-qemu-amd64-initrd.img \
  -m 1G \
  -serial mon:stdio \
  -netdev user,id=net,hostfwd=tcp:127.0.0.1:22222-:22 \
@@ -267,11 +289,36 @@ qemu-system-arm \
 
 #### On qemu-amd64
 
+##### For bookworm
+
 ```
 qemu-system-x86_64 \
  -drive file=./tmp/deploy/images/qemu-amd64/emlinux-image-weston-emlinux-bookworm-qemu-amd64.ext4,discard=unmap,if=none,id=disk,format=raw \
  -kernel ./tmp/deploy/images/qemu-amd64/emlinux-image-weston-emlinux-bookworm-qemu-amd64-vmlinuz \
  -initrd ./tmp/deploy/images/qemu-amd64/emlinux-image-weston-emlinux-bookworm-qemu-amd64-initrd.img \
+ -m 1G \
+ -serial mon:stdio \
+ -netdev user,id=net,hostfwd=tcp:127.0.0.1:22222-:22 \
+ -cpu qemu64 \
+ -smp 4 \
+ -machine q35,accel=kvm:tcg \
+ -global ICH9-LPC.noreboot=off \
+ -device virtio-net-pci,netdev=net \
+ -device ide-hd,drive=disk \
+ -device usb-ehci,id=ehci \
+ -device usb-tablet \
+ -device usb-kbd \
+ -device VGA \
+ -append "root=/dev/sda rw console=ttyS0 ip=dhcp"
+```
+
+##### For trixie
+
+```
+qemu-system-x86_64 \
+ -drive file=./tmp/deploy/images/qemu-amd64/emlinux-image-weston-emlinux-trixie-qemu-amd64.ext4,discard=unmap,if=none,id=disk,format=raw \
+ -kernel ./tmp/deploy/images/qemu-amd64/emlinux-image-weston-emlinux-trixie-qemu-amd64-vmlinuz \
+ -initrd ./tmp/deploy/images/qemu-amd64/emlinux-image-weston-emlinux-trixie-qemu-amd64-initrd.img \
  -m 1G \
  -serial mon:stdio \
  -netdev user,id=net,hostfwd=tcp:127.0.0.1:22222-:22 \
@@ -400,6 +447,7 @@ EMLinux currently supports the following machines. The supported machines are di
 
 ### Supported machines in trixie
 
+- qemu-amd64
 - qemu-arm64
 - qemu-arm
 - raspberrypi4b-64
