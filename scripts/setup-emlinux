@@ -59,11 +59,9 @@ if [ -z "$TEMPLATECONF" ] && [ "${EML_BUILDDIR_SETUP_DONE}" = "false" ]; then
     # Add debian repository
     echo "DEBIAN_MIRROR=\"http://archive.debian.org/debian/pool\"" >> conf/local.conf
     # Add debian security updates repository
-    echo "DEBIAN_SECURITY_UPDATE_MIRROR=\"http://security.debian.org/debian-security/pool/updates\"" >> conf/local.conf
+    echo "DEBIAN_SECURITY_UPDATE_MIRROR=\"http://archive.debian.org/debian-security/pool/updates\"" >> conf/local.conf
     # Add ELTS updates repository
     echo "DEBIAN_ELTS_SECURITY_UPDATE_MIRROR=\"http://deb.freexian.com/extended-lts/pool\"" >> conf/local.conf
-    # Add repository mirrors
-    echo 'MIRRORS+="${DEBIAN_SECURITY_UPDATE_MIRROR}    http://archive.debian.org/debian-security/pool/updates \n"' >> conf/local.conf
 
     if [ -d "${EML_HOOKS}" ]; then
 	for hook in $(\ls ${EML_HOOKS}); do
