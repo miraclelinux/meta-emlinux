@@ -9,8 +9,8 @@ FILESEXTRAPATHS:prepend := "${FILE_DIRNAME}/files/6.12:"
 
 require recipes-kernel/linux/linux-cip-common.inc
 
-LINUX_CIP_VERSION = "v6.12.36-cip4"
-PV = "6.12.36-cip4"
+LINUX_CIP_VERSION = "v6.12.39-cip5"
+PV = "6.12.39-cip5"
 BRANCH = "linux-6.12.y-cip"
 
 SRC_URI:append:qemu-arm64 = " file://qemu-arm64_defconfig"
@@ -19,4 +19,4 @@ SRC_URI:append:qemu-amd64 = " file://qemu-amd64_defconfig"
 SRC_URI:append:generic-x86-64 = " file://generic-x86-64_defconfig"
 SRC_URI:append:raspberrypi4b-64 = " file://raspberrypi4-64_defconfig"
 
-SRCREV = "24cd8155efab47b262747fcae9db7404333c9312"
+SRCREV = "c5c2a910062275d412bd98e33e4e25c3ea2b21b4"
