@@ -4,3 +4,7 @@
 # example.
 #linux-cip:
 #- CVE-2023-35825
+linux-cip:
+  - CVE-2016-3699
+  - CVE-2017-6264
+  - CVE-2019-14899
