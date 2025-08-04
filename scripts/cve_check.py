@@ -157,6 +157,11 @@ def create_debian_pkg_cve_info(pkgname, bin_pkgname, installed_version, debian_c
     for cveid in cve_ids:
         fixed = False
         if cveid in debian_cveinfo:
+            if not codename in debian_cveinfo[cveid]["releases"]:
+                # Package may be installed from other debian version.
+                logger.debug(f"pkg:{pkgname}: {cveid} for {codename} is not found")
+                return None
+
             dc = debian_cveinfo[cveid]["releases"][codename]
             if dc["status"] == "resolved":
                 for repo in dc["repositories"]:
@@ -207,7 +212,12 @@ def merge_cve_data(uniq_installed_pkgs, installed_pkgs_cves_by_debian_data, cve_
                 nvd_cveinfo = {}
 
         bin_pkgname = uniq_installed_pkgs[pkgname]["bin_pkgs"]
-        cveinfo[pkgname] = create_debian_pkg_cve_info(pkgname, bin_pkgname, installed_version, debian_cveinfo, nvd_cveinfo, codename)
+
+        tmpret = create_debian_pkg_cve_info(pkgname, bin_pkgname, installed_version, debian_cveinfo, nvd_cveinfo, codename)
+        if not tmpret is None:
+            cveinfo[pkgname] = tmpret
+        else:
+            cve_not_in_debian.append(pkgname)
 
     for pkgname in cve_not_in_debian:
         installed_version = uniq_installed_pkgs[pkgname]["version"]
