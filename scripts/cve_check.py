@@ -286,11 +286,11 @@ def is_fixed_in_upstream_version(upstream_version, debian_upstream_version, oper
     if operator == "=":
         return uver == dver
     elif operator == "<":
-        return uver < dver
+        return uver <= dver
     elif operator == "<=":
         return uver <= dver
     elif operator == ">":
-        return dver > uver
+        return dver >= uver
     elif operator == ">=":
         return dver >= uver
     return False # unknown operator
@@ -308,11 +308,11 @@ def is_affected_upstream_version(upstream_version, debian_upstream_version, oper
     if operator == "=":
         return uver == dver
     elif operator == "<":
-        return dver < uver
+        return dver <= uver
     elif operator == "<=":
         return dver <= uver
     elif operator == ">":
-        return dver > uver
+        return dver >= uver
     elif operator == ">=":
         return dver >= uver
 
