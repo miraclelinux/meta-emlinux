@@ -80,5 +80,9 @@ require conf/distro/include/yocto-uninative.inc
 require conf/distro/include/no-static-libs.inc
 INHERIT += "uninative"
 
+# fixes-poky.bbclass is fixes Poky's bbclass bugs by overwriting functions
+# Add it at the very end of the INHERIT definition.
+INHERIT_append += "fixes-poky"
+
 # In .bbappend, enable PR value addition using the ADD_PR variable.
 INHERIT += "increment_bbappend_pr"
