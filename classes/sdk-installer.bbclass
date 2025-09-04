@@ -39,8 +39,9 @@ fi
 
 answer=""
 target_sdk_dir="/opt"
+repatch_list=""
 
-while getopts ":yd:" OPT; do
+while getopts ":yd:l:" OPT; do
     case $OPT in
     y)
         answer="Y"
@@ -48,6 +49,8 @@ while getopts ":yd:" OPT; do
     d)
         target_sdk_dir=$OPTARG
         ;;
+    l)
+        repatch_list=$OPTARG
     esac
 done
 
@@ -73,7 +76,12 @@ sdk_installed_dir="${sdk_install_target_dir}/${EMLINUX_SDK_BASE_NAME}"
 echo "Installing EMLinux SDK to ${sdk_install_target_dir} ."
 tail -n +${SDK_START_LINE} $0 | sudo tar xpJ -C ${sdk_install_target_dir}
 
-sudo "${sdk_installed_dir}/relocate-sdk.sh" || (echo "Setup SDK environment failed." ; exit 1)
+if [ -f "${repatch_list}" ]; then
+    arg="-l ${repatch_list}"
+else
+    arg=""
+fi
+sudo "${sdk_installed_dir}/relocate-sdk.sh" $arg || (echo "Setup SDK environment failed." ; exit 1)
 
 sudo sed -i "s:@EMLINUX_SDK_INSTALL_DIR@:${sdk_installed_dir}:g" "${sdk_installed_dir}/environment-setup-${MACHINE}-${DISTRO}"
 sudo sed -i "s/@EMLINUX_SDK_TOOLCHAIN_PREFIX@/${EMLINUX_SDK_TARGET_TOOLCHAIN_PREFIX}/g" "${sdk_installed_dir}/environment-setup-${MACHINE}-${DISTRO}"
