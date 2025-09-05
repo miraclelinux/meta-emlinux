@@ -1,0 +1,37 @@
+#
+# An example for building go project
+#
+# Copyright (c) Cyberturst Japan Co., Ltd. 2025
+#
+# Authors:
+#  Daisuke Yamane <daisuke.yamane@miraclelinux.com>
+#
+# SPDX-License-Identifier: MIT
+#
+
+inherit dpkg
+
+DEBIAN_BUILD_DEPENDS += "dh-golang, golang-any, rsync"
+
+TEMPLATE_FILES = "debian/rules.tmpl debian/control.tmpl"
+TEMPLATE_VARS += "MACHINE DEBIAN_BUILD_DEPENDS DESCRIPTION BOARD_TARGETS RCWDIR RCW_FOLDER RCWQSPI RCWSD RCW_SUFFIX DEPLOYDIR BOOTTYPE CHASISTYPE BLD_OPT PLATFORM EXTRA_OEMAKE COMBINED_FEATURES DISTRO_FEATURES　MAINTAINER BUILDDIR DISTRO_ARCH DEBIAN_COMPAT"
+
+SRC_URI = "\
+    git://github.com/go-training/helloworld.git;protocol=https;branch=master \
+    file://debian/ \
+    "
+SRCREV = "ba5f4379d78b0dbf4f58b0aec7af9bb7f645fa2e"
+
+DESCRIPTION = "An example for building go-lang project"
+LICENSE = "MIT"
+LIC_FILES_CHKSUM = "file://LICENSE;md5=f37338b31c69eb5f0aae2fc8f49350f2"
+
+MAINTAINER = "Daisuke Yamane <daisuke.yamane@miraclelinux.com>"
+
+S = "${WORKDIR}/git"
+
+do_prepare_build() {
+    cp -r ${WORKDIR}/debian ${S}/
+
+    deb_add_changelog
+}
