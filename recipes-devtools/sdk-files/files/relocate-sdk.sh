@@ -71,6 +71,9 @@ done
 ## HACK: Listed binaries require applying patchelf twice to avoid segfaults.
 for binary in $(cat $repatch_list ${new_sdkroot}/repatch.list); do
 	binary=${sdkroot}/${binary}
+	if [ ! -f "${binary}" ]; then
+		continue
+	fi
 	if file -L ${binary} |grep "executable" 2>&1 >/dev/null; then
 		interpreter=$(patchelf --print-interpreter ${binary} 2>/dev/null)
 		oldpath=${interpreter%/lib*/ld-linux*}
