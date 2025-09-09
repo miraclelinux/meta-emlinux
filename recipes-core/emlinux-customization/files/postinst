@@ -10,8 +10,8 @@
 #
 set -e
 
-echo "EMLinux 3.3 \\\n \\\l" > /etc/issue
-echo "EMLinux 3.3" > /etc/issue.net
+echo "EMLinux 3.4 \\\n \\\l" > /etc/issue
+echo "EMLinux 3.4" > /etc/issue.net
 
 HOSTNAME=EMLinux3
 
