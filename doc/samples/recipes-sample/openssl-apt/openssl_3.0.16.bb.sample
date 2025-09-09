@@ -19,7 +19,7 @@ LIC_FILES_CHKSUM = "file://LICENSE.txt;md5=c75985e733726beaba57bc5253e96d04"
 inherit dpkg
 
 SRC_URI = " \
-    apt://${PN}/bookworm \
+    apt://${PN}=3.0.16-1~deb12u1/bookworm \
     file://custom-debian \
 "
 
