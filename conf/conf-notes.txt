@@ -1,4 +1,3 @@
 Common targets are:
-    mc:qemuarm-bookworm:isar-image-base
-    mc:qemuarm64-bookworm:isar-image-base
-    mc:qemuamd64-bookworm:isar-image-base
+    emlinux-image-base
+    emlinux-image-weston
