@@ -19,6 +19,7 @@ from spdx_tools.spdx.validation.document_validator import validate_full_spdx_doc
 from spdx_tools.spdx.validation.validation_message import ValidationMessage
 from spdx_tools.spdx.writer.write_anything import write_file
 from spdx_tools.spdx.model.spdx_none import SpdxNone
+from license_expression import ExpressionParseError
 
 import re
 import json
@@ -79,12 +80,21 @@ def split_licenses(lic, sep):
     return arr
 
 def create_license_string(pkg, license_mapping):
-    arr = []
+    licenses = []
     s = ""
 
-    licenses = licensing.normalize_for_spdx(create_uniq_list(pkg["licenses"]), license_mapping)
+    licenses_tmp = licensing.normalize_for_spdx(create_uniq_list(pkg["licenses"]), license_mapping)
+
+    try:
+        for lic in licenses_tmp:
+            spdx_licensing.parse(lic)
+            licenses.append(lic)
+    except ExpressionParseError as e:
+        logger.debug(f"Invalid license name '{lic}'")
+        licenses.append("unknown")
 
     s = " AND ".join(licenses)
+
     return spdx_licensing.parse(s)
 
 def create_package_info(pkg, distro, license_mapping):
