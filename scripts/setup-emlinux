@@ -34,6 +34,7 @@ if [ ! -d "${REPOS}/isar-cip-core" ]; then
   git clone -b master https://gitlab.com/cip-project/cip-core/isar-cip-core.git "${REPOS}/isar-cip-core"
 fi
 
+TEMPLATECONF="${REPOS}/meta-emlinux/conf" \
 source "${REPOS}/isar/isar-init-build-env" "${ENV_BUILDDIR}"
 
 ENV_TOPDIR=$(dirname $(pwd))
