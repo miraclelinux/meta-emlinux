@@ -1,0 +1,237 @@
+# This software is a part of ISAR.
+# Copyright (C) 2016-2024 ilbers GmbH
+# Copyright (C) 2017-2024 Siemens AG
+#
+# SPDX-License-Identifier: MIT
+
+#
+# This file is your local configuration file and is where all local user settings
+# are placed. The comments in this file give some guide to the options a new user
+# to the system might want to change but pretty much any configuration option can
+# be set in this file. More adventurous users can look at local.conf.extended
+# which contains other examples of configuration which can be placed in this file
+# but new users likely won't need any of them initially.
+#
+# Lines starting with the '#' character are commented out and in some cases the
+# default values are provided as comments to show people example syntax. Enabling
+# the option is a question of removing the # character and making any change to the
+# variable as required.
+
+#
+# Machine Selection
+#
+# You need to select a specific machine to target the build with. There are a selection
+# of emulated machines available which can boot and run in the QEMU emulator:
+#
+# This sets the default machine to be qemuarm if no other machine is selected:
+MACHINE ??= "qemuarm"
+
+#
+# Isar Configuration Selection
+#
+# You need to select a specific distribution configuration which will used for both:
+# generation of schroot environment and target root filesystem.
+#
+# This sets the default distribution configuration:
+DISTRO ??= "debian-bookworm"
+DISTRO_ARCH ??= "armhf"
+
+#
+# Multiple Configuration Selection
+#
+include ${LAYERDIR_isar}/conf/mc.conf
+
+#
+# Where to place downloads
+#
+# During a first build the system will download many different source code tarballs
+# from various upstream projects. This can take a while, particularly if your network
+# connection is slow. These are all stored in DL_DIR. When wiping and rebuilding you
+# can preserve this directory to speed up this part of subsequent builds. This directory
+# is safe to share between multiple builds on the same machine too.
+#
+# The default is a downloads directory under TOPDIR which is the build directory.
+#
+#DL_DIR ?= "${TOPDIR}/downloads"
+
+#
+# Where to place shared-state files
+#
+# BitBake has the capability to accelerate builds based on previously built output.
+# This is done using "shared state" files which can be thought of as cache objects
+# and this option determines where those files are placed.
+#
+# You can wipe out TMPDIR leaving this directory intact and the build would regenerate
+# from these files if no changes were made to the configuration. If changes were made
+# to the configuration, only shared state files where the state was still valid would
+# be used (done using checksums).
+#
+# The default is a sstate-cache directory under TOPDIR.
+#
+#SSTATE_DIR ?= "${TOPDIR}/sstate-cache"
+
+#
+# Where to place the build output
+#
+# This option specifies where the bulk of the building work should be done and
+# where BitBake should place its temporary files and output. Keep in mind that
+# this includes the extraction and compilation of many applications and the toolchain
+# which can use Gigabytes of hard disk space.
+#
+# The default is a tmp directory under TOPDIR.
+#
+#TMPDIR = "${TOPDIR}/tmp"
+
+#
+# Interactive shell configuration
+#
+# Under certain circumstances the system may need input from you and to do this it
+# can launch an interactive shell. It needs to do this since the build is
+# multithreaded and needs to be able to handle the case where more than one parallel
+# process may require the user's attention. The default is iterate over the available
+# terminal types to find one that works.
+#
+# Examples of the occasions this may happen are when resolving patches which cannot
+# be applied, to use the devshell or the kernel menuconfig
+#
+# Supported values are auto, gnome, xfce, rxvt, screen, konsole (KDE 3.x only), none
+# Note: currently, Konsole support only works for KDE 3.x due to the way
+# newer Konsole versions behave
+#OE_TERMINAL = "auto"
+# By default disable interactive patch resolution (tasks will just fail instead):
+PATCHRESOLVE = "noop"
+
+#
+# Disk Space Monitoring during the build
+#
+# Monitor the disk space during the build. If there is less that 1GB of space or less
+# than 100K inodes in any key build location (TMPDIR, DL_DIR, SSTATE_DIR), gracefully
+# shutdown the build. If there is less that 100MB or 1K inodes, perform a hard abort
+# of the build. The reason for this is that running completely out of space can corrupt
+# files and damages the build in ways which may not be easily recoverable.
+# It's necesary to monitor /tmp, if there is no space left the build will fail
+# with very exotic errors.
+BB_DISKMON_DIRS = "\
+    STOPTASKS,${TMPDIR},1G,100K \
+    STOPTASKS,${DL_DIR},1G,100K \
+    STOPTASKS,${SSTATE_DIR},1G,100K \
+    STOPTASKS,/tmp,100M,100K \
+    HALT,${TMPDIR},100M,1K \
+    HALT,${DL_DIR},100M,1K \
+    HALT,${SSTATE_DIR},100M,1K \
+    HALT,/tmp,10M,1K"
+
+# Isar MIRRORS in case of service unavailable
+MIRRORS ?= "git?://salsa\.debian\.org/debian/.* git://github.com/ilbers/BASENAME"
+
+# External MIRRORS in case of service unavailable
+MIRRORS += "https?://cdn\.kernel\.org/.* https://mirrors.edge.kernel.org/PATH"
+
+#
+# Shared-state files from other locations
+#
+# As mentioned above, shared state files are prebuilt cache data objects which can
+# used to accelerate build time. This variable can be used to configure the system
+# to search other mirror locations for these objects before it builds the data itself.
+#
+# This can be a filesystem directory, or a remote url such as http or ftp. These
+# would contain the sstate-cache results from previous builds (possibly from other
+# machines). This variable works like fetcher MIRRORS/PREMIRRORS and points to the
+# cache locations to check for the shared objects.
+# NOTE: if the mirror uses the same structure as SSTATE_DIR, you need to add PATH
+# at the end as shown in the examples below. This will be substituted with the
+# correct path within the directory structure.
+#SSTATE_MIRRORS ?= "\
+#file://.* http://someserver.tld/share/sstate/PATH;downloadfilename=PATH \n \
+#file://.* file:///some/local/dir/sstate/PATH"
+
+# CONF_VERSION is increased each time build/conf/ changes incompatibly and is used to
+# track the version of this file when it was generated. This can safely be ignored if
+# this doesn't mean anything to you.
+CONF_VERSION = "1"
+
+#
+# The default list of extra packages to be installed.
+IMAGE_INSTALL = "hello-isar example-raw example-module-${KERNEL_NAME} enable-fsck isar-exclude-docs samefile hello isar-disable-apt-cache cowsay example-prebuilt"
+
+#
+# Container machines don't need example module and enable-fsck.
+IMAGE_INSTALL:remove:container-amd64 = "example-module-${KERNEL_NAME} enable-fsck"
+
+#
+# Machines with secure boot should use signed modules.
+IMAGE_INSTALL:remove:qemuamd64-sb = "example-module-${KERNEL_NAME}"
+IMAGE_INSTALL:append:qemuamd64-sb = " example-module-signed-${KERNEL_NAME}"
+
+#
+# Uncomment this to disable cross-compilation support
+#ISAR_CROSS_COMPILE ?= "0"
+
+#
+# Uncomment to enable 32-bit compat architecture support
+# NOTE: this works for amd64 and arm64 targets so far
+#ISAR_ENABLE_COMPAT_ARCH ?= "1"
+
+# Uncomment this to enable caching of all source packages.
+# Without this feature, only sources of packages downloaded with apt:// are downloaded.
+#BASE_REPO_FEATURES ?= "cache-deb-src"
+
+# Uncomment this to enable caching of all debug symbol packages.
+#BASE_REPO_FEATURES += "cache-dbg-pkgs"
+
+#
+# Uncomment this to enable use of cached base repository
+#ISAR_USE_CACHED_BASE_REPO ?= "1"
+#
+# You probably want to uncomment this as well to make sure the build
+# does not access the network
+#BB_NO_NETWORK ?= "1"
+
+# Set root password to 'root'
+# Password was encrypted using following command:
+#   mkpasswd -m sha512crypt -R 10000
+# mkpasswd is part of the 'whois' package of Debian
+USERS += "root"
+USER_root[password] ??= "$6$rounds=10000$RXeWrnFmkY$DtuS/OmsAS2cCEDo0BF5qQsizIrq6jPgXnwv3PHqREJeKd1sXdHX/ayQtuQWVDHe0KIO0/sVH8dvQm1KthF0d/"
+
+GROUPS += "isar"
+GROUP_isar[flags] = "system"
+
+USERS += "isar"
+USER_isar[gid] = "isar"
+USER_isar[home] = "/var/lib/isar"
+USER_isar[comment] = "My isar user"
+USER_isar[flags] = "system create-home"
+
+USER_isar[password] = "isar"
+USER_isar[flags] += "clear-text-password"
+
+# Use buildstats by default
+#USE_BUILDSTATS = "1"
+
+# Uncomment the below line to debug WIC.
+# WIC_CREATE_EXTRA_ARGS += "-D"
+
+# Uncomment this to also deploy each wic partition as separate file (e.g. for swupdate)
+#WIC_DEPLOY_PARTITIONS = "1"
+
+# Uncomment this to use ccache for custom packages
+#USE_CCACHE = "1"
+# Uncomment and set own top level ccache directory to share between builds
+#CCACHE_TOP_DIR ?= "${TMPDIR}/ccache"
+# Enable ccache debug mode
+#CCACHE_DEBUG = "1"
+
+# Uncommnet and add value to it to build images reproducibly
+#
+# The value for `SOURCE_DATE_EPOCH` should be latest source change time in
+# seconds since the Epoch.
+# Git repository users can use value from 'git log -1 --pretty=%ct'
+# Non git repository users can use value from 'stat -c%Y ChangeLog'
+# To know more details about this variable and how to set the value refer below
+# https://reproducible-builds.org/docs/source-date-epoch/
+#SOURCE_DATE_EPOCH =
+
+# Uncomment this to use old isar-bootstrap provider for rootfs prepare
+#PREFERRED_PROVIDER_bootstrap-host ?= "isar-bootstrap-host"
+#PREFERRED_PROVIDER_bootstrap-target ?= "isar-bootstrap-target"
