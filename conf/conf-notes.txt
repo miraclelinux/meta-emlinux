@@ -1,0 +1,3 @@
+Common targets are:
+    emlinux-image-base
+    emlinux-image-weston
