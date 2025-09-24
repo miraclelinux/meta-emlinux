@@ -175,7 +175,7 @@ def write_sbom_json(output_filepath, sbom_data):
 
 def main(args):
     if args.verbose_output:
-        logging.basicConfig(level = logging.DEBUG)
+        logger.setLevel(logging.DEBUG)
 
     bitbakeinfo = bitbake_runner.get_bitbake_information(args.image)
     rootfs = bitbakeinfo["rootfs_dir"]
