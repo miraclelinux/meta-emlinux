@@ -10,8 +10,9 @@
 #
 FILESEXTRAPATHS:prepend := "${FILE_DIRNAME}/files:"
 
+EMLINUX_SOURCE_FROM="non-debian"
 DESCRIPTION = "EMLinux 3.x specific customization"
-
+LICENSE = "MIT"
 DEBIAN_DEPENDS = "netbase"
 
 inherit dpkg-raw
@@ -26,4 +27,3 @@ do_install:append() {
         echo "PS1=\"${EMLINUX_ENVIRONMENT_VARIABLE_PS1}\"" > "${D}/etc/profile.d/ps1.sh"
     fi
 }
-

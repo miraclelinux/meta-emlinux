@@ -17,3 +17,5 @@ SRC_URI[sha256sum] = "1caa1b8e24bcfdd55c3cffd8f147f3d33282312989d85c82fc1bc39b80
 KBUILD_DEPENDS:append = ", zstd"
 
 LIBSSL_DEP:armhf:trixie = "libssl3t64"
+
+EMLINUX_SOURCE_FROM="non-debian"
