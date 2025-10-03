@@ -41,7 +41,7 @@ Files:
 Copyright:
  2007-2012 The Kronos Group Inc.
  2006-2012 Broadcom Europe Ltd.
-License: MIT or Apache-2 (FIXME)
+License: MIT and BSD-3-Clause
 
 Files:
  boot/kernel*.img
