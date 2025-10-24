@@ -1,0 +1,28 @@
+inherit dpkg
+
+ISAR_CROSS_COMPILE = "0"
+
+# tar.gz file url specification is defined in https://docs.pypi.org/api/#predictable-urls
+SRC_URI = " \
+  https://files.pythonhosted.org/packages/source/t/textfile/textfile-${PV}.tar.gz \
+  file://debian/control \
+  file://debian/rules \
+"
+
+SRC_URI[sha256sum] = "057e70442275426ed76c229a14fc99e62021bb89c030748f59d29edad6475489"
+
+S = "${WORKDIR}/textfile-${PV}"
+
+PROVIDES += "python3-textfile"
+
+DEB_BUILD_PROFILES = "nocheck"
+DEB_BUILD_OPTIONS = "nocheck"
+
+do_prepare_build[cleandirs] += "${S}/debian"
+do_prepare_build() {
+    deb_debianize
+    rm -f ${S}/debian/compat
+    cp ${WORKDIR}/debian/control \
+       ${WORKDIR}/debian/rules \
+       ${S}/debian/
+}

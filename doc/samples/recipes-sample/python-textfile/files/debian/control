@@ -1,0 +1,24 @@
+Source: python-textfile
+Section: python
+Priority: optional
+Maintainer: Cybertrust <announce@cportal.cybertrust.co.jp>
+Build-Depends: debhelper-compat (= 13),
+ dh-python,
+ pybuild-plugin-pyproject,
+ python3-all,
+ python3-poetry-core,
+ python3-venv,
+ python3-all-dev,
+Standards-Version: 4.6.1
+Homepage: https://jimaru.site/textfile/
+Vcs-Browser: https://github.com/kendimaru/textfile
+Vcs-Git: https://github.com/kendimaru/textfile.git
+Rules-Requires-Root: no
+
+Package: python3-textfile
+Architecture: all
+Multi-Arch: foreign
+Depends:
+  ${python3:Depends},
+  ${misc:Depends}
+Description: Functions that enables us to write out or read from with text file in shorter syntax.
