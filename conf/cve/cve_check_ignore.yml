@@ -1,24 +1,54 @@
 # format
 # debian source package name:
+#   version:
 #   - CVE ID
+# 
+# The version key takes following values
+# 1. linux-cip or linux-cip-rt:
+#   It can use version number which is in recipe name.
+#   e.g. 6.12 for linux-cip_6.12.bb, 6.1 for linux-cip_6.1.bb
+# 2. debian package
+#   When installing packages using IMAGE_PREINSTALL or IMAGE_INSTALL 
+#   from the same Debian release as the one specified in the DISTRO 
+#   variable(emlinux-<debian codename>).
+#   It can use debian codename such as bookworm, trixie.
+# 3. other 
+#   If neither of the above conditions 1 and 2 apply, for example,
+#   if you are backporting packages from a newer release of Debian 
+#   regardless of the version, or building from sources other than 
+#   Debian packages, use "all".
+#   
 # example.
 #linux-cip:
-#- CVE-2023-35825
+#  6.1:
+#    - CVE-2023-35825
+#bash:
+#  bookworm:
+#   - CVE-2023-45853
+#vim:
+#  bookworm:
+#    - CVE-2008-4677
+#  trixie:
+#    - CVE-2017-1000382
+#util-linux:
+#  all:
+#   - CVE-2022-0563
 linux-cip:
-  - CVE-2016-3699
-  - CVE-2017-6264
-  - CVE-2019-14899
-  - CVE-2020-26556
-  - CVE-2020-26557
-  - CVE-2020-26559
-  - CVE-2020-26560
-  - CVE-2021-0399
-  - CVE-2021-29256
-  - CVE-2021-3492
-  - CVE-2021-39802
-  - CVE-2022-2327
-  - CVE-2022-36397
-  - CVE-2023-0030
-  - CVE-2023-26242
-  - CVE-2023-3079
-  - CVE-2024-49928
+  6.1:
+    - CVE-2016-3699
+    - CVE-2017-6264
+    - CVE-2019-14899
+    - CVE-2020-26556
+    - CVE-2020-26557
+    - CVE-2020-26559
+    - CVE-2020-26560
+    - CVE-2021-0399
+    - CVE-2021-29256
+    - CVE-2021-3492
+    - CVE-2021-39802
+    - CVE-2022-2327
+    - CVE-2022-36397
+    - CVE-2023-0030
+    - CVE-2023-26242
+    - CVE-2023-3079
+    - CVE-2024-49928

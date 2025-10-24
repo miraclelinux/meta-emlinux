@@ -7,7 +7,6 @@
 #
 # SPDX-License-Identifier: MIT
 #
-
 import argparse
 import sys
 import os, os.path
@@ -15,6 +14,7 @@ import sqlite3
 import yaml
 import logging
 import debian.debian_support
+import re
 
 logging.basicConfig(level = logging.INFO, format='%(asctime)s:%(levelname)s: %(message)s')
 logger = logging.getLogger("emlinux-cve-check")
@@ -48,26 +48,82 @@ def get_cve_products(extra_cve_product):
 
     return data
 
-def get_cve_ignore(extra_cve_check_ignore):
+def get_cve_ignore(uniq_installed_pkgs, debian_codename, extra_cve_check_ignore):
     name = os.path.join(os.path.dirname(__file__), "../conf/cve/cve_check_ignore.yml")
 
-    data = None
-    with open(name, "r") as f:
-        data = yaml.safe_load(f)
+    def read_ignore_list(filename):
+        if filename is None:
+            return {}
 
-    if extra_cve_check_ignore:
-        with open(extra_cve_check_ignore, "r") as f:
-            tmp = yaml.safe_load(f)
-            if tmp:
-                if data is None:
-                    data = {}
-                for pkg in tmp:
-                    if pkg in data:
-                        data[pkg] = data[pkg] + tmp[pkg]
+        try:
+            with open(filename) as f:
+                return yaml.safe_load(f)
+        except FileNotFoundError:
+            logger.warn(f"File {filename} is not found")
+            return {}
+
+    # 1. Read default ignore data
+    tmp_merge_list = read_ignore_list(name)
+    # 2. Read extra ignore list
+    extra_data = read_ignore_list(extra_cve_check_ignore)
+
+    # backward compatibility
+    def make_backward_compatibility(data):
+        tmp = {}
+        for pkg in data:
+            if type(data[pkg]) is list:
+                tmp[pkg] = { "all": data[pkg] }
+            else:
+                tmp[pkg] = data[pkg]
+        return tmp
+
+    tmp_merge_list = make_backward_compatibility(tmp_merge_list)
+    extra_data = make_backward_compatibility(extra_data)
+
+    # 3. Merge default and extra list
+    if extra_data:
+        for pkg in extra_data:
+            if pkg in tmp_merge_list:
+                for ek in extra_data[pkg].keys():
+                    if ek in tmp_merge_list[pkg]:
+                        tmp_merge_list[pkg][ek] += extra_data[pkg][ek]
                     else:
-                        data[pkg] = tmp[pkg]
+                        tmp_merge_list[pkg][ek] = extra_data[pkg][ek]
+            else:
+                tmp_merge_list[pkg] = extra_data[pkg]
 
-    return data
+    # 4. Create complete ignore list
+    # This step does not collect CVE IDs which are not target distribution/linux version.
+    ignore_list = {}
+    all_used = []
+    for pkg in tmp_merge_list:
+        d = tmp_merge_list[pkg]
+        for version in d.keys():
+            if debian_codename == version:
+                ignore_list[pkg] = d[version]
+            elif version == "all":
+                if not pkg in ignore_list:
+                    ignore_list[pkg] = []
+                all_used.append(pkg)
+            else:
+                if not pkg in uniq_installed_pkgs:
+                    continue
+                pkg_version = str(uniq_installed_pkgs[pkg]["upstream_version"])
+                if str(version) == pkg_version:
+                    ignore_list[pkg] = d[version]
+                    break
+
+                ver_pattern = rf"\b{re.escape(str(version))}(?!\d)"
+                m = re.search(ver_pattern, pkg_version)
+                if m:
+                    if not pkg in ignore_list:
+                        ignore_list[pkg] = d[version]
+                    else:
+                        ignore_list[pkg].extend(d[version])
+
+    for pkg in all_used:
+        ignore_list[pkg].extend(tmp_merge_list[pkg]["all"])
+    return ignore_list
 
 def update_ignored_cves_status(cves, cve_ignore_list):
     if cve_ignore_list is None:
@@ -669,10 +725,10 @@ def main(args):
         exit(1)
 
     installed_pkgs = debian_cve.parse_dpkg_status(bitbakeinfo["dpkg_status"])
-    cve_products = get_cve_products(args.extra_cve_product)
-    cve_ignore_list = get_cve_ignore(args.extra_cve_check_ignore)
-
     uniq_installed_pkgs = create_unique_package(installed_pkgs)
+    cve_products = get_cve_products(args.extra_cve_product)
+    cve_ignore_list = get_cve_ignore(uniq_installed_pkgs, args.debian_codename, args.extra_cve_check_ignore)
+
     linux_kernel_src_dir = os.path.abspath(bitbakeinfo["kernel_srcdir"])
     cves = create_cves_info(db_file, debian_cve_list, uniq_installed_pkgs, installed_pkgs, args.debian_codename, cve_products, linux_kernel_src_dir, cip_kernel_sec_dir, kev_list)
 
