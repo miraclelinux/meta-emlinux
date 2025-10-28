@@ -119,6 +119,8 @@ do_shared_workdir_prepend () {
 # CVE-2024-50286: Vulnerable code not present.
 # CVE-2019-14899: This is not a kernel issue.
 # CVE-2023-32256: Vulnerable code not present.
+# CVE-2024-42147: Vulnerable code not present.
+# CVE-2024-56609: Vulnerable code not present.
 CVE_CHECK_WHITELIST = "\
     CVE-2021-43057 CVE-2015-8955 CVE-2020-8834 \
     CVE-2017-6264 CVE-2017-1000377 CVE-2007-2764 \
@@ -150,4 +152,5 @@ CVE_CHECK_WHITELIST = "\
     CVE-2024-27297 CVE-2024-49932 CVE-2025-37805 \
     CVE-2024-50086 CVE-2024-50112 CVE-2024-50217 \
     CVE-2024-50286 CVE-2019-14899 CVE-2023-32256 \
+    CVE-2024-42147 CVE-2024-56609 \
 "
