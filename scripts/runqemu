@@ -1,0 +1,79 @@
+#!/bin/bash
+
+usage () {
+    echo "usage: runqemu <machine> <distro> <image>"
+    echo ""
+    echo "e.g.) runqemu qemu-amd64 emlinux-bookworm emlinux-image-base"
+    echo ""
+    echo "Supported machines	qemu-amd64, qemu-arm64, qemu-arm"
+    echo ""
+    echo "Any distro and image can be specified according to the image to run."
+}
+
+source <(bitbake -e | grep DEPLOY_DIR=)
+
+if [ ! -v DEPLOY_DIR ]; then
+    echo "DEPLOY_DIR is not set. Please run \`source setup-emlinux <build directory>\`."
+    exit 1
+fi
+
+if [ $# -ne 3 ]; then
+    usage
+    exit 1
+fi
+
+case $1 in
+    "qemu-amd64")
+	arch="x86_64"
+	machine="q35,accel=kvm:tcg"
+	cpu="qemu64"
+	kernel_type="vmlinuz"
+	disk_drive="-device ide-hd,drive=disk -drive file=$DEPLOY_DIR/images/$1/$3-$2-$1.ext4,discard=unmap,if=none,id=disk,format=raw"
+	block_device="/dev/sda"
+	console="ttyS0"
+	;;
+    "qemu-arm64")
+	arch="aarch64"
+	machine="virt"
+	cpu="cortex-a57"
+	kernel_type="vmlinux"
+	disk_drive="-device virtio-blk-device,drive=disk0 -drive id=disk0,file=$DEPLOY_DIR/images/$1/$3-$2-$1.ext4,if=none,format=raw"
+	block_device="/dev/vda"
+	console="ttyAMA0"
+	;;
+    "qemu-arm")
+	arch="arm"
+	machine="virt-2.12"
+	cpu="cortex-a15"
+	kernel_type="vmlinuz"
+	disk_drive="-device virtio-blk-device,drive=disk0 -drive id=disk0,file=$DEPLOY_DIR/images/$1/$3-$2-$1.ext4,if=none,format=raw"
+	block_device="/dev/vda"
+	console="ttyAMA0"
+	;;
+    *)
+	usage
+	exit 1
+	;;
+esac
+
+if [ $3 = "emlinux-image-weston" ]; then
+    graphics_opt="-device VGA,edid=on"
+else
+    graphics_opt="-nographic"
+fi
+
+qemu-system-$arch \
+    $disk_drive \
+    $graphics_opt \
+    -device usb-ehci,id=ehci \
+    -device usb-tablet \
+    -device usb-kbd \
+    -device virtio-rng-pci,rng=rng0  \
+    -object rng-random,filename=/dev/urandom,id=rng0 \
+    -machine $machine \
+    -cpu $cpu \
+    -m 512 \
+    -serial mon:stdio \
+    -kernel $DEPLOY_DIR/images/$1/$3-$2-$1-$kernel_type \
+    -initrd $DEPLOY_DIR/images/$1/$3-$2-$1-initrd.img \
+    -append "root=$block_device rw mem=512M ip=dhcp console=$console"
