@@ -8,7 +8,22 @@
 
 import re
 import subprocess
-import sys
+
+def find_layers():
+    cmd = ["bitbake-layers", "show-layers"]
+    process = subprocess.Popen(cmd, stdout=subprocess.PIPE, text=True)
+    output, errors = process.communicate()
+
+    layers = []
+
+    lines = output.split("\n")
+    for line in lines:
+        tmp = [col for col in line.split(" ") if not col == ""]
+        if len(tmp) >= 2:
+            if "/repos/" in tmp[1]:
+                layers.append(tmp[1])
+
+    return layers
 
 def get_linux_source_dir(kernel_name):
     cmd = ["bitbake", f"linux-{kernel_name}", "-e"]
@@ -27,7 +42,7 @@ def get_bitbake_information(image):
     try:
         process = subprocess.Popen(cmd, stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True)
         output, errors = process.communicate()
-    except FileNotFoundError as e:
+    except FileNotFoundError:
         print("bitbake command is not found.")
         print("Please run [source setup-emlinux <your build directory>]")
         exit(1)
@@ -46,6 +61,7 @@ def get_bitbake_information(image):
     pattern_repo_isar_dir = r'\nREPO_ISAR_DIR="([^"]*)"'
     pattern_image_distro = r'\nDISTRO="([^"]*)"'
     pattern_cve_db_predownload = r'\nCVE_DB_PREDOWNLOAD_URL="([^"]*)"'
+    pattern_layer_emlinux = r'\nLAYERDIR_emlinux="([^"]*)"'
 
     deploy_image_dir = re.findall(pattern_deploy_image_dir, output)[0]
     deploy_dir = re.findall(pattern_deploy_dir, output)[0]
@@ -57,6 +73,7 @@ def get_bitbake_information(image):
     distro_arch = re.findall(pattern_distro_arch, output)[0]
     repo_isar_dir = re.findall(pattern_repo_isar_dir, output)[0]
     image_distro = re.findall(pattern_image_distro, output)[0]
+    emlinux_layer_dir = re.findall(pattern_layer_emlinux, output)[0]
 
     cve_db_url = re.findall(pattern_cve_db_predownload, output)
     if not len(cve_db_url) == 0:
@@ -67,6 +84,7 @@ def get_bitbake_information(image):
     dpkg_status = f"{deploy_image_dir}/{image_full_name}.dpkg_status"
     return {
         "deploy_dir": deploy_dir,
+        "deploy_image_dir": deploy_image_dir,
         "image_full_name": image_full_name,
         "dl_dir": dl_dir,
         "dpkg_status": dpkg_status,
@@ -76,4 +94,5 @@ def get_bitbake_information(image):
         "repo_isar_dir": repo_isar_dir,
         "image_distro": image_distro,
         "cve_db_predownload": cve_db_predownload,
+        "emlinux_layer_dir": emlinux_layer_dir,
     }
