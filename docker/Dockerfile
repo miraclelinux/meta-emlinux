@@ -11,6 +11,7 @@ RUN apt-get update --fix-missing && apt-get -y upgrade --fix-missing
 
 RUN apt-get install --fix-missing -y \
   binfmt-support \
+  bubblewrap \
   debootstrap \
   dosfstools \
   dpkg-dev \
