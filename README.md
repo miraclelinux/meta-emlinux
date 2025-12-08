@@ -46,6 +46,7 @@ Run following command to install required packages.
 ```
 $ sudo apt install \
   binfmt-support \
+  bubblewrap \
   debootstrap \
   dosfstools \
   dpkg-dev \
