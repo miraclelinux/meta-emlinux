@@ -48,7 +48,9 @@ RUN apt-get install --fix-missing -y \
   openssh-server \
   openjdk-11-jdk-headless \
   python-is-python3 \
-  python3-yaml
+  python3-yaml \
+  python3-html5lib \
+  python3-requests
 
 RUN useradd -s /bin/bash -m build -u $uid
 RUN echo "build ALL=(ALL) NOPASSWD: ALL" | tee -a /etc/sudoers
