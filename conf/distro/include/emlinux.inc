@@ -83,6 +83,7 @@ INHERIT += "uninative"
 # fixes-poky.bbclass is fixes Poky's bbclass bugs by overwriting functions
 # Add it at the very end of the INHERIT definition.
 INHERIT_append += "fixes-poky"
+INHERIT += "cve-check-append"
 
 # In .bbappend, enable PR value addition using the ADD_PR variable.
 INHERIT += "increment_bbappend_pr"
