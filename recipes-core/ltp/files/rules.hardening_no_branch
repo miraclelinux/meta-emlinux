@@ -1,0 +1,13 @@
+#!/usr/bin/make -f
+export DEB_BUILD_MAINT_OPTIONS = hardening=-branch
+export DEB_CFLAGS_MAINT_APPEND  = -Wall  -Wno-format-security
+
+LTP_CONFIGURE_FLAGS = --prefix=/opt/ltp
+
+%:
+	dh $@  --with autoreconf
+
+override_dh_auto_configure:
+	dh_auto_configure -- $(LTP_CONFIGURE_FLAGS)
+
+override_dh_auto_test:
