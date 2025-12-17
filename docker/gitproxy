@@ -1,2 +1,45 @@
-#!/bin/sh
-exec socat STDIO PROXY:$http_proxy:$1:$2
+#!/bin/bash
+#
+# Script for using proxy with git protocol
+#
+# The http_proxy environment variable is expected to have the following format:
+# - http_proxy="http://proxy.example.com"
+#   socat command HTTP proxy port default value: 8080
+# - http_proxy="http://proxy.example.com:1234"
+# - http_proxy="http://username:password@proxy.example.com:1234"
+#
+# Also can specify an IPv4/IPv6 address.
+# For IPv6 address use '[]'.
+# e.g.:
+# - http_proxy="127.0.0.1:8080"
+# - http_proxy="[::1]:8080"
+#
+
+_proxy_string=`echo ${http_proxy##http*:\/\/}`
+if [[ ${_proxy_string} == *@* ]]; then
+    _proxy_serverport=`echo ${_proxy_string##*@}`
+    _proxy_userpass=`echo ${_proxy_string%%@*}`
+    _proxyuser=`echo ${_proxy_userpass%:*}`
+    _proxypass=`echo ${_proxy_userpass#*:}`
+    if [ -n "${_proxyuser}" ] && [ -n "${_proxypass}" ]; then
+        proxyauth=",proxyauth=${_proxyuser}:${_proxypass}"
+    fi
+else
+    _proxy_serverport="${_proxy_string}"
+fi
+
+if [[ ${_proxy_serverport} == *\[*\]* ]]; then
+    _tmp_port=`echo ${_proxy_serverport/\[*\]/}`
+    _proxyserver=`echo ${_proxy_serverport/${_tmp_port}/}`
+    _proxyport=`echo ${_tmp_port##*:}`
+elif [[ ${_proxy_serverport} == *:* ]]; then
+    _proxyserver=`echo ${_proxy_serverport%:*}`
+    _proxyport=`echo ${_proxy_serverport##*:}`
+else
+    _proxyserver="${_proxy_serverport}"
+fi
+if [ -n "${_proxyport}" ]; then
+    proxyport=",proxyport=${_proxyport}"
+fi
+
+exec socat STDIO PROXY:${_proxyserver}:$1:$2${proxyport}${proxyauth}
