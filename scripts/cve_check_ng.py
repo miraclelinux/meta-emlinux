@@ -293,9 +293,13 @@ def main(args: dict):
         logger.error(f"File {dpkg_status_file} is not found")
         exit(1)
 
+    debian_codename = args.debian_codename
+    if not debian_codename:
+        debian_codename = bitbakeinfo["image_distro"].split("-")[1]
+
     # Read dpkg file to get installed package information
     installed_packages = PackageInfoHelper.parse_dpkg_status_file(
-        dpkg_status_file, target_source_package=args.target_source_package
+        dpkg_status_file, debian_codename, target_source_package=args.target_source_package,
     )
 
     # Check recipe's source code provenance
@@ -312,7 +316,7 @@ def main(args: dict):
     ignore_list = create_ignore_list(
         bitbakeinfo["emlinux_layer_dir"],
         installed_packages,
-        args.debian_codename,
+        debian_codename,
         args.extra_cve_check_ignore,
     )
 
@@ -395,8 +399,7 @@ def parse_options():
     cve_check_opts.add_argument(
         "--debian-codename",
         dest="debian_codename",
-        help="debian codename(Debian 12 is bookworm)",
-        default="bookworm",
+        help="debian codename(bookworm, trixie, and etc)",
         metavar="DEBIANCODENAME",
     )
     cve_check_opts.add_argument(

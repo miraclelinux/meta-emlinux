@@ -17,9 +17,10 @@ SOURCE_VERSION_PATTERN = re.compile(
 
 
 class PackageInfo:
-    def __init__(self, binary_pkg_name, src_pkg_name, version):
+    def __init__(self, binary_pkg_name, src_pkg_name, version, debian_codename):
         self.binary_pkg_name = binary_pkg_name
         self.source_from = "debian"  # default is debian package
+        self.debian_codename = debian_codename
 
         self.version = debian.debian_support.Version(version)
         self.upstream_version = self.version.upstream_version
@@ -104,11 +105,23 @@ class PackageList:
 
         return str(self.packages[src_pkg_name][0].version)
 
+    def get_source_from(self, src_pkg_name: str) -> str:
+        if not src_pkg_name in self.packages:
+            return None
+
+        return str(self.packages[src_pkg_name][0].source_from)
+
+    def get_debian_codename(self, src_pkg_name: str) ->str:
+        if not src_pkg_name in self.packages:
+            return None
+
+        return self.packages[src_pkg_name][0].debian_codename
 
 class PackageInfoHelper:
     @staticmethod
     def parse_dpkg_status_file(
-        filepath: str, target_source_package: str = None
+        filepath: str, debian_codename: str,
+        target_source_package: str = None
     ) -> PackageList:
         results = PackageList()
 
@@ -145,7 +158,7 @@ class PackageInfoHelper:
                     target_source_package is None
                     or target_source_package == actual_src_pkg_name
                 ):
-                    pkginfo = PackageInfo(binary_pkg_name, actual_src_pkg_name, version)
+                    pkginfo = PackageInfo(binary_pkg_name, actual_src_pkg_name, version, debian_codename)
 
                 if pkginfo:
                     results.add_package(pkginfo)
