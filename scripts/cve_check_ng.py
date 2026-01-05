@@ -220,7 +220,7 @@ def load_plugins(plugin_files: list[str]):
 # 1. Plugin file must be located in scripts/lib/python/cve/plugin directory
 # 2. Plugin file name must be start with eml_cve_ then ends with _plugin.py
 #    e.g. eml_cve_myplugin_plugin.py
-def find_plugins() -> list[str]:
+def find_plugins(disable_plugins: list[str]) -> list[str]:
     layer_dirs = bitbake_runner.find_layers()
     plugins = []
 
@@ -229,7 +229,11 @@ def find_plugins() -> list[str]:
         d = ld + plugin_dir
         pattern = f"{d}/eml_cve_*_plugin.py"
         for plugin in glob.glob(pattern):
-            plugins.append(plugin)
+            p = os.path.splitext(os.path.basename(plugin))[0]
+            if not p in disable_plugins:
+                plugins.append(plugin)
+            else:
+                logger.info(f"Plugin '{p}' is disabled")
 
     return plugins
 
@@ -256,11 +260,29 @@ def fetch_kev_data(cve_data_dir: str) -> KevInfoList:
         return KevInfoList({})
 
 
+def create_disable_plugins_list(user_given_plugins: str) -> list[str]:
+    if not user_given_plugins:
+        return []
+
+    disable_plugins = []
+
+    do_not_disable = ["eml_cve_nvd_plugin"]
+    disable_plugins_tmp = [p.strip() for p in user_given_plugins.split(",")]
+    for p in disable_plugins_tmp:
+        if p not in do_not_disable:
+            disable_plugins.append(p)
+        else:
+            logger.warning(f"Plugin '{p}' cannot be disabeld")
+
+    return disable_plugins
+
+
 def main(args: dict):
     if args.verbose_output:
         logger.setLevel(logging.DEBUG)
 
     bitbakeinfo = bitbake_runner.get_bitbake_information(args.image_name)
+    disable_plugins = create_disable_plugins_list(args.disable_plugins)
 
     dpkg_status_file = (
         bitbakeinfo["dpkg_status"]
@@ -298,7 +320,7 @@ def main(args: dict):
     cl.create_directory(cve_data_dir)
 
     # Find and load plugins
-    plugin_files = find_plugins()
+    plugin_files = find_plugins(disable_plugins)
     plugin_objs = load_plugins(plugin_files)
 
     # Create plugin instance
@@ -445,7 +467,10 @@ def parse_options():
         action="store_true",
         help="Skip update CVE databases",
     )
-
+    plugin_opts.add_argument(
+        "--disable-plugins",
+        help="List plugin names to be disabled without .py extension (comma separated). e.g. --disable-plugins eml_cve_debian_plugin,eml_cve_your_plugin",
+    )
     return parser.parse_args()
 
 
