@@ -27,6 +27,7 @@ IMAGE_PREINSTALL:append = "\
   iputils-ping \
   procps \
   vim-tiny \
+  udev \
 "
 inherit image
 
