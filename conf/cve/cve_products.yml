@@ -5,12 +5,21 @@
 aom:
   vendor: aomedia
   product: aomedia
+apparmor:
+  vendor: canonical
+  product: apparmor
 apt:
   vendor: debian
   product: apt
+audit:
+  vendor: linux_audit_project
+  product: linux_audit
 cyrus-sasl2:
   vendor: cyrusimap
   product: cyrus-sasl
+dash:
+  vendor: dash
+  product: dash
 db5.3:
   vendor: oracle
   product: berkeley_db
@@ -23,6 +32,9 @@ gcc-12:
 glib2.0:
   vendor: gnome
   product: glib
+glibc:
+  vendor: gnu
+  product: glibc
 gnupg2:
   vendor: gnupg
   product: gnupg
@@ -65,12 +77,27 @@ linux-cip-rt:
 openjpeg2:
   vendor: uclouvain
   product: openjpeg
+openssl:
+  vendor: openssl
+  product: openssl
 pango1.0:
   vendor: gnome
   product: pango
+perl:
+  vendor: perl
+  product: perl
+shadow:
+    vendor: shadow_project
+    product: shadow
 tar:
   vendor: gnu
   product: tar
+util-linux:
+  vendor: kernel
+  product: util-linux
+vim:
+  vendor: vim
+  product: vim
 xvidcore:
   vendor: xvid
   product: xvid
