@@ -35,6 +35,8 @@ def split_licesense_and_normalize(lic, license_mapping):
 
     if ", and " in lic:
         lics += normalize_licenses(split_licenses(lic, ", and "), license_mapping)
+    elif "," in lic:
+        lics += normalize_licenses(split_licenses(lic, ","), license_mapping)
     elif "/" in lic:
         tmp = normalize_licenses(split_licenses(lic, "/"), license_mapping)
         lics.append("-".join(tmp))
