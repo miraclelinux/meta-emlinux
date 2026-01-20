@@ -6,7 +6,7 @@
 
 FILESPATH:append := ":${FILE_DIRNAME}/files"
 
-require recipes-bsp/u-boot/u-boot-custom.inc
+inherit u-boot
 
 SRC_URI += " \
     https://ftp.denx.de/pub/u-boot/u-boot-${PV}.tar.bz2"
