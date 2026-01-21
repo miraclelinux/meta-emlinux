@@ -11,7 +11,7 @@
 
 require include/security_flags.inc
 
-INHERIT += "sdk-installer"
+INHERIT += "sdk-installer source-info"
 
 DISTRO_KERNELS ?= "linux-cip"
 KERNEL_NAME ?= "cip"

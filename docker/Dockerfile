@@ -76,6 +76,7 @@ RUN bash -c 'if test -n "$no_proxy"; then git config --global core.noproxy "$no_
 RUN pip install --user 'cyclonedx-python-lib>=7.3.2,<=7.5.1' --break-system-packages --no-warn-script-location
 RUN pip install --user jsonschema==4.21.1 --break-system-packages --no-warn-script-location
 RUN pip install --user spdx-tools==0.8.2 --break-system-packages --no-warn-script-location
+RUN pip install --user looseversion==1.3.0 --break-system-packages --no-warn-script-location
 
 RUN mkdir work
 WORKDIR /home/build/work
