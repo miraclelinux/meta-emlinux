@@ -17,8 +17,6 @@ IMAGE_PREINSTALL:append:trixie = " seatd"
 
 GROUPS += "weston-launch"
 GROUP_weston-launch[flags] = "system"
-GROUPS += "render"
-GROUP_render[flags] = "system"
 GROUPS += "wayland"
 GROUP_wayland[flags] = "system"
 

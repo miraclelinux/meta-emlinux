@@ -43,5 +43,5 @@ SDK_PREINSTALL += " \
   libssl-dev \
   libelf-dev"
 
-SDK_INSTALL += "linux-headers-${KERNEL_NAME}"
+SDK_INSTALL += "${@ "linux-headers-"+d.getVar('KERNEL_NAME') if d.getVar('KERNEL_NAME') else '' }"
 
