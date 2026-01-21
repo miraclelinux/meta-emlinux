@@ -181,13 +181,17 @@ def main(args):
     rootfs = bitbakeinfo["rootfs_dir"]
     dpkg_status = bitbakeinfo["dpkg_status"]
 
+    distro = args.distro
+    if not distro:
+        distro = bitbakeinfo["image_distro"].split("-")[1]
+
     installed_pkgs = parse_dpkg_status(dpkg_status)
     
     user_defined_licenses = read_user_defined_license_file(args.user_defined_licenses)
     license_mapping = read_license_mapping_file(args.user_defined_license_mapping)
 
     packages_info = get_package_info_from_control(bitbakeinfo["dl_dir"], bitbakeinfo["repo_isar_dir"],
-            args.distro, bitbakeinfo["image_distro"], bitbakeinfo["distro_arch"])
+            distro, bitbakeinfo["image_distro"], bitbakeinfo["distro_arch"])
 
     installed_pkgs = merge_package_data(installed_pkgs, packages_info)
 
@@ -204,9 +208,9 @@ def main(args):
     logger.info(f"Create {args.sbom_format} format sbom for {args.image}")
 
     if args.sbom_format == "cyclonedx":
-        sbom_data = sbom_cyclonedx.create_cyclonedx_sbom(args.product, args.image, args.distro, installed_pkgs, args.supplier, license_mapping)
+        sbom_data = sbom_cyclonedx.create_cyclonedx_sbom(args.product, args.image, distro, installed_pkgs, args.supplier, license_mapping)
     else:
-        sbom_data = sbom_spdx.create_spdx_sbom(args.product, args.image, args.distro, installed_pkgs, args.supplier, license_mapping)
+        sbom_data = sbom_spdx.create_spdx_sbom(args.product, args.image, distro, installed_pkgs, args.supplier, license_mapping)
 
     if sbom_data:
         write_sbom_json(output_filepath, sbom_data)
@@ -222,7 +226,7 @@ def parse_options():
     parser.add_argument("--sbom-format", dest="sbom_format", help="spdx or cyclonedx",
             metavar="SBOM_FORMAT", required=True)
     parser.add_argument("--distro", dest="distro", help="debian distro name(e.g. bookworm)",
-            default="bookworm", metavar="DISTRO")
+            metavar="DISTRO")
     parser.add_argument("--licenses", dest="user_defined_licenses", help="license yaml file",
             metavar="FILE")
     parser.add_argument("--license-mapping", dest="user_defined_license_mapping", help="license mapping yaml file",
