@@ -10,6 +10,26 @@ clean_up()
     unset EML_BUILDDIR EML_BUILDDIR_SETUP_DONE REPOS EML_HOOKS
 }
 
+get_generated_comment()
+{
+    tagname="2.x"
+    if [ -d "../.repo/manifests/" ]; then
+        cd ../.repo/manifests
+        submodule="$(git submodule status | grep 'emlinux-manifests')"
+        if [ -n "${submodule}" ]; then
+            tmptag="${submodule}"
+            tmptag="${tmptag#*(}"
+            tmptag="${tmptag%)}"
+        else
+            tmptag="$(git describe --tags --abbrev=0)"
+        fi
+        if [ -n "${tmptag}" ]; then
+            tagname="${tmptag}"
+        fi
+    fi
+    echo "# The above settings were generated in EMLinux ${tagname} on $(date '+%Y-%m-%d')"
+}
+
 # save error during 'source setup-emlinux'
 _ERROR=0
 trap '_ERROR=$?' ERR
@@ -73,6 +93,7 @@ if [ -z "$TEMPLATECONF" ] && [ "${EML_BUILDDIR_SETUP_DONE}" = "false" ]; then
 	    source ${EML_HOOKS}/$hook
 	done
     fi
+    echo "$(get_generated_comment)" >> conf/local.conf
 fi
 
 clean_up
