@@ -6,8 +6,8 @@ python do_collect_source_info() {
 
     source_info = d.getVar("EMLINUX_SOURCE_FROM")
     if source_info is None:
-        distro = d.getVar("DISTRO").split("-")[1]
-        source_info = distro
+        # if EMLINUX_SOURCE_FROM is not set, we should set unknown to reduce false positive.
+        source_info = "unknown"
 
     data = {
         "source_package_name": d.getVar("PN"),
