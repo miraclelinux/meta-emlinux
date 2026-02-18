@@ -6,10 +6,13 @@ PV = "5.10"
 PROVIDES += " linux-k510"
 LIC_FILES_CHKSUM = "file://COPYING;md5=6bc538ed5bd9a7fc9398086aedcd7e46"
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
+FILESEXTRAPATHS_prepend := "${THISDIR}/files:${THISDIR}/linux-k510:"
 
 FILESEXTRAPATHS_append := ":${LAYERDIR_DEBIAN_debian}/recipes-kernel/linux/files/"
 
+SRC_URI_append = "\
+    file://0001-rtc-interface-skip-near-future-check-if-setting-alar.patch \
+"
 KERNEL_CONFIG_COMMAND = "oe_runmake_call O=${B} -C ${S} olddefconfig"
 
 CVE_VERSION = "${LINUX_CVE_VERSION}"

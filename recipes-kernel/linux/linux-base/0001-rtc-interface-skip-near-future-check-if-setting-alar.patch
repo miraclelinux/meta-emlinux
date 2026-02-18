@@ -1,0 +1,43 @@
+From ca5fa008a39693c82c829609344b9b4755c74a4d Mon Sep 17 00:00:00 2001
+From: Akira Shibakawa <akira.shibakawa@miraclelinux.com>
+Date: Tue, 17 Feb 2026 07:36:56 +0000
+Subject: [PATCH] rtc: interface: skip near-future check if setting alarm fails
+
+In __rtc_set_alarm(), a check was previously introduced (see Fixes tag)
+to handle a race condition when an alarm is set to expire in the near
+future.
+
+However, if the attempt to set the alarm fails (e.g., returns -EINVAL
+when set_alarm is not implemented, or -ENODEV when rtc->ops is missing),
+the subsequent near-future check then overwrites this 'err' variable
+with the result of __rtc_read_time() (which is 0 for success).
+
+This causes __rtc_set_alarm() to return 0, falsely indicating that an
+alarm has been scheduled. This misleading return value confuses userspace
+tools like hwclock.
+
+Fix this by only performing the near-future race check if the alarm
+was successfully set (err == 0).
+
+Fixes: 795cda8338ea ("rtc: interface: Fix long-standing race when setting alarm")
+Signed-off-by: Akira Shibakawa <akira.shibakawa@miraclelinux.com>
+---
+ drivers/rtc/interface.c | 2 +-
+ 1 file changed, 1 insertion(+), 1 deletion(-)
+
+diff --git a/drivers/rtc/interface.c b/drivers/rtc/interface.c
+index d86fcf03624b..b4a54775e09f 100644
+--- a/drivers/rtc/interface.c
++++ b/drivers/rtc/interface.c
+@@ -467,7 +467,7 @@ static int __rtc_set_alarm(struct rtc_device *rtc, struct rtc_wkalrm *alarm)
+ 	 * are in, we can return -ETIME to signal that the timer has already
+ 	 * expired, which is true in both cases.
+ 	 */
+-	if ((scheduled - now) <= 1) {
++	if (err == 0 && (scheduled - now) <= 1) {
+ 		err = __rtc_read_time(rtc, &tm);
+ 		if (err)
+ 			return err;
+-- 
+2.25.1
+

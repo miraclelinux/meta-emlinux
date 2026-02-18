@@ -2,7 +2,11 @@ require linux-common.inc
 
 PV = "4.19"
 
-FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
+FILESEXTRAPATHS_prepend := "${THISDIR}/files:${THISDIR}/linux-base:"
+
+SRC_URI_append = "\
+    file://0001-rtc-interface-skip-near-future-check-if-setting-alar.patch \
+"
 
 CVE_VERSION = "${LINUX_CVE_VERSION}"
 
