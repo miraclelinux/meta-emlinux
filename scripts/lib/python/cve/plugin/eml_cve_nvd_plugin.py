@@ -107,12 +107,11 @@ class EmlNVDPlugin(EmlCvePlugin):
                 cveid = cverow[0]
                 vulnerable = False
                 product_cursor = conn.execute(
-                    "SELECT VERSION_START, OPERATOR_START, VERSION_END, OPERATOR_START  FROM PRODUCTS WHERE ID IS ? AND PRODUCT IS ? AND VENDOR LIKE ?",
+                    "SELECT VERSION_START, OPERATOR_START, VERSION_END, OPERATOR_END  FROM PRODUCTS WHERE ID IS ? AND PRODUCT IS ? AND VENDOR LIKE ?",
                     (cveid, product, vendor),
                 )
                 for row in product_cursor:
                     (version_start, operator_start, version_end, operator_end) = row
-
                     vuln_status = CveStatus.CVE_STATUS_PATCHED
                     vulnerable = cl.check_affected(
                         version,
