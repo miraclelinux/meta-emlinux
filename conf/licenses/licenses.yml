@@ -12,6 +12,10 @@ busybox:
   licenses: [
     GPL-2,
   ]
+busybox-static:
+  licenses: [
+    GPL-2,
+  ]
 debian-archive-keyring:
   licenses: [
     GPL-3,
@@ -28,6 +32,24 @@ gcc-12-base:
     GPL-2,
     GPL-3,
     LGPL
+  ]
+gcc-14-base:
+  licenses: [
+    Artistic,
+    GPL-3.0-only,
+    GPL-3.0-or-later,
+    GPL-3.0-with-GCC-exception,
+    BSD-3-Clause,
+    MIT,
+    GFDL-1.2,
+    GPL-2.0-or-later,
+    LGPL-2.1-only,
+    LGPL-2.1-or-later,
+    LGPL-3.0,
+    public-domain,
+    Zlib,
+    BSL-1.0,
+    Unicode-DFS-2015
   ]
 initramfs-tools:
   licenses: [
@@ -50,6 +72,24 @@ libasound2-data:
   # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1061276
   licenses: [
     LGPL-2.1+,
+  ]
+libatomic1:
+  licenses: [
+    Artistic,
+    GPL-3.0-only,
+    GPL-3.0-or-later,
+    GPL-3.0-with-GCC-exception,
+    BSD-3-Clause,
+    MIT,
+    GFDL-1.2,
+    GPL-2.0-or-later,
+    LGPL-2.1-only,
+    LGPL-2.1-or-later,
+    LGPL-3.0,
+    public-domain,
+    Zlib,
+    BSL-1.0,
+    Unicode-DFS-2015
   ]
 libc-bin:
   licenses: [
@@ -103,6 +143,15 @@ libgcrypt20:
     LGPL
   ]
 libgnutls30:
+  licenses: [
+    Apache-2.0,
+    GFDL-1.3,
+    GPL,
+    GPL-3,
+    LGPL,
+    LGPL-3
+  ]
+libgnutls30t64:
   licenses: [
     Apache-2.0,
     GFDL-1.3,
@@ -168,6 +217,22 @@ libpython3.11-minimal:
 libpython3.11-stdlib:
   licenses: [
     PSF-2.0,
+  ]
+libpython3.13:
+  licenses: [
+    PSF-2.0
+  ]
+libpython3.13-minimal:
+  licenses: [
+    PSF-2.0
+  ]
+libpython3.13-minimal:
+  licenses: [
+    PSF-2.0
+  ]
+libpython3.13-stdlib:
+  licenses: [
+    PSF-2.0
   ]
 librtmp1:
   licenses: [
