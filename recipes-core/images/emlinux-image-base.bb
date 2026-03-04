@@ -32,3 +32,6 @@ IMAGE_PREINSTALL:append = "\
 inherit image
 
 DEPENDS:class-sdk:append = " ${IMAGE_INSTALL}"
+
+INITRAMFS_RECIPE ?= "emlinux-initramfs-base"
+IMAGE_INITRD = "${INITRAMFS_RECIPE}"
