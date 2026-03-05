@@ -8,6 +8,7 @@
 
 import re
 import subprocess
+import pathlib
 
 def find_layers():
     cmd = ["bitbake-layers", "show-layers"]
@@ -20,7 +21,7 @@ def find_layers():
     for line in lines:
         tmp = [col for col in line.split(" ") if not col == ""]
         if len(tmp) >= 2:
-            if "/repos/" in tmp[1]:
+            if pathlib.Path(tmp[1]).exists():
                 layers.append(tmp[1])
 
     return layers
