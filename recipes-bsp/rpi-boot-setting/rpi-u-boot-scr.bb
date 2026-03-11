@@ -9,6 +9,7 @@ FILESEXTRAPATHS:prepend := "${FILE_DIRNAME}/files:"
 DESCRIPTION = "U-boot boot script for Raspberry Pi"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${LAYERDIR_core}/licenses/COPYING.MIT;md5=838c366f69b72c5df05c96dff79b35f2"
+MAINTAINER = "Kazunori Kobayashi <kazunori.kobayashi@cybertrust.co.jp>"
 
 inherit dpkg
 

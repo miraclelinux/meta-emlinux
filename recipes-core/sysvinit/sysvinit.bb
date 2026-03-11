@@ -11,6 +11,8 @@ inherit dpkg
 
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
+MAINTAINER = "Masami Ichikawa <masami.ichikawa@miraclelinux.com>"
+
 SRC_URI = " \
 apt://${PN} \
 file://custom-debian \

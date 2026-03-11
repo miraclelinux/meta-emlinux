@@ -6,6 +6,8 @@
 
 inherit dpkg
 
+MAINTAINER = "Masami Ichikawa <masami.ichikawa@miraclelinux.com>"
+
 FILESEXTRAPATHS:prepend := "${THISDIR}/files:"
 
 SRC_URI = "\
