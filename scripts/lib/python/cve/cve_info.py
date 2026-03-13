@@ -15,6 +15,7 @@ class CveStatus:
     CVE_STATUS_PATCHED = "Patched"
     CVE_STATUS_UNPATCHED = "Unpatched"
     CVE_STATUS_REJECTED = "Rejected"
+    CVE_STATUS_IGNORED = "Ignored"
 
 
 class CveCheckResult:

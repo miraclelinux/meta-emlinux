@@ -150,7 +150,7 @@ class CveCheckMergedList:
                     if cveid in self.merged[src_pkg_name]:
                         self.merged[src_pkg_name][cveid][
                             "cve_info"
-                        ].status = CveStatus.CVE_STATUS_PATCHED
+                        ].status = CveStatus.CVE_STATUS_IGNORED
 
     def get_cve_status(self, src_pkg_name: str, cveid: str) -> str:
         return self.merged[src_pkg_name][cveid]["cve_info"].status
