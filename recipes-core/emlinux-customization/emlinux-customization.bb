@@ -14,6 +14,7 @@ EMLINUX_SOURCE_FROM="non-debian"
 DESCRIPTION = "EMLinux 3.x specific customization"
 LICENSE = "MIT"
 DEBIAN_DEPENDS = "netbase"
+MAINTAINER = "Masami Ichikawa <masami.ichikawa@miraclelinux.com>"
 
 inherit dpkg-raw
 

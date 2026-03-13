@@ -8,6 +8,8 @@ FILESPATH:append := ":${FILE_DIRNAME}/files"
 
 inherit u-boot
 
+MAINTAINER = "Kazunori Kobayashi <kazunori.kobayashi@miraclelinux.com>"
+
 SRC_URI += " \
     https://ftp.denx.de/pub/u-boot/u-boot-${PV}.tar.bz2"
 

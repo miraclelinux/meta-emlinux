@@ -8,6 +8,7 @@
 SUMMARY = "Startup script and systemd unit file for the Weston Wayland compositor"
 LICENSE = "MIT"
 LIC_FILES_CHKSUM = "file://${LAYERDIR_core}/licenses/COPYING.MIT;md5=838c366f69b72c5df05c96dff79b35f2"
+MAINTAINER = "Kazunori Kobayashi <kazunori.kobayashi@miraclelinux.com>"
 
 inherit dpkg-raw
 

@@ -6,6 +6,8 @@
 
 inherit dpkg
 
+MAINTAINER = "Masami Ichikawa <masami.ichikawa@miraclelinux.com>"
+
 SRC_URI = "apt://${PN}"
 
 DEB_BUILD_PROFILES += "nocheck"
