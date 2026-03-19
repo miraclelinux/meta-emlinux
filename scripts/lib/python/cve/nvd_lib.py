@@ -15,7 +15,7 @@ logger = logging.getLogger("emlinux-cve-check")
 
 import sqlite3
 
-CVE_DATABASE_NAME = "nvd_cve_db.db"
+CVE_DB_V2_NAME = "nvd_cve_db_v2.db"
 
 
 class NvdCveNvdInfo:
@@ -28,6 +28,7 @@ class NvdCveNvdInfo:
         summary: str,
         scorev2: str,
         scorev3: str,
+        scorev4: str,
         vector: str,
         vector_string: str,
         status: str,
@@ -42,6 +43,7 @@ class NvdCveNvdInfo:
             self.summary = summary.strip()
         self.scorev2 = scorev2
         self.scorev3 = scorev3
+        self.scorev4 = scorev4
         self.vector = vector
         self.vector_string = vector_string
         self.status = status
@@ -163,7 +165,7 @@ class NvdCveInfoListCreator:
         package_info_list: PackageList,
         kev_info_list: KevInfoList,
     ) -> None:
-        self.db_file = f"{cve_data_dir}/{CVE_DATABASE_NAME}"
+        self.db_file = f"{cve_data_dir}/{CVE_DB_V2_NAME}"
         self.nvd_info_list = NvdCveNvdInfoList()
         self.package_info_list = package_info_list
         self.kev_info_list = kev_info_list
@@ -214,7 +216,7 @@ class NvdCveInfoListCreator:
         status: str,
     ) -> NvdCveNvdInfo:
         c = self.conn.cursor()
-        sql = f'SELECT VULNSTATUS, SUMMARY, SCOREV2, SCOREV3, VECTOR, VECTORSTRING FROM NVD WHERE ID="{cveid}"'
+        sql = f'SELECT VULNSTATUS, SUMMARY, SCOREV2, SCOREV3, SCOREV4, VECTOR, VECTORSTRING FROM NVD WHERE ID="{cveid}"'
         cursor = c.execute(sql)
         data = cursor.fetchone()
         c.close()
@@ -223,6 +225,7 @@ class NvdCveInfoListCreator:
         summary = ""
         scorev2 = "0.0"
         scorev3 = "0.0"
+        scorev4 = "0.0"
         vector = "UNKNOWN"
         vector_string = "UNKNOWN"
 
@@ -233,8 +236,9 @@ class NvdCveInfoListCreator:
             summary = data[1]
             scorev2 = data[2]
             scorev3 = data[3]
-            vector = data[4]
-            vector_string = data[5]
+            scorev4 = data[4]
+            vector = data[5]
+            vector_string = data[6]
 
         return NvdCveNvdInfo(
             cveid,
@@ -244,6 +248,7 @@ class NvdCveInfoListCreator:
             summary,
             scorev2,
             scorev3,
+            scorev4,
             vector,
             vector_string,
             vuln_status,

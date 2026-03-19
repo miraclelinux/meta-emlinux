@@ -282,6 +282,7 @@ def main(args: dict):
         logger.setLevel(logging.DEBUG)
 
     bitbakeinfo = bitbake_runner.get_bitbake_information(args.image_name)
+
     disable_plugins = create_disable_plugins_list(args.disable_plugins)
 
     dpkg_status_file = (
@@ -299,7 +300,9 @@ def main(args: dict):
 
     # Read dpkg file to get installed package information
     installed_packages = PackageInfoHelper.parse_dpkg_status_file(
-        dpkg_status_file, debian_codename, target_source_package=args.target_source_package,
+        dpkg_status_file,
+        debian_codename,
+        target_source_package=args.target_source_package,
     )
 
     # Check recipe's source code provenance

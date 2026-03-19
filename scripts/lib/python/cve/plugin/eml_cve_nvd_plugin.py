@@ -27,6 +27,7 @@ import time
 import json
 import os
 import errno
+import shutil
 
 CVE_DB_UPDATE_INTERVAL = 86400
 
@@ -52,14 +53,28 @@ class EmlNVDPlugin(EmlCvePlugin):
             cve_products,
         )
 
-        self.predownload_url = self.bitbakeinfo["cve_db_predownload"]
+        # default database name
+        self.predownload_url = self.bitbakeinfo["cve_db_v2_predownload"]
         self.predownload = self.args.cve_db_predownload
-
-        self.db_file = f"{self.cve_data_dir}/{nvd_lib.CVE_DATABASE_NAME}"
+        self.db_file = f"{self.cve_data_dir}/{nvd_lib.CVE_DB_V2_NAME}"
+        self.tmp_db_file = f"{self.db_file}.tmp"
         self.nvd_api_key = args.nvd_api_key
 
     def update_database(self) -> bool:
-        return self._update_nvd_db()
+        ret = False
+        try:
+            if os.path.exists(self.db_file):
+                # copy current database file for database update process
+                shutil.copyfile(self.db_file, self.tmp_db_file)
+
+            ret = self._update_nvd_db()
+        except Exception as e:
+            logger.error(e)
+        finally:
+            if os.path.exists(self.tmp_db_file):
+                os.replace(self.tmp_db_file, self.db_file)
+
+        return ret
 
     def run_check(self) -> CveCheckResultList:
         logger.debug(f"{self.plugin_name}: run-check start")
@@ -130,8 +145,8 @@ class EmlNVDPlugin(EmlCvePlugin):
     def _update_nvd_db(self) -> bool:
         result = False
 
-        conn = sqlite3.connect(self.db_file)
-        logger.debug(f"Initialize nvd cve database {self.db_file}")
+        conn = sqlite3.connect(self.tmp_db_file)
+        logger.debug(f"Initialize nvd cve database {self.tmp_db_file}")
         self._initialize_nvd_cve_db(conn)
 
         skip_db_update, last_modified = self._check_skip_db_update(conn)
@@ -143,7 +158,7 @@ class EmlNVDPlugin(EmlCvePlugin):
             if not self._predownload_db(self.predownload_url):
                 return result
 
-            conn = sqlite3.connect(self.db_file)
+            conn = sqlite3.connect(self.tmp_db_file)
             # re-check last modified date
             skip_db_update, last_modified = self._check_skip_db_update(conn)
 
@@ -171,7 +186,7 @@ class EmlNVDPlugin(EmlCvePlugin):
 
             c.execute(
                 "CREATE TABLE IF NOT EXISTS NVD (ID TEXT UNIQUE, VULNSTATUS TEXT, SUMMARY TEXT, SCOREV2 TEXT, \
-                SCOREV3 TEXT, MODIFIED INTEGER, VECTOR TEXT, VECTORSTRING TEXT)"
+                SCOREV3 TEXT, SCOREV4 TEXT, MODIFIED INTEGER, VECTOR TEXT, VECTORSTRING TEXT)"
             )
 
             c.execute(
@@ -235,7 +250,7 @@ class EmlNVDPlugin(EmlCvePlugin):
                 time.sleep(6)
                 pass
             else:
-                with open(self.db_file, "wb") as f:
+                with open(self.tmp_db_file, "wb") as f:
                     f.write(raw_data)
                     logger.info("Download CVE database file was succeeded.")
 
@@ -312,6 +327,13 @@ class EmlNVDPlugin(EmlCvePlugin):
             "insert into PRODUCTS values (?, ?, ?, ?, ?, ?, ?)", _cpe_generator()
         ).close()
 
+    def _column_exsits(self, conn, column_name) -> bool:
+        cur = conn.cursor()
+        cur.execute("PRAGMA table_info(NVD)")
+        columns = [row[1] for row in cur.fetchall()]
+        cur.close()
+        return column_name in columns
+
     def _update_db(self, conn, elt):
         """
         Update a single entry in the on-disk database
@@ -327,6 +349,10 @@ class EmlNVDPlugin(EmlCvePlugin):
         else:
             vulnStatus = ""
 
+        cvssv2 = 0.0
+        cvssv3 = 0.0
+        cvssv4 = 0.0
+
         cveDesc = ""
         for desc in elt["cve"]["descriptions"]:
             if desc["lang"] == "en":
@@ -341,8 +367,8 @@ class EmlNVDPlugin(EmlCvePlugin):
             ]
             cvssv2 = elt["cve"]["metrics"]["cvssMetricV2"][0]["cvssData"]["baseScore"]
         except KeyError:
-            cvssv2 = 0.0
-        cvssv3 = None
+            pass
+
         try:
             accessVector = (
                 accessVector
@@ -355,6 +381,7 @@ class EmlNVDPlugin(EmlCvePlugin):
             cvssv3 = elt["cve"]["metrics"]["cvssMetricV30"][0]["cvssData"]["baseScore"]
         except KeyError:
             pass
+
         try:
             accessVector = (
                 accessVector
@@ -370,18 +397,39 @@ class EmlNVDPlugin(EmlCvePlugin):
             )
         except KeyError:
             pass
+
+        try:
+            accessVector = (
+                accessVector
+                or elt["cve"]["metrics"]["cvssMetricV40"][0]["cvssData"]["attackVector"]
+            )
+
+            vectorString = (
+                vectorString
+                or elt["cve"]["metrics"]["cvssMetricV40"][0]["cvssData"]["vectorString"]
+            )
+            cvssv4 = elt["cve"]["metrics"]["cvssMetricV40"][0]["cvssData"]["baseScore"]
+        except KeyError:
+            pass
+
         accessVector = accessVector or "UNKNOWN"
         vectorString = vectorString or "UNKNOWN"
-        cvssv3 = cvssv3 or 0.0
+
+        if not self._column_exsits(conn, "SCOREV4"):
+            logger.error(
+                f"SCOREV4 column is not found in your NVD CVE database, please remove old one then create new database"
+            )
+            return False
 
         conn.execute(
-            "insert or replace into NVD values (?, ?, ?, ?, ?, ?, ?, ?)",
+            "insert or replace into NVD values (?, ?, ?, ?, ?, ?, ?, ?, ?)",
             [
                 cveId.strip(),
                 vulnStatus.strip(),
                 cveDesc.strip(),
                 cvssv2,
                 cvssv3,
+                cvssv4,
                 date.strip(),
                 accessVector.strip(),
                 vectorString.strip(),
@@ -399,6 +447,8 @@ class EmlNVDPlugin(EmlCvePlugin):
                     self._parse_node_and_insert(conn, node, cveId)
         except KeyError:
             logger.debug("CVE %s has no configurations" % cveId)
+
+        return True
 
     def _nvd_request_next(self, url: str, request_args: Any) -> str:
         """
@@ -464,7 +514,8 @@ class EmlNVDPlugin(EmlCvePlugin):
             per_page = data["resultsPerPage"]
             logger.debug(f"Got {per_page} entries")
             for cve in data["vulnerabilities"]:
-                self._update_db(conn, cve)
+                if not self._update_db(conn, cve):
+                    return False
 
             if per_page == 0:
                 # no more data

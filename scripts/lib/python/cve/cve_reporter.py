@@ -67,6 +67,7 @@ class CveReporter:
                     f.write(f"CVE SUMMARY: {ci.summary}\n")
                     f.write(f"CVSS v2 BASE SCORE: {ci.scorev2}\n")
                     f.write(f"CVSS v3 BASE SCORE: {ci.scorev3}\n")
+                    f.write(f"CVSS v4 BASE SCORE: {ci.scorev4}\n")
                     f.write(f"VECTOR: {ci.vector}\n")
                     f.write(f"VECTORSTRING: {ci.vector_string}\n")
 
@@ -162,6 +163,7 @@ class CveReporter:
             data["CVE SUMMARY"] = ci.summary
             data["CVSS v2 BASE SCORE"] = ci.scorev2
             data["CVSS v3 BASE SCORE"] = ci.scorev3
+            data["CVSS v4 BASE SCORE"] = ci.scorev4
             data["VECTOR"] = ci.vector
             data["VECTORSTRING"] = ci.vector_string
 
