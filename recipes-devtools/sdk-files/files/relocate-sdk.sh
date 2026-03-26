@@ -86,10 +86,10 @@ for binary in $(cat $repatch_list ${new_sdkroot}/repatch.list); do
 		fi
 	else
 		rpath=$(patchelf --print-rpath ${binary})
-		if [ -n "${binary}" ]; then
+		if [ -n "${rpath}" ]; then
 			patchelf --set-rpath ${new_sdkroot}/usr/lib:${new_sdkroot}/usr/lib/${arch}-linux-gnu \
 			--force-rpath \
-			$library 2>/dev/null
+			$binary 2>/dev/null
 		fi
 	fi
 done
