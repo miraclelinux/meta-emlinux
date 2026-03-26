@@ -8,6 +8,20 @@ fi
 clean_up()
 {
     unset EML_BUILDDIR EML_BUILDDIR_SETUP_DONE REPOS EML_HOOKS
+    unset get_emlinux_version
+}
+
+get_emlinux_version()
+{
+    tagname="2.x"
+    if [ -f "${REPOS}/meta-emlinux/conf/distro/include/emlinux.inc" ]; then
+        tmpver=$(grep '^DISTRO_VERSION *= *' ${REPOS}/meta-emlinux/conf/distro/include/emlinux.inc)
+        tmpver=$(echo ${tmpver//\'/\"} | cut -d'"' -f2)
+        if [ -n "${tmpver}" ]; then
+            tagname="${tmpver}"
+        fi
+    fi
+    echo "${tagname} "
 }
 
 # save error during 'source setup-emlinux'
@@ -73,6 +87,7 @@ if [ -z "$TEMPLATECONF" ] && [ "${EML_BUILDDIR_SETUP_DONE}" = "false" ]; then
 	    source ${EML_HOOKS}/$hook
 	done
     fi
+    echo "# The above settings were generated in EMLinux $(get_emlinux_version)on $(date '+%Y-%m-%d')" >> conf/local.conf
 fi
 
 clean_up
