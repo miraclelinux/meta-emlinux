@@ -12,7 +12,7 @@ new_sdkroot=$sdkroot
 repatch_list=""
 
 opt_short="hrl:"
-opt_long="help,resore-chroot,repatch-list:"
+opt_long="help,restore-chroot,repatch-list:"
 OPTS=$(getopt -o "$opt_short" -l "$opt_long" -- "$@")
 if [ $? -ne 0 ] ; then
 	echo "Wrong input parameter!"; 1>&2
