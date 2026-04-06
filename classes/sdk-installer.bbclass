@@ -81,7 +81,7 @@ if [ -f "${repatch_list}" ]; then
 else
     arg=""
 fi
-sudo "${sdk_installed_dir}/relocate-sdk.sh" $arg || (echo "Setup SDK environment failed." ; exit 1)
+sudo "${sdk_installed_dir}/relocate-sdk.sh" $arg || { echo "Setup SDK environment failed."; exit 1; }
 
 sudo sed -i "s:@EMLINUX_SDK_INSTALL_DIR@:${sdk_installed_dir}:g" "${sdk_installed_dir}/environment-setup-${MACHINE}-${DISTRO}"
 sudo sed -i "s/@EMLINUX_SDK_TOOLCHAIN_PREFIX@/${EMLINUX_SDK_TARGET_TOOLCHAIN_PREFIX}/g" "${sdk_installed_dir}/environment-setup-${MACHINE}-${DISTRO}"
