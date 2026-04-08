@@ -8,7 +8,7 @@
 
 inherit linux-kernel
 
-MAINTAINER = "Arisu Tachibana <arisu.tachibana@miraclelinux.com>"
+MAINTAINER = "EMLinux development team <emlinux-dev@emlinux-host>"
 
 SRC_URI += " \
     git://git.kernel.org/pub/scm/linux/kernel/git/cip/linux-cip.git;branch=${BRANCH};destsuffix=${P};protocol=https \
