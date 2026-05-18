@@ -25,6 +25,9 @@
 # CC
 "CC0": "CC0-1.0"
 
+# Vixie Cron License
+"Paul-Vixie's-license": "Vixie-Cron"
+
 # FSF
 "FSF-unlimited": "FSFULLRWD"
 "FSF-unlimited-permission": "FSFULLR"
