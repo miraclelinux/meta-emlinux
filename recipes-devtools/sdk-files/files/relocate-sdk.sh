@@ -94,7 +94,10 @@ for binary in $(cat $repatch_list ${new_sdkroot}/repatch.list); do
 	fi
 done
 
-sed -i 's|^GCC_SYSROOT=.*|GCC_SYSROOT="'"${new_sdkroot}"'"|' \
-    ${sdkroot}/usr/bin/gcc-sysroot-wrapper.sh
+if ! sed -i 's|^GCC_SYSROOT=.*|GCC_SYSROOT="'"${new_sdkroot}"'"|' \
+    ${sdkroot}/usr/bin/gcc-sysroot-wrapper.sh; then
+	echo "Failed to update gcc-sysroot-wrapper.sh." 1>&2
+	exit 1
+fi
 
 echo "done"

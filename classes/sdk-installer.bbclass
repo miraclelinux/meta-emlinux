@@ -67,7 +67,7 @@ if [ "$answer" != "y" ] && [ "$answer" != "Y" ]; then
 fi
 
 if [ ! -d "${target_sdk_dir}" ]; then
-    mkdir -p "${target_sdk_dir}"
+    mkdir -p "${target_sdk_dir}" || { echo "Create SDK directory failed."; exit 1; }
 fi
 
 sdk_install_target_dir=$(realpath ${target_sdk_dir})
@@ -81,10 +81,12 @@ if [ -f "${repatch_list}" ]; then
 else
     arg=""
 fi
-sudo "${sdk_installed_dir}/relocate-sdk.sh" $arg || (echo "Setup SDK environment failed." ; exit 1)
+sudo "${sdk_installed_dir}/relocate-sdk.sh" $arg || { echo "Setup SDK environment failed."; exit 1; }
 
-sudo sed -i "s:@EMLINUX_SDK_INSTALL_DIR@:${sdk_installed_dir}:g" "${sdk_installed_dir}/environment-setup-${MACHINE}-${DISTRO}"
-sudo sed -i "s/@EMLINUX_SDK_TOOLCHAIN_PREFIX@/${EMLINUX_SDK_TARGET_TOOLCHAIN_PREFIX}/g" "${sdk_installed_dir}/environment-setup-${MACHINE}-${DISTRO}"
+sudo sed -i "s:@EMLINUX_SDK_INSTALL_DIR@:${sdk_installed_dir}:g" "${sdk_installed_dir}/environment-setup-${MACHINE}-${DISTRO}" || \
+    { echo "Update environment script failed."; exit 1; }
+sudo sed -i "s/@EMLINUX_SDK_TOOLCHAIN_PREFIX@/${EMLINUX_SDK_TARGET_TOOLCHAIN_PREFIX}/g" "${sdk_installed_dir}/environment-setup-${MACHINE}-${DISTRO}" || \
+    { echo "Update environment script failed."; exit 1; }
 
 echo "When you use the SDK in a new shell session, you need to run following command."
 echo "  $ source ${sdk_installed_dir}/environment-setup-${MACHINE}-${DISTRO}"
