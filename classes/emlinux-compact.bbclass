@@ -132,7 +132,7 @@ EOL
 
     if [ "${EMLINUX_IMAGE_COMPACT_REMOVE_BOOT_DIR}" = "1" ]; then
       sudo -E chroot "${ROOTFSDIR}" /bin/busybox sh <<EOL
-rm -fr /boot/System.map-* /boot/config-* /boot/vmlinux-* /boot/initrd* || true
+rm -fr /boot/System.map-* /boot/config-* /boot/vmlinux-* /boot/vmlinuz-* /boot/initrd* || true
 rm -fr /initrd.img /initrd.img.old /vmlinuz /vmlinuz.old || true
 EOL
     fi
