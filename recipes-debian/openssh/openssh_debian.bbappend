@@ -1,8 +1,4 @@
-# In openssh, ADD_PR was set to 1 because of the following one modification:
-# - openssh: Add CVE-2025-32728.patch (meta-emlinux#493)
-ADD_PR += "1"
-
-FILESEXTRAPATHS_prepend := "${THISDIR}/files:"
-SRC_URI += " \
-           file://CVE-2025-32728.patch \
-           "
+# In openssh, ADD_PR was set to 2 because of the following modifications:
+# - 1: openssh: Add CVE-2025-32728.patch
+# - 2: openssh: Remove CVE-2025-32728.patch
+ADD_PR += "2"
