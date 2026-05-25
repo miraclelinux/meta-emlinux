@@ -209,6 +209,10 @@ def fetch_all_cves(db_file, conn, last_modified, api_key):
             for cve in data["vulnerabilities"]:
                update_db(conn, cve)
 
+            if per_page == 0:
+                # no more data
+                break
+
             index += per_page
             if index >= total:
                break
