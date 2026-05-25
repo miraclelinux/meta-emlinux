@@ -466,6 +466,10 @@ class EmlNVDPlugin(EmlCvePlugin):
             for cve in data["vulnerabilities"]:
                 self._update_db(conn, cve)
 
+            if per_page == 0:
+                # no more data
+                break
+
             index += per_page
             if index >= total:
                 break
