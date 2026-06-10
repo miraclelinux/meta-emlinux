@@ -45,3 +45,4 @@ SDK_PREINSTALL += " \
 
 SDK_INSTALL += "${@ "linux-headers-"+d.getVar('KERNEL_NAME') if d.getVar('KERNEL_NAME') else '' }"
 
+RT_FRAGMENT = "preempt-rt.cfg"
