@@ -290,38 +290,45 @@ def main(args: dict):
         if not args.dpkg_status_file
         else args.dpkg_status_file
     )
-    if not os.path.exists(dpkg_status_file):
-        logger.error(f"File {dpkg_status_file} is not found")
-        exit(1)
 
     debian_codename = args.debian_codename
     if not debian_codename:
         debian_codename = bitbakeinfo["image_distro"].split("-")[1]
 
-    # Read dpkg file to get installed package information
-    installed_packages = PackageInfoHelper.parse_dpkg_status_file(
-        dpkg_status_file,
-        debian_codename,
-        target_source_package=args.target_source_package,
-    )
+    installed_packages = None
+    cve_product_list = None
 
-    # Check recipe's source code provenance
-    recipe_source_info = read_recipe_source_info(bitbakeinfo["deploy_image_dir"])
-    installed_packages.merge_recipe_source_info(recipe_source_info)
+    if args.update_cve_databese_only:
+        logger.info("Run on database update only mode.")
+    else:
+        if not os.path.exists(dpkg_status_file):
+            logger.error(f"File {dpkg_status_file} is not found.")
+            exit(1)
 
-    # Read cve product list
-    cve_product_list = CveProductList()
-    cve_product_list.create_product_list(
-        installed_packages, bitbakeinfo["emlinux_layer_dir"], args.extra_cve_product
-    )
+        # Read dpkg file to get installed package information
+        installed_packages = PackageInfoHelper.parse_dpkg_status_file(
+            dpkg_status_file,
+            debian_codename,
+            target_source_package=args.target_source_package,
+        )
 
-    # Read ignore list
-    ignore_list = create_ignore_list(
-        bitbakeinfo["emlinux_layer_dir"],
-        installed_packages,
-        debian_codename,
-        args.extra_cve_check_ignore,
-    )
+        # Check recipe's source code provenance
+        recipe_source_info = read_recipe_source_info(bitbakeinfo["deploy_image_dir"])
+        installed_packages.merge_recipe_source_info(recipe_source_info)
+
+        # Read cve product list
+        cve_product_list = CveProductList()
+        cve_product_list.create_product_list(
+            installed_packages, bitbakeinfo["emlinux_layer_dir"], args.extra_cve_product
+        )
+
+        # Read ignore list
+        ignore_list = create_ignore_list(
+            bitbakeinfo["emlinux_layer_dir"],
+            installed_packages,
+            debian_codename,
+            args.extra_cve_check_ignore,
+        )
 
     cve_data_dir = f"{bitbakeinfo['dl_dir']}/CVE"
     cl.create_directory(cve_data_dir)
