@@ -43,12 +43,15 @@ def debian_section_to_component_type(section):
     return ComponentType.APPLICATION 
 
 def make_license_info(factory, licenses, license_mapping):
-    ret = []
+    ret = None
 
-    uniq_licenses = licensing.normalize_for_cyclonedx(licenses)
+    uniq_licenses = licensing.normalize_for_sbom(licenses, license_mapping)
     for lic in uniq_licenses:
         tmp = factory["lc_factory"].make_with_name(lic)
-        ret.append(tmp)
+        if ret is None:
+            ret = tmp.name
+        else:
+            ret = f"{ret} AND {tmp.name}"
 
     return ret
 
@@ -78,12 +81,13 @@ def create_component(factory, distro, pkg, license_mapping):
     purl_info = create_package_url(distro, pkg)
     pkgname_hash = sbom_common.package_name_hash(pkg['package'], pkg['source'])
 
+    licenses_string = make_license_info(factory, pkg["licenses"], license_mapping)
     return Component(
         type = debian_section_to_component_type(pkg["section"]),
         name = pkg["package"],
         group = pkg["source"],
         version = pkg["version"],
-        licenses = make_license_info(factory, pkg["licenses"], license_mapping),
+        licenses = [LicenseExpression(value=licenses_string)],
         supplier = create_organization_entity(pkg),
         bom_ref = BomRef(f"{pkg['package']}@{pkg['version']}-{pkgname_hash}"),
         purl = purl_info,

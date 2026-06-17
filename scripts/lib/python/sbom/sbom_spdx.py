@@ -83,7 +83,7 @@ def create_license_string(pkg, license_mapping):
     licenses = []
     s = ""
 
-    licenses_tmp = licensing.normalize_for_spdx(create_uniq_list(pkg["licenses"]), license_mapping)
+    licenses_tmp = licensing.normalize_for_sbom(create_uniq_list(pkg["licenses"]), license_mapping)
 
     try:
         for lic in licenses_tmp:

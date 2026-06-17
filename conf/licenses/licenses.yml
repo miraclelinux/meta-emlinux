@@ -205,6 +205,12 @@ initramfs-tools-core:
   licenses: [
     GPL-2
   ]
+libisl23:
+  licenses: [
+    BSD-2-clause,
+    LGPL-2.1-or-later,
+    MIT,
+  ]
 klibc-utils:
   licenses: [
     GPL-2
@@ -928,6 +934,11 @@ locales:
 lrzsz:
   licenses: [
     GPL-2
+  ]
+ruby-narray:
+  licenses: [
+    GPL-2.0-or-later,
+    Ruby OR GPL-2.0-only,
   ]
 shared-mime-info:
   licenses: [

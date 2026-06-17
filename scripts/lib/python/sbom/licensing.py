@@ -52,6 +52,15 @@ def split_licesense_and_normalize(lic, license_mapping):
     elif " and-or " in lic:
         tmp = normalize_licenses(split_licenses(lic, " and-or "), license_mapping)
         lics.append("-and-or-".join(tmp))
+    elif " OR " in lic:
+        tmp = normalize_licenses(split_licenses(lic, " OR "), license_mapping)
+        l = f"({' OR '.join(tmp)})"
+        lics.append(l)
+    elif " or " in lic:
+        tmp = normalize_licenses(split_licenses(lic, " or "), license_mapping)
+        l = f"({' OR '.join(tmp)})"
+        lics.append(l)
+
     else:
         lics += normalize_licenses([lic], license_mapping)
 
@@ -68,12 +77,6 @@ def split_licenses_simple(licenses):
         elif " and " in lic:
             ret += lic.split(" and ")
             splited = True
-        elif " or " in lic:
-            ret += lic.split(" or ")
-            splited = True
-        elif " OR " in lic:
-            ret += lic.split(" OR ")
-            splited = True
         else:
             ret.append(lic)
 
@@ -82,7 +85,7 @@ def split_licenses_simple(licenses):
     
     return ret
 
-def normalize_for_spdx(licenses, license_mapping):
+def normalize_for_sbom(licenses, license_mapping):
     tmp = []
     normalized = []
 
@@ -91,13 +94,9 @@ def normalize_for_spdx(licenses, license_mapping):
         tmp += split_licesense_and_normalize(lic, license_mapping)
 
     for lic in tmp:
-        if " " in lic:
+        if not lic.startswith("(") and " " in lic:
             normalized.append(lic.replace(" ", "-"))
         else:
             normalized.append(lic)
 
     return list(set(normalized))
-
-def normalize_for_cyclonedx(licenses):
-    return split_licenses_simple(licenses)
-
