@@ -5,7 +5,7 @@
 #
 # SPDX-License-Identifier: MIT
 #
-require emlinux-image-prepare-sshd.inc
+require emlinux-image-common.inc
 
 FILESEXTRAPATHS:prepend := "${FILE_DIRNAME}/files/compact:"
 
