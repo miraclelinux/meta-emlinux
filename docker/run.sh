@@ -14,9 +14,24 @@ if [ $? != 0 ]; then
 fi
 
 mode="run"
-if [ $# = 1 ]; then
-    mode="${1}"
-fi
+while [ $# -gt 0 ]; do
+  case "$1" in
+    run|build|clean)
+	mode="$1"
+	;;
+    "-t")
+	distro="-trixie"
+	;;
+    "-h")
+	echo "Usage: $0 [-t] [run|build|clean]"
+	echo "       -t:    Use trixie distribution (Default is bookworm)"
+	echo "       run:   Run new docker container"
+	echo "       build: Build docker image"
+	echo "       clean: Remove docker image"
+	exit
+  esac
+  shift
+done
 
 host_user_id=$(id -u)
 host_user_name=$(id -un)
@@ -25,9 +40,9 @@ export host_user_name="${host_user_name}"
 
 cd ${script_dir}
 if [ "${mode}" = "build" ]; then
-    ${docker_compose_cmd} build --no-cache emlinux3-build
+    ${docker_compose_cmd} build --no-cache emlinux3-build"${distro}"
 elif [ "${mode}" = "run" ]; then
-    ${docker_compose_cmd} run --rm emlinux3-build
+    ${docker_compose_cmd} run --rm emlinux3-build"${distro}"
 elif [ "${mode}" = "clean" ]; then
-    docker rmi -f "emlinux3-build-${host_user_name}"
+    docker rmi -f "emlinux3-build${distro}-${host_user_name}"
 fi
