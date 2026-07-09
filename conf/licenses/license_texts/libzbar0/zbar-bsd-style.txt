@@ -1,0 +1,2 @@
+Portions of the bit stream reader are copyright (C) The Xiph.Org Foundation
+  1994-2008, and are licensed under a BSD-style license.

@@ -1,0 +1,6 @@
+mkinstalldirs
+The first two chapters of Alice in Wonderland
+
+Author: Noah Friedman <friedman@prep.ai.mit.edu>
+        Gutenburg project (for Alice in Wonderland)
+

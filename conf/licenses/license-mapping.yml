@@ -1,16 +1,19 @@
-# https://scancode-licensedb.aboutcode.org/
+# https://spdx.org/licenses/
+
+# This file format is following
+# LICENSE NAME: REPLACED LICENSE NAME
+#
+# For example, folowing line replace from GPL2 to GPL-2.0-only
+# "GPL2": "GPL-2.0-only"
+# Layer is able to have its own license-mapping.yml file in conf/licenses directory.
+# 
 
 # Apache
 "Apache-2": "Apache-2.0"
 
 # Artistic
 "Artistic-1": "Artistic-1.0"
-"Artistic-dist": "LicenseRef-scancode-artistic-1988-1.0"
-
-# Autoconf exception
-"GPL-2.0-or-later WITH Autoconf-exception": "Autoconf-exception-2.0"
-"GPL-3.0-or-later WITH Autoconf-exception": "Autoconf-exception-3.0"
-"GPL-3 WITH automake-exception": "Autoconf-exception-3.0"
+"Artistic": "Artistic-1.0-Perl"
 
 # BSL
 "BSL-1": "BSL-1.0"
@@ -27,6 +30,9 @@
 
 # Vixie Cron License
 "Paul-Vixie's-license": "Vixie-Cron"
+
+# Expat can be treated as MIT.
+"Expat": "MIT"
 
 # FSF
 "FSF-unlimited": "FSFULLRWD"
@@ -51,27 +57,21 @@
 # GPL 2
 "GPL-2": "GPL-2.0-only"
 "GPL-2+": "GPL-2.0-or-later"
+'GPL-2.0+': "GPL-2.0-or-later"
 
 # GLP3
 "GPL-3": "GPL-3.0-only"
 "GPL-3+": "GPL-3.0-or-later"
 
-# GPL with Autoconf exception
-"GPL-2+ with Autoconf exception": "Autoconf-exception-2.0"
-
-# GPL with libtool exception
-"GPL-2+ with Libtool exception": "Libtool-exception"
-
-# GPL with OpenSSL exception
-"GPL-2+ WITH OpenSSL exception": "LicenseRef-scancode-openssl-exception-gpl-2.0-plus"
-
 # LGPL
 "LGPL-2": "LGPL-2.0-only"
 "LGPL-2+": "LGPL-2.0-or-later"
+"LGPL-2.0+": "LGPL-2.0-or-later"
 "LGPL-2.1": "LGPL-2.1-only"
 "LGPL-2.1+": "LGPL-2.1-or-later"
 "LGPL-3": "LGPL-3.0-only"
 "LGPL-3+": "LGPL-3.0-or-later"
+"LGPL-3.0+": "LGPL-3.0-or-later"
 
 # OpenLdap
 "OpenLDAP-2.0": "OLDAP-2.0"
@@ -85,24 +85,6 @@
 "OpenLDAP-2.8": "OLDAP-2.8"
 
 
-# pcre
-"pcre": "LicenseRef-scancode-pcre"
-
 # permissive
 "permissive-fsf": "FSFULLR"
-
-# public domain
-"public-domain": "LicenseRef-scancode-public-domain"
-"Public-Domain": "LicenseRef-scancode-public-domain"
-"PD": "LicenseRef-scancode-public-domain"
-"PD-debian": "LicenseRef-scancode-public-domain"
-
-# SMAIL-GPL
-"SMAIL-GPL": "LicenseRef-scancode-smail-gpl"
-
-# Unicode
-"Unicode": "LicenseRef-scancode-unicode"
-
-# Misc
-"Linux-syscall-note-exception": "Linux-syscall-note"
 
