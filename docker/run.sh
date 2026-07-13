@@ -19,16 +19,16 @@ while [ $# -gt 0 ]; do
     run|build|clean)
 	mode="$1"
 	;;
-    "-t")
-	distro="-trixie"
+    "--trixie")
+	distro="trixie"
 	;;
     "-h")
-	echo "Usage: $0 [-t] [run|build|clean]"
-	echo "       -t:    Use trixie distribution (Default is bookworm)"
-	echo "       run:   Run new docker container"
-	echo "       build: Build docker image"
-	echo "       clean: Remove docker image"
-	exit
+	echo "Usage: $0 [--trixie] [run|build|clean]"
+	echo "       --trixie: Use trixie distribution (Default is bookworm)"
+	echo "       run:      Run new docker container"
+	echo "       build:    Build docker image"
+	echo "       clean:    Remove docker image"
+	exit 1
   esac
   shift
 done
@@ -38,11 +38,17 @@ host_user_name=$(id -un)
 export host_user_id="${host_user_id}"
 export host_user_name="${host_user_name}"
 
+if [ -z "$distro" ]; then
+    dockerimage="emlinux3-build"
+else
+    dockerimage="emlinux3-build-${distro}"
+fi
+
 cd ${script_dir}
 if [ "${mode}" = "build" ]; then
-    ${docker_compose_cmd} build --no-cache emlinux3-build"${distro}"
+    ${docker_compose_cmd} build --no-cache "${dockerimage}"
 elif [ "${mode}" = "run" ]; then
-    ${docker_compose_cmd} run --rm emlinux3-build"${distro}"
+    ${docker_compose_cmd} run --rm "${dockerimage}"
 elif [ "${mode}" = "clean" ]; then
-    docker rmi -f "emlinux3-build${distro}-${host_user_name}"
+    docker rmi -f "${dockerimage}-${host_user_name}"
 fi
