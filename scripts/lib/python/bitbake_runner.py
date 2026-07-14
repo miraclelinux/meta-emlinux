@@ -9,20 +9,27 @@
 import re
 import subprocess
 import pathlib
+import pprint
 
 def find_layers():
+    """
+    This function returns layer list that is sorted by layer priority.
+    """
     cmd = ["bitbake-layers", "show-layers"]
     process = subprocess.Popen(cmd, stdout=subprocess.PIPE, text=True)
     output, errors = process.communicate()
 
-    layers = []
+    layer_info = {}
 
     lines = output.split("\n")
     for line in lines:
         tmp = [col for col in line.split(" ") if not col == ""]
         if len(tmp) >= 2:
             if pathlib.Path(tmp[1]).exists():
-                layers.append(tmp[1])
+                name = tmp[1]
+                layer_info[name] = int(tmp[2])
+
+    layers = [k for k, v in sorted(layer_info.items(), key=lambda x: x[1])]
 
     return layers
 

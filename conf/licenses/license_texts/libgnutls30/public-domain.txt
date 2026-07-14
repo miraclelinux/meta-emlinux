@@ -1,0 +1,6 @@
+Upstream Authors: Mike Hamburg (Stanford University)
+
+Copyright:
+  * Mike Hamburg (Stanford University), 2009.
+License:
+  Public domain.

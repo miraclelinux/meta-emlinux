@@ -1,972 +1,1172 @@
 # format
+#
+# Format 1:
 # debian binary package name:
 #   licenses: [
-#     "LICENSE A",
-#     "LICENSE B"
+#     "LICENSE_NAME_A",
+#     "LICENSE_NAME_B"
 #   ]
+#
+# Format 2:
+# debian binary package name:
+#  licenses:
+#    - LICENSE_NAME_A
+#    - LICENSE_NAME_B
+#
+# Format 3:
+# debian binary package name:
+#   licenses:
+#     license:
+#       - LICENSE_NAME_A
+#       - LICENSE_NAME_B
+#       - LICENSE_NAME_C
+#     text:
+#       LICENSE_NAME_C: /path/to/license text file
+#
+# Format 3 can put License text in a file if license is not defined SPDX License ID list
+# (https://spdx.org/licenses/).
+# Path to license file can be used both absolute and relative path from <layer>/conf/licenses/license_texts.
+# If use relative path, text file should be in conf/licenses/license_texts in your layer.
+# create_sbom.py use <layer>/conf/licenses/license_texts as base path.
+# For example, adwaita-icon-theme package, we defined CC-BY-3.0-US license following line.
+# CC-BY-3.0-US: adwaita-icon-theme/CC-BY-SA-3.0-US.txt
+# Above example, create_sbom.py create file path as "meta-emlinux/conf/licenses/license_texts/adwaita-icon-theme/CC-BY-SA-3.0-US.txt"
+#
+# Layer is able to have it own licenses.yml file in <layer>/conf/licenses directory.
+# If custom layer is called meta-custom, you can put meta-custom/conf/licenses/licenses.yml file.
+# If meta-custom/conf/licenses/licenses.yml contais following line
+# MY-LICENSE: myapp/license.txt
+# create_sbom.py will read meta-custom/conf/licenses/license_texts/myapp/license.txt
+#
+# In this file, some packages use Format 3 style definition.
 adwaita-icon-theme:
-  licenses: [
-    CC-BY-SA-3.0,
-    LGPL-3.0-only,
-    CC-BY-SA-3.0-US,
-    CC-BY-SA-4.0,
-    GFDL-1.2+,
-    CC-BY-SA-3.0-Unported,
-    CC-BY-SA-2.0-IT,
-    CC-BY-3.0-US,
-  ]
+  licenses:
+    license:
+      - CC-BY-SA-3.0 or LGPL-3
+      - CC-BY-SA-3.0-US or LGPL-3
+      - GPL-unspecified
+      - CC-BY-SA-4.0
+      - GFDL-1.2+ or CC-BY-SA-3.0-Unported or CC-BY-SA-2.0-IT
+      - CC-BY-3.0-US
+    text:
+      GPL-unspecified: adwaita-icon-theme/GPL-unspecified.txt
+      CC-BY-SA-2.0-IT: adwaita-icon-theme/CC-BY-SA-2.0-IT.txt
+      CC-BY-SA-3.0-Unported: adwaita-icon-theme/CC-BY-SA-3.0-Unported.txt
+      CC-BY-SA-3.0-US: adwaita-icon-theme/CC-BY-SA-3.0-US.txt
 base-files:
-  licenses: [
-    GPL-3,
-  ]
+  licenses:
+    - GPL-2.0-or-later
 busybox:
-  licenses: [
-    GPL-2,
-  ]
+  licenses:
+    GPL-2.0-or-later
 busybox-static:
-  licenses: [
-    GPL-2,
-  ]
+  licenses:
+    GPL-2.0-or-later
+blt:
+  licenses:
+    license:
+      - MIT-1
+      - MIT-2
+      - MIT-3
+      - MIT-4
+      - MIT-5
+      - MIT-6
+      - TCL
+    text:
+      MIT-1: blt/MIT-1.txt
+      MIT-2: blt/MIT-2.txt
+      MIT-3: blt/MIT-3.txt
+      MIT-4: blt/MIT-4.txt
+      MIT-5: blt/MIT-5.txt
+      MIT-6: blt/MIT-6.txt
 debian-archive-keyring:
-  licenses: [
-    GPL-3,
-  ]
+  licenses:
+    - GPL-2.0-or-later
 emlinux-customization:
-  licenses: [
-    MIT,
-  ]
+  licenses:
+    - MIT
 fontconfig:
-  licenses: [
-    MIT
-  ]
+  licenses:
+    - HPND-sell-variant
 fontconfig-config:
-  licenses: [
-    MIT
-  ]
+  licenses:
+    - HPND-sell-variant
 gcc-12-base:
-  licenses: [
-    Artistic,
-    GFDL-1.2,
-    GPL,
-    GPL-2,
-    GPL-3,
-    LGPL
-  ]
+  licenses:
+    - GPL-3.0-or-later WITH GCC-exception-3.1
+    - GPL-3.0-or-later
+    - GPL-2.0-or-later
+    - LGPL-2.1-or-later
+    - BSD-3-Clause
+    - MIT
+    - Zlib
+    - Unicode-DFS-2015
+    - HPND
+    - Artistic
 gcc-14-base:
-  licenses: [
-    Artistic,
-    GPL-3.0-only,
-    GPL-3.0-or-later,
-    GPL-3.0-with-GCC-exception,
-    BSD-3-Clause,
-    MIT,
-    GFDL-1.2,
-    GPL-2.0-or-later,
-    LGPL-2.1-only,
-    LGPL-2.1-or-later,
-    LGPL-3.0,
-    public-domain,
-    Zlib,
-    BSL-1.0,
-    Unicode-DFS-2015
-  ]
+  licenses:
+    - GPL-3.0-or-later WITH GCC-exception-3.1
+    - GPL-3.0-or-later
+    - GPL-2.0-or-later
+    - LGPL-2.1-or-later
+    - BSD-3-Clause
+    - MIT
+    - Zlib
+    - Unicode-DFS-2015
+    - HPND
+    - Artistic
 gstreamer1.0-alsa:
-  licenses: [
-    LGPL-2.0-or-later,
-    BSD-2-Clause,
-    BSD-3-Clause,
-    GPL-2.0-or-later,
-    MIT
-  ]
+  licenses:
+    - BSD-2-Clause
+    - BSD-3-Clause
+    - GPL-2.0-or-later
+    - GPL-3.0-or-later
+    - LGPL-2.1-only
+    - LGPL-2.1-or-later
+    - LGPL-3.0-or-later
+    - MPL-1.1
+    - MIT
+    - UNKNOWN
 gstreamer1.0-gl:
-  licenses: [
-    LGPL-2.0-or-later,
-    BSD-2-Clause,
-    BSD-3-Clause,
-    GPL-2.0-or-later,
-    MIT
-  ]
+  licenses:
+    - BSD-2-Clause
+    - BSD-3-Clause
+    - GPL-2.0-or-later
+    - GPL-3.0-or-later
+    - LGPL-2.1-only
+    - LGPL-2.1-or-later
+    - LGPL-3.0-or-later
+    - MPL-1.1
+    - MIT
+    - UNKNOWN
 gstreamer1.0-gtk3:
-  licenses: [
-    BSD-2-Clause,
-    BSD-3-Clause,
-    LGPL-2.0-or-later,
-    LGPL-2.0-only,
-    LGPL-2.1-or-later,
-    MIT
-  ]
+  licenses:
+    license:
+      - BSD-2-Clause
+      - BSD-3-Clause
+      - GPL-2.0-or-later
+      - LGPL-2.1-or-later
+      - MIT
+      - BSD
+    text:
+      BSD: gstreamer1.0-plugins-good/BSD.txt
 gstreamer1.0-opencv:
-  licenses: [
-    BSD-2-Clause,
-    BSD-3-Clause,
-    GPL-2.0-or-later,
-    GPL-3.0-or-later,
-    LGPL-2.0-or-later,
-    LGPL-2.1-or-later,
-    LGPL-2.1-only,
-    LGPL-2.1-only,
-    MPL-1.1,
-    MIT,
-    Proprietary
-  ]
+  licenses:
+    - BSD-2-Clause
+    - BSD-3-Clause
+    - GPL-2.0-or-later
+    - GPL-3.0-or-later
+    - LGPL-2.1-only
+    - LGPL-2.1-or-later
+    - LGPL-3.0-or-later
+    - MPL-1.1
+    - MIT
+    - UNKNOWN
 gstreamer1.0-plugins-bad:
-  licenses: [
-    BSD-2-Clause,
-    BSD-3-Clause,
-    GPL-2.0-or-later,
-    GPL-3.0-or-later,
-    LGPL-2.0-or-later,
-    LGPL-2.1-or-later,
-    LGPL-2.1-only,
-    LGPL-2.1-only,
-    MPL-1.1,
-    MIT,
-    Proprietary
-  ]
+  licenses:
+    - BSD-2-Clause
+    - BSD-3-Clause
+    - GPL-2.0-or-later
+    - GPL-3.0-or-later
+    - LGPL-2.1-only
+    - LGPL-2.1-or-later
+    - LGPL-3.0-or-later
+    - MPL-1.1
+    - MIT
+    - UNKNOWN
 gstreamer1.0-plugins-bad-apps:
-  licenses: [
-    BSD-2-Clause,
-    BSD-3-Clause,
-    GPL-2.0-or-later,
-    GPL-3.0-or-later,
-    LGPL-2.0-or-later,
-    LGPL-2.1-or-later,
-    LGPL-2.1-only,
-    LGPL-2.1-only,
-    MPL-1.1,
-    MIT,
-    Proprietary
-  ]
-gstreamer1.0-plugins-base:
-  licenses: [
-    LGPL-2.0-or-later,
-    BSD-2-Clause,
-    BSD-3-Clause,
-    GPL-2.0-or-later,
-    MIT
-  ]
+  licenses:
+    - BSD-2-Clause
+    - BSD-3-Clause
+    - GPL-2.0-or-later
+    - GPL-3.0-or-later
+    - LGPL-2.1-only
+    - LGPL-2.1-or-later
+    - LGPL-3.0-or-later
+    - MPL-1.1
+    - MIT
+    - UNKNOWN
 gstreamer1.0-plugins-base-apps:
-  licenses: [
-    LGPL-2.0-or-later,
-    BSD-2-Clause,
-    BSD-3-Clause,
-    GPL-2.0-or-later,
-    MIT
-  ]
+  licenses:
+    - BSD-2-Clause
+    - BSD-3-Clause
+    - GPL-2.0-or-later
+    - GPL-3.0-or-later
+    - LGPL-2.1-only
+    - LGPL-2.1-or-later
+    - LGPL-3.0-or-later
+    - MPL-1.1
+    - MIT
+    - UNKNOWN
+gstreamer1.0-plugins-base:
+  licenses:
+    - BSD-2-Clause
+    - BSD-3-Clause
+    - GPL-2.0-or-later
+    - LGPL-2.1-or-later
+    - MIT
 gstreamer1.0-plugins-good:
-  licenses: [
-    BSD-2-Clause,
-    BSD-3-Clause,
-    LGPL-2.0-or-later,
-    LGPL-2.0-only,
-    LGPL-2.1-or-later,
-    MIT
-  ]
+  licenses:
+    license:
+      - BSD-2-Clause
+      - BSD-3-Clause
+      - GPL-2.0-or-later
+      - LGPL-2.1-or-later
+      - MIT
+      - BSD
+    text:
+      BSD: gstreamer1.0-plugins-good/BSD.txt
 gstreamer1.0-pulseaudio:
-  licenses: [
-    BSD-2-Clause,
-    BSD-3-Clause,
-    LGPL-2.0-or-later,
-    LGPL-2.0-only,
-    LGPL-2.1-or-later,
-    MIT
-  ]
-gstreamer1.0-tools:
-  licenses: [
-    GPL-2.0-or-later,
-    GPL-3.0-or-later,
-    LGPL-2.0-or-later,
-    LGPL-2.1-or-later
-  ]
+  licenses:
+    license:
+      - BSD-2-Clause
+      - BSD-3-Clause
+      - GPL-2.0-or-later
+      - LGPL-2.1-or-later
+      - MIT
+      - BSD
+    text:
+      BSD: gstreamer1.0-plugins-good/BSD.txt
 gstreamer1.0-x:
-  licenses: [
-    LGPL-2.0-or-later,
-    BSD-2-Clause,
-    BSD-3-Clause,
-    GPL-2.0-or-later,
-    MIT
-  ]
+  licenses:
+    - BSD-2-Clause
+    - BSD-3-Clause
+    - GPL-2.0-or-later
+    - GPL-3.0-or-later
+    - LGPL-2.1-only
+    - LGPL-2.1-or-later
+    - LGPL-3.0-or-later
+    - MPL-1.1
+    - MIT
+    - UNKNOWN
+gstreamer1.0-tools:
+  licenses:
+    - GPL-2.0-or-later
+    - GPL-3.0-or-later
+    - LGPL-2.0-or-later
+    - LGPL-2.1-or-later
 i2c-tools:
-  licenses: [
-    LGPL-2.1-or-later,
-    GPL-2.0-only,
-    GPL-2.0-or-later
-  ]
+  licenses:
+    - GPL-2.0-or-later
 initramfs-tee-supplicant-hook:
-  licenses: [
-    GPL-2.0-only,
-    MIT
-  ]
+  licenses:
+    - GPL-2.0-only
 initramfs-tools:
-  licenses: [
-    GPL-2
-  ]
+  licenses:
+    - GPL-2.0-or-later
 initramfs-tools-core:
-  licenses: [
-    GPL-2
-  ]
-libisl23:
-  licenses: [
-    BSD-2-clause,
-    LGPL-2.1-or-later,
-    MIT,
-  ]
+  licenses:
+    - GPL-2.0-or-later
 klibc-utils:
-  licenses: [
-    GPL-2
-  ]
+  licenses:
+    - GPL-2.0-only
+    - BSD-3-Clause
 libaec0:
-  licenses: [
-    BSD-2-Clause
-  ]
-libasound2:
-  # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1061276
-  licenses: [
-    LGPL-2.1+,
-  ]
-libasound2-data:
-  # https://bugs.debian.org/cgi-bin/bugreport.cgi?bug=1061276
-  licenses: [
-    LGPL-2.1+,
-  ]
+  licenses:
+    - BSD-2-Clause
 libatomic1:
-  licenses: [
-    Artistic,
-    GPL-3.0-only,
-    GPL-3.0-or-later,
-    GPL-3.0-with-GCC-exception,
-    BSD-3-Clause,
-    MIT,
-    GFDL-1.2,
-    GPL-2.0-or-later,
-    LGPL-2.1-only,
-    LGPL-2.1-or-later,
-    LGPL-3.0,
-    public-domain,
-    Zlib,
-    BSL-1.0,
-    Unicode-DFS-2015
-  ]
+  licenses:
+    - GPL-3.0-or-later WITH GCC-exception-3.1
+    - GPL-3.0-or-later
+    - GPL-2.0-or-later
+    - LGPL-2.1-or-later
+    - BSD-3-Clause
+    - MIT
+    - Zlib
+    - Unicode-DFS-2015
+    - HPND
 libavahi-client3:
-  licenses: [
-    LGPL-2.1-or-later,
-    GPL-2.0-only,
-    GPL-3.0-with-autoconf-exception,
-    GPL-2.0-only,
-    BSD-2-Clause,
-    BSD-3-Clause
-  ]
+  licenses:
+    - LGPL-2.0-or-later
+    - GPL-2.0-only
+    - GPL
+    - BSD-2-Clause
+    - BSD-3-Clause
 libavahi-common-data:
-  licenses: [
-    LGPL-2.1-or-later,
-    GPL-2.0-only,
-    GPL-3.0-with-autoconf-exception,
-    GPL-2.0-only,
-    BSD-2-Clause,
-    BSD-3-Claus
-  ]
+  licenses:
+    - LGPL-2.0-or-later
+    - GPL-2.0-only
+    - GPL
+    - BSD-2-Clause
+    - BSD-3-Clause
 libavahi-common3:
-  licenses: [
-    LGPL-2.1-or-later,
-    GPL-2.0-only,
-    GPL-3.0-with-autoconf-exception,
-    BSD-2-Clause,
-    BSD-3-Clause
-  ]
+  licenses:
+    - LGPL-2.0-or-later
+    - GPL-2.0-only
+    - GPL
+    - BSD-2-Clause
+    - BSD-3-Clause
 libc-bin:
-  licenses: [
-    GPL-2,
-    LGPL-2.1
-  ]
+  licenses:
+    license:
+      - LGPL-2.1-or-later
+      - GPL-2.0-or-later
+      - BSD-3-Clause
+      - InnerNet-2.00
+      - ISOC-RFC3492bis
+      - Henry-Spencer-Regex
+      - CE-Chew-Acknowledge
+    text:
+      InnerNet-2.00: libc6/InnerNet-2.00.txt
+      ISOC-RFC3492bis: libc6/ISOC-RFC3492bis.txt
+      Henry-Spencer-Regex: libc6/Henry-Spencer-Regex.txt
+      CE-Chew-Acknowledge: libc6/CE-Chew-Acknowledge.txt
 libc-l10n:
-  licenses: [
-    GPL-2,
-    LGPL-2.1
-  ]
+  licenses:
+    license:
+      - LGPL-2.1-or-later
+      - GPL-2.0-or-later
+      - BSD-3-Clause
+      - InnerNet-2.00
+      - ISOC-RFC3492bis
+      - Henry-Spencer-Regex
+      - CE-Chew-Acknowledge
+    text:
+      InnerNet-2.00: libc6/InnerNet-2.00.txt
+      ISOC-RFC3492bis: libc6/ISOC-RFC3492bis.txt
+      Henry-Spencer-Regex: libc6/Henry-Spencer-Regex.txt
+      CE-Chew-Acknowledge: libc6/CE-Chew-Acknowledge.txt
 libc6:
-  licenses: [
-    GPL-2,
-    LGPL-2.1
-  ]
+  licenses:
+    license:
+      - LGPL-2.1-or-later
+      - GPL-2.0-or-later
+      - BSD-3-Clause
+      - InnerNet-2.00
+      - ISOC-RFC3492bis
+      - Henry-Spencer-Regex
+      - CE-Chew-Acknowledge
+    text:
+      InnerNet-2.00: libc6/InnerNet-2.00.txt
+      ISOC-RFC3492bis: libc6/ISOC-RFC3492bis.txt
+      Henry-Spencer-Regex: libc6/Henry-Spencer-Regex.txt
+      CE-Chew-Acknowledge: libc6/CE-Chew-Acknowledge.txt
 libcairo-gobject2:
-  licenses: [
-    MPL-1.1,
-    LGPL-2.1-only,
-  ]
+  licenses:
+    license:
+      - LGPL-2.1-or-later OR MPL-1.1
+      - DavidReveman
+    text:
+      DavidReveman: libcairo2/DavidReveman.txt
 libcairo2:
-  licenses: [
-    MPL-1.1,
-    LGPL-2.1-only,
-  ]
+  licenses:
+    license:
+      - LGPL-2.1-or-later OR MPL-1.1
+      - DavidReveman
+    text:
+      DavidReveman: libcairo2/DavidReveman.txt
 libcfitsio10:
-  licenses: [
-    NASA-1.3,
-    MIT,
-    LGPL-2.0-only,
-    GPL-2.0-only
-  ]
+  licenses:
+    - NASA-1.3
+    - GPL-2.0-or-later
+    - LGPL-2.0-or-later
 libcrypt1:
-  licenses: [
-    public-domain
-  ]
+  licenses:
+    - LGPL-2.1-or-later
 libdc1394-25:
-  licenses: [
-    LGPL-2.0-or-later
-  ]
+  licenses:
+    - LGPL-2.1-or-later
+    - GPL-2.0-or-later
 libdrm-amdgpu1:
-  licenses: [
-    MIT
-  ]
+  licenses:
+    - MIT
 libdrm-common:
-  licenses: [
-    MIT,
-  ]
+  licenses:
+    - MIT
 libdrm-nouveau2:
-  licenses: [
-    MIT
-  ]
+  licenses:
+    - MIT
 libdrm-radeon1:
-  licenses: [
-    MIT
-  ]
+  licenses:
+    - MIT
 libdrm2:
-  licenses: [
-    MIT,
-  ]
-libdw1:
-  licenses: [
-    BSD-2-Clause,
-    GFDL-NIV-1.3,
-    GPL-3.0-or-later,
-    GPL-3.0-or-later WITH Bison-exception-2.2,
-    GPL-2.0-or-later,
-    LGPL-2.1-or-later,
-    LGPL-3.0-or-later
-  ]
-libegl1:
-  licenses: [
-    MIT,
-    BSD-1-Clause,
-    BSD-3-Clause,
-    GPL-3.0-with-autoconf-exception
-  ]
-libelf1:
-  licenses: [
-    BSD-2-Clause,
-    GFDL-NIV-1.3,
-    GPL-3.0-or-later,
-    GPL-3.0-or-later WITH Bison-exception-2.2,
-    GPL-2.0-or-later,
-    LGPL-2.1-or-later,
-    LGPL-3.0-or-later
-  ]
+  licenses:
+    - MIT
 libflite1:
-  licenses: [
-    BSD-3-Clause,
-    GPL-2.0-only
-  ]
+  licenses:
+    license:
+      - public-domain
+      - BSD-4-Clause-Shortended
+      - GPL-2.0-only
+      - GPL-3.0-only
+      - BSD-2-Clause
+      - HPND-sell-variant
+      - Henry-Spencer-Regexp
+      - doc-cmu
+    text:
+      public-domain: libflite1/public-domain.txt
+      Henry-Spencer-Regexp: libflite1/Henry-Spencer-Regexp.txt
+      doc-cmu: libflite1/doc-cmu.txt
 libfontconfig1:
-  licenses: [
-    MIT,
-  ]
-libgbm1:
-  licenses: [
-    Apache-2.0,
-    BSD-2-clause,
-    BSD-3-google,
-    BSL,
-    GPL-3.0-or-later,
-    Khronos,
-    MIT,
-    SGI-B-2.0
-  ]
+  licenses:
+    - HPND-sell-variant
+libfontenc1:
+  licenses:
+    - MIT
 libgcc-s1:
-  licenses: [
-    Artistic,
-    GFDL-1.2,
-    GPL,
-    GPL-2,
-    GPL-3,
-    LGPL
-  ]
+  licenses:
+    - GPL-3.0-or-later WITH GCC-exception-3.1
+    - GPL-3.0-or-later
+    - GPL-2.0-or-later
+    - LGPL-2.1-or-later
+    - BSD-3-Clause
+    - MIT
+    - Zlib
+    - Unicode-DFS-2015
+    - HPND
 libgcrypt20:
-  licenses: [
-    GPL-2,
-    LGPL
-  ]
+  licenses:
+    license:
+      - LGPL-2.1-or-later
+      - GPL-2.0-or-later
+      - BSD-3-Clause
+      - X11
+      - public-domain
+      - OCB
+    text:
+      public-domain: libgcrypt20/public-domain.txt
+      OCB: libgcrypt20/OCB.txt
 libgfortran5:
-  licenses: [
-    Artistic,
-    GFDL-1.2,
-    GPL,
-    GPL-2,
-    GPL-3,
-    LGPL
-  ]
-libgles2:
-  licenses: [
-    MIT,
-    BSD-1-Clause,
-    BSD-3-Clause,
-    GPL-3.0-with-autoconf-exception
-  ]
-libgnutls30:
-  licenses: [
-    Apache-2.0,
-    GFDL-1.3,
-    GPL,
-    GPL-3,
-    LGPL,
-    LGPL-3
-  ]
-libgnutls30t64:
-  licenses: [
-    Apache-2.0,
-    GFDL-1.3,
-    GPL,
-    GPL-3,
-    LGPL,
-    LGPL-3
-  ]
-libgomp1:
-  licenses: [
-    GPL-3+,
-    gcc-exception-3.1,
-  ]
-libgssapi-krb5-2:
-  licenses: [
-    GPL-2
-  ]
-libgstreamer-gl1.0-0:
-  licenses: [
-    LGPL-2.0-or-later,
-    BSD-2-Clause,
-    BSD-3-Clause,
-    GPL-2.0-or-later,
-    MIT
-  ]
-libgstreamer-opencv1.0-0:
-  licenses: [
-    BSD-2-Clause,
-    BSD-3-Clause,
-    GPL-2.0-or-later,
-    GPL-3.0-or-later,
-    LGPL-2.0-or-later,
-    LGPL-2.1-or-later,
-    LGPL-2.1-only,
-    LGPL-2.1-only,
-    MPL-1.1,
-    MIT,
-    Proprietary
-  ]
-libgstreamer-plugins-bad1.0-0:
-  licenses: [
-    BSD-2-Clause,
-    BSD-3-Clause,
-    GPL-2.0-or-later,
-    GPL-3.0-or-later,
-    LGPL-2.0-or-later,
-    LGPL-2.1-or-later,
-    LGPL-2.1-only,
-    LGPL-2.1-only,
-    MPL-1.1,
-    MIT,
-    Proprietary
-  ]
-libgstreamer-plugins-base1.0-0:
-  licenses: [
-    LGPL-2.0-or-later,
-    BSD-2-Clause,
-    BSD-3-Clause,
-    GPL-2.0-or-later,
-    MIT
-  ]
-libgstreamer1.0-0:
-  licenses: [
-    GPL-2.0-or-later,
-    GPL-3.0-or-later,
-    LGPL-2.0-or-later,
-    LGPL-2.1-or-later
-  ]
+  licenses:
+    - GPL-3.0-or-later WITH GCC-exception-3.1
+    - GPL-3.0-or-later
+    - GPL-2.0-or-later
+    - LGPL-2.1-or-later
+    - BSD-3-Clause
+    - MIT
+    - Zlib
+    - Unicode-DFS-2015
+    - HPND
 libgupnp-igd-1.0-4:
-  licenses: [
-    LGPL-2.0-or-later,
-    GPL-3.0-only
-  ]
+  licenses:
+    - LGPL-2.0-or-later
+libgnutls30:
+  licenses:
+    license:
+      - LGPL-2.1-or-later
+      - GPL-3.0-or-later
+      - LGPL-3.0-or-later OR GPL-2.0-or-later
+      - BSD-3-Clause
+      - Apache-2.0
+      - CC0-1.0
+      - HPND
+      - MIT
+      - public-domain
+      - CRYPTOGAMS
+    text:
+      public-domain: libgnutls30/public-domain.txt
+      CRYPTOGAMS: libgnutls30/CRYPTOGAMS.txt
+libgnutls30t64:
+  licenses:
+    license:
+      - LGPL-2.1-or-later
+      - GPL-3.0-or-later
+      - LGPL-3.0-or-later OR GPL-2.0-or-later
+      - BSD-3-Clause
+      - Apache-2.0
+      - CC0-1.0
+      - HPND
+      - MIT
+      - public-domain
+      - CRYPTOGAMS
+    text:
+      public-domain: libgnutls30/public-domain.txt
+      CRYPTOGAMS: libgnutls30/CRYPTOGAMS.txt
+ 
+libgomp1:
+  licenses:
+    - GPL-3.0-or-later WITH GCC-exception-3.1
+    - GPL-3.0-or-later
+    - GPL-2.0-or-later
+    - LGPL-2.1-or-later
+    - BSD-3-Clause
+    - MIT
+    - Zlib
+    - Unicode-DFS-2015
+    - HPND
+libgssapi-krb5-2:
+  licenses:
+    license:
+      - BSD-3-Clause
+      - MIT
+      - HPND
+      - CC-BY-SA-3.0
+      - OLDAP-2.8
+      - OpenVision
+      - PKINIT
+      - RSA-MD4
+      - RSA-MD5
+    text:
+      OpenVision: libgssapi-krb5-2/OpenVision.txt
+      PKINIT: libgssapi-krb5-2/PKINIT.txt
+      RSA-MD4: libgssapi-krb5-2/RSA-MD4.txt
+      RSA-MD5: libgssapi-krb5-2/RSA-MD5.txt
+libgstreamer1.0-0:
+  licenses:
+    - GPL-2.0-or-later
+    - GPL-3.0-or-later
+    - LGPL-2.0-or-later
+    - LGPL-2.1-or-later
+libgstreamer-gl1.0-0:
+  licenses:
+    - BSD-2-Clause
+    - BSD-3-Clause
+    - GPL-2.0-or-later
+    - GPL-3.0-or-later
+    - LGPL-2.1-only
+    - LGPL-2.1-or-later
+    - LGPL-3.0-or-later
+    - MPL-1.1
+    - MIT
+    - UNKNOWN
+libgstreamer-opencv1.0-0:
+  licenses:
+    - BSD-2-Clause
+    - BSD-3-Clause
+    - GPL-2.0-or-later
+    - GPL-3.0-or-later
+    - LGPL-2.1-only
+    - LGPL-2.1-or-later
+    - LGPL-3.0-or-later
+    - MPL-1.1
+    - MIT
+    - UNKNOWN
+libgstreamer-plugins-bad1.0-0:
+  licenses:
+    - BSD-2-Clause
+    - BSD-3-Clause
+    - GPL-2.0-or-later
+    - GPL-3.0-or-later
+    - LGPL-2.1-only
+    - LGPL-2.1-or-later
+    - LGPL-3.0-or-later
+    - MPL-1.1
+    - MIT
+    - UNKNOWN
+libgstreamer-plugins-base1.0-0:
+  licenses:
+    - BSD-2-Clause
+    - BSD-3-Clause
+    - GPL-2.0-or-later
+    - GPL-3.0-or-later
+    - LGPL-2.1-only
+    - LGPL-2.1-or-later
+    - LGPL-3.0-or-later
+    - MPL-1.1
+    - MIT
+    - UNKNOWN
+libgtk2.0-0:
+  licenses:
+    license:
+      - LGPL-2.0-or-later
+      - LGPL-2.1-or-later
+      - LGPL-2.1-only
+      - GPL-2.0-or-later
+      - FSFAP
+      - Sun-Government-Clause OR LGPL-2.0-or-later
+      - Wintab-Free-Use
+    text:
+      Wintab-Free-Use: libgtk2.0-0/Wintab-Free-Use.txt
+      Sun-Government-Clause: libgtk2.0-0/Sun-Government-Clause.txt
+libgtk2.0-common:
+  licenses:
+    license:
+      - LGPL-2.0-or-later
+      - LGPL-2.1-or-later
+      - LGPL-2.1-only
+      - GPL-2.0-or-later
+      - FSFAP
+      - Sun-Government-Clause OR LGPL-2.0-or-later
+      - Wintab-Free-Use
+    text:
+      Wintab-Free-Use: libgtk2.0-0/Wintab-Free-Use.txt
+      Sun-Government-Clause: libgtk2.0-0/Sun-Government-Clause.txt
 libhwloc15:
-  licenses: [
-    BSD-3-Clause
-  ]
+  licenses:
+    - BSD-3-Clause
+    - GPL-3.0-only
 libi2c0:
-  licenses: [
-    LGPL-2.1-or-later,
-    GPL-2.0-only,
-    GPL-2.0-or-later
-  ]
+  licenses:
+    - LGPL-2.1-or-later
 libice6:
-  licenses: [
-    MIT-open-group
-  ]
+  licenses:
+    - MIT-open-group
 libiec61883-0:
-  licenses: [
-    LGPL-2.1-or-later
-  ]
+  licenses:
+    - LGPL-2.1-or-later
 libjudydebian1:
-  licenses: [
-    LGPL-2+,
-  ]
-libk5crypto3:
-  licenses: [
-    GPL-2
-  ]
-libklibc:
-  licenses: [
-    GPL-2
-  ]
-libkrb5-3:
-  licenses: [
-    GPL-2
-  ]
-libkrb5support0:
-  licenses: [
-    GPL-2
-  ]
+  licenses:
+    - LGPL-2.1-or-later
 libksba8:
-  licenses: [
-    GPL-3
-  ]
+  licenses:
+    license:
+      - LGPL-3.0-or-later
+      - GPL-2.0-or-later
+      - GPL-3.0-or-later
+      - ISOC-Standard-Notice
+    text:
+      ISOC-Standard-Notice: libksba8/ISOC-Standard-Notice.txt
+libk5crypto3:
+  licenses:
+    license:
+      - BSD-3-Clause
+      - MIT
+      - HPND
+      - CC-BY-SA-3.0
+      - OLDAP-2.8
+      - OpenVision
+      - PKINIT
+      - RSA-MD4
+      - RSA-MD5
+    text:
+      OpenVision: libgssapi-krb5-2/OpenVision.txt
+      PKINIT: libgssapi-krb5-2/PKINIT.txt
+      RSA-MD4: libgssapi-krb5-2/RSA-MD4.txt
+      RSA-MD5: libgssapi-krb5-2/RSA-MD5.txt
+libklibc:
+  licenses:
+    - GPL-2.0-only
+    - BSD-3-Clause
+libkrb5-3:
+  licenses:
+    license:
+      - BSD-3-Clause
+      - MIT
+      - HPND
+      - CC-BY-SA-3.0
+      - OLDAP-2.8
+      - OpenVision
+      - PKINIT
+      - RSA-MD4
+      - RSA-MD5
+    text:
+      OpenVision: libgssapi-krb5-2/OpenVision.txt
+      PKINIT: libgssapi-krb5-2/PKINIT.txt
+      RSA-MD4: libgssapi-krb5-2/RSA-MD4.txt
+      RSA-MD5: libgssapi-krb5-2/RSA-MD5.txt
+libkrb5support0:
+  licenses:
+    license:
+      - BSD-3-Clause
+      - MIT
+      - HPND
+      - CC-BY-SA-3.0
+      - OLDAP-2.8
+      - OpenVision
+      - PKINIT
+      - RSA-MD4
+      - RSA-MD5
+    text:
+      OpenVision: libgssapi-krb5-2/OpenVision.txt
+      PKINIT: libgssapi-krb5-2/PKINIT.txt
+      RSA-MD4: libgssapi-krb5-2/RSA-MD4.txt
+      RSA-MD5: libgssapi-krb5-2/RSA-MD5.txt
 liblept5:
-  licenses: [
-    BSD-2-Clause
-  ]
-libllvm15:
-  licenses: [
-    Apache-2.0-with-LLVM-exception,
-    MIT,
-    BSD-3-clause,
-    Python-2.0
-  ]
+  licenses:
+    - BSD-2-Clause
+liblrdf0:
+  licenses:
+    license:
+      - GPL-2.0-only
+      - public-domain
+      - LGPL-2.1-or-later
+      - FSFUL
+      - GPL-2.0-or-later
+      - X11
+    text:
+      public-domain: liblrdf0/public-domain.txt 
+libtcl8.6:
+  licenses:
+    license:
+      - TCL-Regents-Government-Clause
+      - BSD-3-Clause
+      - HPND
+    text:
+      TCL-Regents-Government-Clause: libtcl8.6/TCL-Regents-Government-Clause.txt
+libtk8.6:
+  licenses:
+    license:
+      - TK-Regents-Government-Clause
+    text:
+      TK-Regents-Government-Clause: libtk8.6/TK-Regents-Government-Clause.txt
 libmjpegutils-2.1-0:
-  licenses: [
-    GPL-2.0-or-later,
-    GPL-2.0-only,
-    GPL-1.0-or-later
-  ]
+  licenses:
+    license:
+      - GPL-2.0-or-later
+      - MSSG-public-domain
+    text:
+      MSSG-public-domain: libmjpegutils-2.1-0/MSSG-public-domain.txt
 libmodplug1:
-  licenses: [
-    PD
-  ]
+  licenses:
+    - public-domain
 libmpcdec6:
-  licenses: [
-    LGPL-2.1-or-later,
-    BSD-3-Clause,
-    GPL-2.0-or-later,
-  ]
-libmpeg2encpp-2.1-0:
-  licenses: [
-    GPL-2.0-or-later,
-    GPL-2.0-only,
-    GPL-1.0-or-later
-  ]
+  licenses:
+    - LGPL-2.1-or-later
+    - Zlib
+    - BSD-3-Clause
+    - GPL-2.0-or-later
 libmpfr6:
-  licenses: [
-    LGPL-3+,
-    GFDL-1.2
-  ]
+  licenses:
+    - LGPL-3.0-or-later
+    - GFDL-1.2+
+libmpeg2encpp-2.1-0:
+  licenses:
+    license:
+      - GPL-2.0-or-later
+      - MSSG-public-domain
+    text:
+      MSSG-public-domain: libmjpegutils-2.1-0/MSSG-public-domain.txt
 libmplex2-2.1-0:
-  licenses: [
-    GPL-2.0-or-later,
-    GPL-2.0-only,
-    GPL-1.0-or-later
-  ]
+  licenses:
+    license:
+      - GPL-2.0-or-later
+      - MSSG-public-domain
+    text:
+      MSSG-public-domain: libmjpegutils-2.1-0/MSSG-public-domain.txt
 libnice10:
-  licenses: [
-    LGPL-2.1-or-later,
-    MPL-1.1,
-    GPL-2.0-only,
-    GPL-3.0-or-later,
-  ]
+  licenses:
+    - MPL-1.1
+    - LGPL-2.1-or-later
+    - GPL-2.0-only or BSD-3-Clause
+    - BSD-3-Clause
+libnl-3-200:
+  licenses:
+    - LGPL-2.1-only
+    - GPL-2.0-only
+    - BSD-3-Clause
+libnl-genl-3-200:
+  licenses:
+    - LGPL-2.1-only
+    - GPL-2.0-only
+    - BSD-3-Clause
+libnl-route-3-200:
+  licenses:
+    - LGPL-2.1-only
+    - GPL-2.0-only
+    - BSD-3-Clause
 libnuma1:
-  licenses: [
-    LGPL-2.1-or-later,
-  ]
+  licenses:
+    - LGPL-2.1-or-later
 liborc-0.4-0:
-  licenses: [
-    BSD-2-Clause,
-    BSD-3-Clause
-  ]
-libpangocairo-1.0-0:
-  licenses: [
-    MPL-1.1,
-    LGPL-2.1-only
-  ]
+  licenses:
+    - BSD-2-Clause
+    - BSD-3-Clause
+liborc-0.4-0t64:
+  licenses:
+    - BSD-2-Clause
+    - BSD-3-Clause
 libpixman-1-0:
-  licenses: [
-    MIT
-  ]
+  licenses:
+    - MIT
 libproxy1v5:
-  licenses: [
-    LGPL-2.1-or-later,
-    GPL-2.0-or-later
-  ]
+  licenses:
+    - LGPL-2.1-or-later
+    - GPL-2.0-only
+libpython3-stdlib:
+  licenses:
+    PSF-2.0
 libpython3.11:
-  licenses: [
-    PSF-2.0,
-  ]
+  licenses:
+    PSF-2.0
 libpython3.11-minimal:
-  licenses: [
-    PSF-2.0,
-  ]
+  licenses:
+    PSF-2.0
 libpython3.11-stdlib:
-  licenses: [
-    PSF-2.0,
-  ]
+  licenses:
+    - PSF-2.0
 libpython3.13:
-  licenses: [
-    PSF-2.0
-  ]
+  licenses:
+    - PSF-2.0
 libpython3.13-minimal:
-  licenses: [
-    PSF-2.0
-  ]
+  licenses:
+    - PSF-2.0
 libpython3.13-stdlib:
-  licenses: [
-    PSF-2.0
-  ]
+  licenses:
+    - PSF-2.0
 libraw1394-11:
-  licenses: [
-    LGPL-2.1-or-later,
-    GPL-2.0-or-later,
-    MIT
-  ]
+  licenses:
+    - LGPL-2.1-or-later
+    - GPL-2.0-or-later
+    - MIT
 librtmp1:
-  licenses: [
-    LGPL-2.1+,
-  ]
+  licenses:
+    - LGPL-2.1-or-later
 libselinux1:
-  licenses: [
-    GPL-2,
-    LGPL-2.1
-  ]
+  licenses:
+    - GPL-2.0-or-later
+    - LGPL-2.1-or-later
+    - libselinux-1.0
 libsemanage-common:
-  licenses: [
-    GPL,
-    LGPL
-  ]
+  licenses:
+    - GPL-2.0-or-later
+    - LGPL-2.1-or-later
 libsemanage2:
-  licenses: [
-    GPL,
-    LGPL
-  ]
+  licenses:
+    - GPL-2.0-or-later
+    - LGPL-2.1-or-later
 libsensors-config:
-  licenses: [
-    LGPL-2.1-or-later,
-    GPL-2.0-or-later
-  ]
+  licenses:
+    - LGPL-2.1-or-later
 libsensors5:
-  licenses: [
-    LGPL-2.1-or-later,
-    GPL-2.0-or-later
-  ]
+  licenses:
+    - LGPL-2.1-or-later
 libsm6:
-  licenses: [
-    MIT-open-group
-  ]
+  licenses:
+    - MIT-open-group
 libspandsp2:
-  licenses: [
-    GPL-2.0-only,
-    LGPL-2.0-only
-  ]
+  licenses:
+    - LGPL-2.1-or-later
+    - GPL-2.0-only
 libstdc++6:
-  licenses: [
-    Artistic,
-    GFDL-1.2,
-    GPL,
-    GPL-2,
-    GPL-3,
-    LGPL
-  ]
+  licenses:
+    - GPL-3.0-or-later WITH GCC-exception-3.1
+    - GPL-3.0-or-later
+    - GPL-2.0-or-later
+    - LGPL-2.1-or-later
+    - BSD-3-Clause
+    - MIT
+    - Zlib
+    - Unicode-DFS-2015
+    - HPND
 libsz2:
-  licenses: [
-    BSD-2-Clause
-  ]
+  licenses:
+    - BSD-2-Clause
 libtasn1-6:
-  licenses: [
-    LGPL-2.1,
-    GPL-3,
-    GFDL-1.3
-  ]
-libteec1:
-  licenses: [
-    BSD-2-Clause
-  ]
+  licenses:
+    - LGPL-2.1-or-later
+    - GPL-3.0-or-later
+    - GFDL-1.3
 libusb-1.0-0:
-  licenses: [
-    GPL-2.0-only,
-    LGPL-2.0-only
-  ]
+  licenses:
+    - LGPL-2.1-or-later
+    - GPL-2.0-or-later
 libwayland-client0:
-  licenses: [
-    X11,
-  ]
+  licenses:
+    - X11
 libwayland-cursor0:
-  licenses: [
-    GPL-2.0-only,
-    LGPL-2.1-or-later
-  ]
+  licenses:
+    - X11
 libwayland-egl1:
-  licenses: [
-    GPL-2.0-only,
-    LGPL-2.1-or-later
-  ]
+  licenses:
+    - X11
 libwayland-server0:
-  licenses: [
-    X11,
-  ]
+  licenses:
+    - X11
 libwebp7:
-  licenses: [
-    BSD-3-Clause,
-    Apache-2.0
-  ]
+ licenses:
+   - BSD-3-Clause
+   - Apache-2.0 
 libwebpmux3:
-  licenses: [
-    BSD-3-Clause,
-    Apache-2.0
-  ]
+  licenses:
+   - BSD-3-Clause
+   - Apache-2.0 
 libx11-6:
-  licenses: [
-    MIT,
-    BSD-1-Clause,
-    HPND,
-    HPND-sell-variant,
-    ISC,
-  ]
+  licenses:
+    license:
+      - MIT
+      - MIT-open-group
+      - HPND-sell-variant
+      - BSD-2-Clause
+      - Tektronix
+    text:
+      Tektronix: libx11-6/Tektronix.txt
 libx11-data:
-  licenses: [
-    MIT,
-    BSD-1-Clause,
-    HPND,
-    HPND-sell-variant,
-    ISC,
-  ]
+  licenses:
+    license:
+      - MIT
+      - MIT-open-group
+      - HPND-sell-variant
+      - BSD-2-Clause
+      - Tektronix
+    text:
+      Tektronix: libx11-6/Tektronix.txt
 libx11-xcb1:
-  licenses: [
-    MIT,
-    BSD-1-Clause,
-    HPND,
-    HPND-sell-variant,
-    ISC,
-  ]
+  licenses:
+    license:
+      - MIT
+      - MIT-open-group
+      - HPND-sell-variant
+      - BSD-2-Clause
+      - Tektronix
+    text:
+      Tektronix: libx11-6/Tektronix.txt
 libxau6:
-  licenses: [
-    MIT,
-  ]
-libxcb-composite0:
-  licenses: [
-    MIT
-  ]
-libxcb-dri2-0:
-  licenses: [
-    MIT,
-  ]
-libxcb-dri3-0:
-  licenses: [
-    MIT,
-  ]
-libxcb-glx0:
-  licenses: [
-    MIT
-  ]
-libxcb-present0:
-  licenses: [
-    MIT,
-  ]
-libxcb-randr0:
-  licenses: [
-    MIT
-  ]
-libxcb-render0:
-  licenses: [
-    MIT,
-  ]
-libxcb-shape0:
-  licenses: [
-    MIT
-  ]
-libxcb-shm0:
-  licenses: [
-    MIT
-  ]
-libxcb-sync1:
-  licenses: [
-    MIT,
-  ]
-libxcb-xfixes0:
-  licenses: [
-    MIT,
-  ]
-libxcb-xinerama0:
-  licenses: [
-    MIT
-  ]
-libxcb-xinput0:
-  licenses: [
-    MIT
-  ]
-libxcb-xkb1:
-  licenses: [
-    MIT
-  ]
+  licenses:
+    - MIT-open-group
+libxaw7:
+  licenses:
+    - MIT-open-group
+    - HPND-sell-variant
 libxcb1:
-  licenses: [
-    MIT,
-  ]
+  licenses:
+    - MIT
+libxcb-composite0:
+  licenses:
+    - MIT
+libxcb-dri2-0:
+  licenses:
+    - MIT
+libxcb-dri3-0:
+  licenses:
+    - MIT
+libxcb-glx0:
+  licenses:
+    - MIT
+libxcb-present0:
+  licenses:
+    - MIT
+libxcb-randr0:
+  licenses:
+    - MIT
+libxcb-render0:
+  licenses:
+    - MIT
+libxcb-xinerama0:
+  licenses:
+    - MIT
+libxcb-shape0:
+  licenses:
+    - MIT
+libxcb-shm0:
+  licenses:
+    - MIT
+libxcb-sync1:
+  licenses:
+    - MIT
+libxcb-xfixes0:
+  licenses:
+    - MIT
+libxcb-xinput0:
+  licenses:
+    - MIT
+libxcb-xkb1:
+  licenses:
+    - MIT
 libxcomposite1:
-  licenses: [
-    MIT
-  ]
+  licenses:
+    - HPND-sell-variant
+    - MIT
 libxcursor1:
-  licenses: [
-    MIT
-  ]
+  licenses:
+    - HPND-sell-variant
 libxdamage1:
-  licenses: [
-    MIT
-  ]
+  licenses:
+    - HPND-sell-variant
 libxdmcp6:
-  licenses: [
-    MIT,
-  ]
+  licenses:
+    - MIT-open-group
 libxext6:
-  licenses: [
-    MIT-open-group,
-    MIT,
-    HPND,
-  ]
+  licenses:
+    - MIT-open-group
+    - HPND-sell-variant
+    - MIT
 libxfixes3:
-  licenses: [
-    MIT,
-    HPND
-  ]
+  licenses:
+    - HPND-sell-variant
+    - MIT
+libxfont2:
+  licenses:
+    - MIT
+    - MIT-open-group
+    - HPND-sell-variant
+    - BSD-2-Clause
+libxft2:
+  licenses:
+    - HPND-sell-variant
 libxi6:
-  licenses: [
-    MIT-open-group,
-    HPND,
-    MIT
-  ]
+  licenses:
+    - MIT-open-group
+    - HPND-sell-variant
+    - MIT
 libxinerama1:
-  licenses: [
-    MIT-open-group,
-    MIT
-  ]
-libxkbcommon-x11-0:
-  licenses: [
-    MIT,
-    MIT-open-group,
-    HPND,
-    HPND-sell-variant,
-    X11
-  ]
+  licenses:
+    license:
+      - MIT
+      - MIT-open-group
+      - X11-no-permit-persons
+    text:
+      X11-no-permit-persons: libxinerama1/X11-no-permit-persons.txt
 libxkbcommon0:
-  licenses: [
-    MIT,
-    MIT-open-group,
-    HPND,
-    HPND-sell-variant,
-    X11
-  ]
+  licenses:
+    - MIT
+    - HPND-sell-variant
+libxkbcommon-x11-0:
+  licenses:
+    - MIT
+    - HPND-sell-variant
 libxkbfile1:
-  licenses: [
-    HPND,
-    MIT-open-group
-  ]
-libxrandr2:
-  licenses: [
-    MIT
-  ]
+  licenses:
+    - HPND-sell-variant
+    - MIT
+libxmu6:
+  licenses:
+    - MIT-open-group
+    - HPND-sell-variant
+libxpm4:
+  licenses:
+    - MIT
 libxrender1:
-  licenses: [
-    MIT
-  ]
+  licenses:
+    - HPND-sell-variant
+libxrandr2:
+  licenses:
+    - HPND-sell-variant
 libxshmfence1:
-  licenses: [
-    HPND,
-  ]
+  licenses:
+    - HPND-sell-variant
 libxslt1.1:
-  licenses: [
-    MIT
-  ]
+  licenses:
+    - MIT
 libxss1:
-  licenses: [
-    MIT
-  ]
+  licenses:
+    - MIT
+libxt6:
+  licenses:
+    - MIT
+    - HPND-sell-variant
 libxtst6:
-  licenses: [
-    MIT,
-    X11,
-    HPND
-  ]
+  licenses:
+    - MIT
 libxv1:
-  licenses: [
-    MIT
-  ]
+  licenses:
+    - MIT
 libxxf86vm1:
-  licenses: [
-    X11
-  ]
+  licenses:
+    - MIT
 libzbar0:
-  licenses: [
-    LGPL-2.0-or-later
-  ]
+  licenses:
+    license:
+      - LGPL-2.1-or-later
+      - zbar-public-domain
+      - zbar-bsd-style
+    text:
+      zbar-public-domain: libzbar0/zbar-public-domain.txt
+      zbar-bsd-style: libzbar0/zbar-bsd-style.txt
 linux-image-cip:
-  licenses: [
-    GPL-2,
-  ]
+  licenses:
+      GPL-2.0-only
 linux-image-cip-rt:
-  licenses: [
-    GPL-2,
-  ]
+  licenses:
+      GPL-2.0-only
 locales:
-  licenses: [
-    LGPL-2.1,
-    GPL-2,
-  ]
+  licenses:
+    license:
+      - LGPL-2.1-or-later
+      - GPL-2.0-or-later
+      - BSD-3-Clause
+      - InnerNet-2.00
+      - ISOC-RFC3492bis
+      - Henry-Spencer-Regex
+      - CE-Chew-Acknowledge
+    text:
+      InnerNet-2.00: libc6/InnerNet-2.00.txt
+      ISOC-RFC3492bis: libc6/ISOC-RFC3492bis.txt
+      Henry-Spencer-Regex: libc6/Henry-Spencer-Regex.txt
+      CE-Chew-Acknowledge: libc6/CE-Chew-Acknowledge.txt
 lrzsz:
-  licenses: [
-    GPL-2
-  ]
+  licenses:
+    - GPL-2.0-only
+python3:
+  licenses:
+    - PSF-2.0
+python3-minimal:
+  licenses:
+    - PSF-2.0
+python3.11:
+  licenses:
+    - PSF-2.0
+python3.11-minimal:
+  licenses:
+    - PSF-2.0
+python3-numpy:
+  licenses:
+    - BSD-3-Clause
+    - BSD-2-Clause
+    - PSF-2.0
+    - Apache-2.0
+    - MIT
+python3-pkg-resources:
+  licenses:
+    - MIT
+    - BSD-3-Clause
+    - Apache-2.0
+python3-tk:
+  licenses:
+    - PSF-2.0
 ruby-narray:
-  licenses: [
-    GPL-2.0-or-later,
-    Ruby OR GPL-2.0-only,
-  ]
+  licenses:
+    - GPL-2.0-or-later
+    - Ruby OR GPL-2.0-only
 shared-mime-info:
-  licenses: [
-    GPL-2.0-or-later
-  ]
+  licenses:
+    - GPL-2.0-or-later
 sshd-regen-keys:
-  licenses: [
-    MIT,
-    GPL-2.0-only
-  ]
-tee-supplicant:
-  licenses: [
-    BSD-2-Clause
-  ]
+  licenses:
+    - MIT
+    - GPL-2.0-only
+tk8.6-blt2.5:
+  licenses:
+    license:
+      - MIT-1
+      - MIT-2
+      - MIT-3
+      - MIT-4
+      - MIT-5
+      - MIT-6
+      - TCL
+    text:
+      MIT-1: blt/MIT-1.txt
+      MIT-2: blt/MIT-2.txt
+      MIT-3: blt/MIT-3.txt
+      MIT-4: blt/MIT-4.txt
+      MIT-5: blt/MIT-5.txt
+      MIT-6: blt/MIT-6.txt
 weston-init:
-  licenses: [
-    MIT,
-  ]
+  licenses:
+    - MIT
 x11-common:
-  licenses: [
-    MIT,
-    GPL-2.0-or-later
-  ]
+  licenses:
+    - GPL-2.0-or-later
+    - X11
 xkb-data:
-  licenses: [
-    MIT,
-    X11,
-    HPND,
-    MIT-open-group,
-    xkeyboard-config-Zinovie
-  ]
+  licenses:
+    license:
+      - HPND-sell-variant
+      - X11
+      - Mitos
+    text:
+      Mitos: xkb-data/Mitos.txt
+x11-xkb-utils:
+  licenses:
+    - HPND-sell-variant
+    - MIT-open-group
+    - DEC-3-Clause
+    - MIT
+xserver-common:
+  licenses:
+    - MIT
+    - HPND-sell-variant
+    - SGI-B-2.0
+    - BSD-3-Clause
+xwayland:
+  licenses:
+    license:
+      - MIT
+      - Adobe-Display-PostScript
+      - BSD-3-Clause
+      - DEC-3-Clause
+      - HPND
+      - HPND-Netrek
+      - HPND-sell-MIT-disclaimer-xserver
+      - HPND-sell-variant
+      - HPND-UC
+      - ICU
+      - ISC
+      - MIT-open-group
+      - NTP
+      - SGI-B-2.0
+      - SMLNJ
+      - X11
+      - X11-no-permit-persons
+    text:
+      X11-no-permit-persons: xwayland/X11-no-permit-persons.txt

@@ -1,0 +1,2 @@
+ISAAC is based on the public domain implementation by Robert J. Jenkins Jr.,
+  and is itself public domain.
