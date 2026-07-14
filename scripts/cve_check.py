@@ -518,7 +518,8 @@ def check_kernel_cves_by_cip_kernel_sec(uniq_installed_pkgs, cves, kernel_src_di
 
     kernel_cves = cves[kernel_name]
     pkgname = uniq_installed_pkgs[kernel_name]["package"]
-    kver = str(uniq_installed_pkgs[kernel_name]["version"]).split("+")[0]
+    pkg_full_version = str(uniq_installed_pkgs[kernel_name]["version"])
+    kver = pkg_full_version.split("+")[0]
 
     cip_kernel_sec_result = kernel_cve.run_cip_kernel_sec(kernel_src_dir, kver, cip_kernel_sec_dir)
 
@@ -526,7 +527,7 @@ def check_kernel_cves_by_cip_kernel_sec(uniq_installed_pkgs, cves, kernel_src_di
         cip_kernel_sec_cves = cip_kernel_sec_result[patched_status]
         for cve in cip_kernel_sec_cves:
             if not cve in kernel_cves:
-                cveinfo = recheck_kernel_cve(db_file, pkgname, kernel_name, kver, cve)
+                cveinfo = recheck_kernel_cve(db_file, pkgname, kernel_name, pkg_full_version, cve)
                 kernel_cves[cve] = cveinfo
 
             # Replace cve status by cip-kernel-sec result
