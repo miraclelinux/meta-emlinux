@@ -23,4 +23,10 @@ services:
     cap_add:
       - NET_ADMIN
     user: build
+    configs:
+      - source: host_netrc
+        target: /home/build/.netrc
 
+configs:
+    host_netrc:
+      content: "${HOST_NETRC:-}"

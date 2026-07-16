@@ -27,7 +27,7 @@ cd ${script_dir}
 if [ "${mode}" = "build" ]; then
   ${docker_compose_cmd} build --no-cache emlinux2-build
 elif [ "${mode}" = "run" ]; then
-  ${docker_compose_cmd} run --rm emlinux2-build
+  HOST_NETRC=$( [ -f ~/.netrc ] && cat ~/.netrc || echo ' ') ${docker_compose_cmd} run --rm emlinux2-build
 elif [ "${mode}" = "clean" ]; then
   docker rmi -f "emlinux2-build-${host_user_name}"
 fi
