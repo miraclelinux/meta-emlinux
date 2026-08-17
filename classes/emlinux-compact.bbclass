@@ -164,5 +164,5 @@ python do_make_emlinux_compact_rootfs() {
     bb.build.exec_func("replace_packages", d)
 }
 
-addtask make_emlinux_compact_rootfs before do_rootfs_finalize after do_generate_initramfs
+addtask make_emlinux_compact_rootfs before do_rootfs_finalize after do_rootfs_postprocess
 
