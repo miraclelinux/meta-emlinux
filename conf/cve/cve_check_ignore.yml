@@ -216,6 +216,9 @@ orc:
   all:
     - CVE-2018-8015
     - CVE-2025-47436
+pam:
+  all:
+    - CVE-2025-8941
 perl:
   all:
     - CVE-2004-2286
