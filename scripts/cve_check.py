@@ -7,49 +7,43 @@
 #
 # SPDX-License-Identifier: MIT
 #
+
+from lib.python.cve.plugin.eml_cve_plugin_base import EmlCvePlugin
+import lib.python.cve.common_libs as cl
+from lib.python.cve.nvd_lib import CveCheckMergedList, NvdCveInfoListCreator
+from lib.python.cve.cve_reporter import CveReporter
+from lib.python.package_info import PackageInfoHelper, PackageList
+from lib.python.cve.cve_product import CveProductList
+from lib.python.cve.kev_info import KevInfoList
+import lib.python.cve.kev_cve as kev_cve
+import lib.python.bitbake_runner as bitbake_runner
+
 import argparse
 import sys
 import os, os.path
-import sqlite3
 import yaml
-import logging
-import debian.debian_support
+from typing import Any
+import pathlib
+import traceback
 import re
+import logging
 
-logging.basicConfig(level = logging.INFO, format='%(asctime)s:%(levelname)s: %(message)s')
+logging.basicConfig(level=logging.INFO, format="%(asctime)s:%(levelname)s: %(message)s")
 logger = logging.getLogger("emlinux-cve-check")
 
-sys.path.append(os.path.join(os.path.dirname(__file__), 'lib/python'))
-sys.path.append(os.path.join(os.path.dirname(__file__), 'lib/python/cve'))
+import glob
 
-import nvd_cve
-import debian_cve
-import kernel_cve
-import kev_cve
-import bitbake_runner
-import json
+import importlib.util
+from concurrent.futures import ThreadPoolExecutor, as_completed
 
-def read_json(jsonfile):
-    with open(jsonfile, "r") as f:
-        return json.loads(f.read())
 
-def get_cve_products(extra_cve_product):
-    name = os.path.join(os.path.dirname(__file__), "../conf/cve/cve_products.yml")
-
-    data = None
-    with open(name, "r") as f:
-        data = yaml.safe_load(f)
-
-    if extra_cve_product:
-        with open(extra_cve_product, "r") as f:
-            tmp = yaml.safe_load(f)
-            if tmp:
-                data.update(tmp)
-
-    return data
-
-def get_cve_ignore(uniq_installed_pkgs, debian_codename, extra_cve_check_ignore):
-    name = os.path.join(os.path.dirname(__file__), "../conf/cve/cve_check_ignore.yml")
+def create_ignore_list(
+    emlinux_layer_dir: str,
+    installed_packages: PackageList,
+    debian_codename: str,
+    extra_cve_check_ignore: str,
+):
+    name = f"{emlinux_layer_dir}/conf/cve/cve_check_ignore.yml"
 
     def read_ignore_list(filename):
         if filename is None:
@@ -72,7 +66,7 @@ def get_cve_ignore(uniq_installed_pkgs, debian_codename, extra_cve_check_ignore)
         tmp = {}
         for pkg in data:
             if type(data[pkg]) is list:
-                tmp[pkg] = { "all": data[pkg] }
+                tmp[pkg] = {"all": data[pkg]}
             else:
                 tmp[pkg] = data[pkg]
         return tmp
@@ -106,9 +100,9 @@ def get_cve_ignore(uniq_installed_pkgs, debian_codename, extra_cve_check_ignore)
                     ignore_list[pkg] = []
                 all_used.append(pkg)
             else:
-                if not pkg in uniq_installed_pkgs:
+                if not pkg in installed_packages:
                     continue
-                pkg_version = str(uniq_installed_pkgs[pkg]["upstream_version"])
+                pkg_version = str(installed_packages.get_upstream_version(pkg))
                 if str(version) == pkg_version:
                     ignore_list[pkg] = d[version]
                     break
@@ -125,657 +119,371 @@ def get_cve_ignore(uniq_installed_pkgs, debian_codename, extra_cve_check_ignore)
         ignore_list[pkg].extend(tmp_merge_list[pkg]["all"])
     return ignore_list
 
-def update_ignored_cves_status(cves, cve_ignore_list):
-    if cve_ignore_list is None:
-        return cves
 
-    for pkg in cve_ignore_list:
-        if pkg in cves:
-            pkg_cves = cves[pkg]
-            for cve in cve_ignore_list[pkg]:
-                if cve in pkg_cves:
-                    cves[pkg][cve]["CVE STATUS"] = "Ignored"
-
-    return cves
-
-def find_debian_pkg_cves(debian_cve_json, pkgs):
-    cvedata = read_json(debian_cve_json)
-    debian_pkg_cve_data = {}
-    cve_not_found_pkgs = []
-
-    # collect cves for each installed packages(based on source package name)
-    for name in pkgs:
-        if name in cvedata:
-            debian_pkg_cve_data[name] = cvedata[name]
-        else:
-            cve_not_found_pkgs.append(name)
-
-    return debian_pkg_cve_data, cve_not_found_pkgs
-
-def create_unique_package(installed):
-    ret = {}
-    for pkg in installed:
-        src = pkg['source']
-
-        if src not in ret:
-            ret[src] = pkg
-            ret[src]["bin_pkgs"] = [pkg["package"]]
-        else:
-            ret[src]["bin_pkgs"].append(pkg["package"])
-
-    return ret
-
-def fill_cve_info(cves, cve_products, db_file):
-    conn = sqlite3.connect(db_file)
-    for pkgname in cves:
-        for cveid in cves[pkgname]:
-            c = conn.cursor()
-            sql = f"SELECT VULNSTATUS, SUMMARY, SCOREV2, SCOREV3, VECTOR, VECTORSTRING FROM NVD WHERE ID=\"{cveid}\""
-            cursor = c.execute(sql)
-            data = cursor.fetchone()
-            c.close()
-
-            # CVE id such as TEMP-0290435-0B57B5 not in NVD database.
-            if data:
-                if data[0] == "Rejected":
-                    cves[pkgname][cveid]["CVE STATUS"] = "Rejected"
-
-                cves[pkgname][cveid]["CVE SUMMARY"] = data[1]
-                cves[pkgname][cveid]["CVSS v2 BASE SCORE"] = data[2]
-                cves[pkgname][cveid]["CVSS v3 BASE SCORE"] = data[3]
-                cves[pkgname][cveid]["VECTOR"] = data[4]
-                cves[pkgname][cveid]["VECTOR STRING"] = data[5]
-                cves[pkgname][cveid]["KEV"] = "Not Found"
-                cves[pkgname][cveid]["MORE INFORMATION"] = f"https://nvd.nist.gov/vuln/detail/{cveid}"
-            else:
-                cves[pkgname][cveid]["CVE SUMMARY"] = ""
-                cves[pkgname][cveid]["CVSS v2 BASE SCORE"] = "0.0"
-                cves[pkgname][cveid]["CVSS v3 BASE SCORE"] = "0.0"
-                cves[pkgname][cveid]["VECTOR"] = "UNKNOWN"
-                cves[pkgname][cveid]["VECTOR STRING"] = "UNKNOWN"
-                cves[pkgname][cveid]["KEV"] = "Not Found"
-                cves[pkgname][cveid]["MORE INFORMATION"] = f"https://security-tracker.debian.org/tracker/{cveid}"
-
-
-    conn.close()
-
-    return cves
-
-def status_name(fixed):
-    if fixed:
-        return "Patched"
-    return "Unpatched"
-
-def create_debian_pkg_cve_info(pkgname, bin_pkgname, installed_version, debian_cveinfo, nvd_cveinfo, codename):
-    ret = {}
-
-    cve_ids = set(list(debian_cveinfo.keys()) + list(nvd_cveinfo.keys()))
-    for cveid in cve_ids:
-        fixed = False
-        if cveid in debian_cveinfo:
-            if not codename in debian_cveinfo[cveid]["releases"]:
-                # Package may be installed from other debian version.
-                logger.debug(f"pkg:{pkgname}: {cveid} for {codename} is not found")
-                return None
-
-            dc = debian_cveinfo[cveid]["releases"][codename]
-            if dc["status"] == "resolved":
-                for repo in dc["repositories"]:
-                    fixed_ver = debian.debian_support.Version(dc["repositories"][repo])
-                    if installed_version >= fixed_ver:
-                        fixed = True
-        else:
-            nc = nvd_cveinfo[cveid]
-            fixed = nc["FIXED"]
-
-        ret[cveid] = {
-            "CVE": cveid,
-            "PACKAGE NAME": pkgname,
-            "BINARY PACKAGE NAME": bin_pkgname,
-            "VERSION": str(installed_version),
-            "CVE STATUS": status_name(fixed),
-        }
-
-    return ret
-
-def create_cve_info_by_nvd(pkgname, bin_pkgname, installed_version, nvd_cveinfo):
-    cve_ids = set(list(nvd_cveinfo["CVE"].keys()))
-    cves = nvd_cveinfo["CVE"]
-    ret = {}
-
-    for cveid in cve_ids:
-        ret[cveid] = {
-            "CVE": cveid,
-            "PACKAGE NAME": pkgname,
-            "BINARY PACKAGE NAME": bin_pkgname,
-            "VERSION": str(installed_version),
-            "CVE STATUS": status_name(cves[cveid]["FIXED"]),
-        }
-
-    return ret
-
-def merge_cve_data(uniq_installed_pkgs, installed_pkgs_cves_by_debian_data, cve_not_in_debian, installed_pkgs_cves_by_nvd_data, codename):
-
-    cveinfo = {}
-    for pkgname in installed_pkgs_cves_by_debian_data:
-        installed_version = uniq_installed_pkgs[pkgname]["version"]
-        debian_cveinfo = installed_pkgs_cves_by_debian_data[pkgname]
-        nvd_cveinfo = None
-        if pkgname in installed_pkgs_cves_by_nvd_data:
-            if "CVE" in installed_pkgs_cves_by_nvd_data:
-                nvd_cveinfo = installed_pkgs_cves_by_nvd_data[pkgname]
-            else:
-                nvd_cveinfo = {}
-
-        bin_pkgname = uniq_installed_pkgs[pkgname]["bin_pkgs"]
-
-        tmpret = create_debian_pkg_cve_info(pkgname, bin_pkgname, installed_version, debian_cveinfo, nvd_cveinfo, codename)
-        if not tmpret is None:
-            cveinfo[pkgname] = tmpret
-        else:
-            cve_not_in_debian.append(pkgname)
-
-    for pkgname in cve_not_in_debian:
-        installed_version = uniq_installed_pkgs[pkgname]["version"]
-        nvd_cveinfo = None
-        if pkgname in installed_pkgs_cves_by_nvd_data:
-            if installed_pkgs_cves_by_nvd_data[pkgname] is None:
-                installed_pkgs_cves_by_nvd_data[pkgname] = {}
-
-            if "CVE" in installed_pkgs_cves_by_nvd_data[pkgname]:
-                nvd_cveinfo = installed_pkgs_cves_by_nvd_data[pkgname]
-            else:
-                nvd_cveinfo = {"CVE": {}}
-
-        bin_pkgname = uniq_installed_pkgs[pkgname]["bin_pkgs"]
-        cveinfo[pkgname] = create_cve_info_by_nvd(pkgname, bin_pkgname, installed_version, nvd_cveinfo)
-
-    return cveinfo
-
-def get_cves_by_package_from_nvd(conn, vendor, product):
-    c = conn.cursor()
-
-    """
-    NVD's CVE data has several data for a CVE.
-    e.g.
-    sqlite> select count(*) from products where id="CVE-2016-6321";
-    42
-    sqlite> select * from products where id="CVE-2016-6321";
-    ...
-    CVE-2016-6321|gnu|tar|1.25|=||
-    CVE-2016-6321|gnu|tar|1.26|=||
-    CVE-2016-6321|gnu|tar|1.27|=||
-    CVE-2016-6321|gnu|tar|1.27.1|=||
-    CVE-2016-6321|gnu|tar|1.28|=||
-    CVE-2016-6321|gnu|tar|1.29|=||
-    ...
-
-    So, get unique CVE IDs then get CVE data by each ID.
-    """
-
-    if vendor:
-        sql = f"SELECT DISTINCT(ID) FROM PRODUCTS WHERE VENDOR=\"{vendor}\" AND PRODUCT=\"{product}\""
-    else:
-        sql = f"SELECT DISTINCT(ID) FROM PRODUCTS WHERE PRODUCT=\"{product}\""
-
-    cursor = c.execute(sql)
-
-    # Get unique CVE ID
-    cves = []
-    if cursor:
-        for cve in cursor:
-            cves.append(cve[0])
-
-    c.close()
-
-    return cves
-
-def is_fixed_in_upstream_version(upstream_version, debian_upstream_version, operator):
-
-    if upstream_version == "":
-        # Can't determine affected or not. So return True to it may be affected
-        return False
-
-    uver = debian_cve.parse_version(upstream_version)
-    dver = debian_upstream_version
-
-    if operator == "=":
-        return uver == dver
-    elif operator == "<":
-        return uver <= dver
-    elif operator == "<=":
-        return uver <= dver
-    elif operator == ">":
-        return dver >= uver
-    elif operator == ">=":
-        return dver >= uver
-    return False # unknown operator
-
-
-def is_affected_upstream_version(upstream_version, debian_upstream_version, operator):
-
-    if upstream_version == "":
-        # Can't determine affected or not. So return True to it may be affected
-        return True
-
-    uver = debian_cve.parse_version(upstream_version)
-    dver = debian_upstream_version
-
-    if operator == "=":
-        return uver == dver
-    elif operator == "<":
-        return dver <= uver
-    elif operator == "<=":
-        return dver <= uver
-    elif operator == ">":
-        return dver >= uver
-    elif operator == ">=":
-        return dver >= uver
-
-    return True # unknown operator
-
-def check_affected_upstream_version(conn, cveid, pkg, vendor, product):
-    """
-    Check debian package's upstream version and start/end version in NVD database.
-    if debian's upstream version is less than start version or greator than or equal
-    debian's package version, this CVE may not be affected.
-    However, debian package may backport vulnerable feature from upstream so we can't
-    completely determine this CVE is affected or not.
-    """
-
-    cves = []
-    c = conn.cursor()
-
-    if vendor:
-        sql = f"SELECT * FROM PRODUCTS WHERE ID=\"{cveid}\" AND VENDOR=\"{vendor}\" AND PRODUCT=\"{product}\""
-    else:
-        sql = f"SELECT * FROM PRODUCTS WHERE ID=\"{cveid}\" AND PRODUCT=\"{product}\""
-
-    cursor = c.execute(sql)
-    if cursor:
-        for cve in cursor:
-            d = {
-                "CVE": cve[0],
-                "VERSION_START": cve[3],
-                "VERSION_START_OPERAND": cve[4],
-                "VERSION_END": cve[5],
-                "VERSION_END_OPERAND": cve[6],
-            }
-            cves.append(d)
-    c.close()
-
-    affected = False
-    fixed = False
-
-    for cve in cves:
-        start_version = cve["VERSION_START"]
-        end_version = cve["VERSION_END"]
-
-        if not start_version == "":
-            if not affected:
-                op = cve["VERSION_START_OPERAND"]
-                affected = is_affected_upstream_version(start_version, pkg["upstream_version"], op)
-
-        if not end_version == "":
-            if not fixed:
-                op = cve["VERSION_END_OPERAND"]
-                fixed = is_fixed_in_upstream_version(end_version, pkg["upstream_version"], op)
-
-    # if start version's operator uses "=" and end vesion is not set in nvd database,
-    # it may be able to set not affected(e.g. CVE-2002-0059. This CVE is not in debian security tracker)
-    if not affected and not fixed:
-        fixed = True
-
-    return affected, fixed
-
-def pkg_cve_fixed_check_by_nvd_data(uniq_installed_pkgs, installed_debian_pkgs_cves, db_file, cve_products):
-    conn = sqlite3.connect(db_file)
-
-    cve_analyzed = {}
-
-    for name in uniq_installed_pkgs:
-        cve_analyzed[name] = None
-
-        pkg = uniq_installed_pkgs[name]
-        vendor = None
-        product = name
-        if name in cve_products:
-            vendor = cve_products[name]["vendor"]
-            product = cve_products[name]["product"]
-
-        cve_ids = get_cves_by_package_from_nvd(conn, vendor, product)
-
+def create_cve_check_merged_list(
+    src_pkg_names: list[str], check_results: Any
+) -> CveCheckMergedList:
+    cve_check_merged_list = CveCheckMergedList()
+
+    cve_ids = create_cve_id_list_by_src_pkg_name_from_check_result(
+        src_pkg_names, check_results
+    )
+    for src_pkg_name in src_pkg_names:
         for cveid in cve_ids:
-            affected, fixed = check_affected_upstream_version(conn, cveid, pkg, vendor, product)
-            tmp = {
-                "DEBIAN_SRC_PKG_NAME": name,
-                "VENDOR": vendor,
-                "PRODICT": product,
-                "CVE": cveid,
-                "AFFECTED": affected,
-                "FIXED": fixed,
-            }
+            for cr in check_results:
+                vulns = cr[src_pkg_name]
+                if vulns is None:
+                    # Plugin doesn't have CVE information for the src_pkg_name
+                    continue
+                if cveid in vulns:
+                    cve_check_merged_list.add_data(
+                        src_pkg_name, cveid, vulns[cveid], cr.priority
+                    )
+                else:
+                    # Plugin doesn't have CVE information for the CVE
+                    pass
+                    # logger.debug(f"{cveid} {src_pkg_name} is not found")
+    return cve_check_merged_list
 
-            if cve_analyzed[name] is None:
-                cve_analyzed[name] = { "CVE": {}, }
 
-            cve_analyzed[name]["CVE"][cveid] = tmp
+def create_cve_id_list_by_src_pkg_name_from_check_result(
+    src_pkg_names: list[str], check_results: Any
+) -> list[str]:
+    tmp_cve_ids = []
+    for src_pkg_name in src_pkg_names:
+        for cr in check_results:
+            ci = cr.cve_ids_by_src_pkg(src_pkg_name)
+            if ci:
+                tmp_cve_ids.extend(ci)
+    return list(dict.fromkeys(tmp_cve_ids))
 
-    conn.close()
 
-    return cve_analyzed
+# make a source package name list which content has CVE information
+def create_src_package_name_list_from_check_result(check_results: Any) -> list[str]:
+    tmp_list = []
+    for result in check_results:
+        tmp_list.extend(result.src_pkg_names())
+    return list(dict.fromkeys(tmp_list))
 
-def recheck_kernel_cve(db_file, kernel_pkg_name, kernel_src_name, version, cveid):
-    conn = sqlite3.connect(db_file)
-    cve = {}
-    sql = f"SELECT VULNSTATUS, SUMMARY, SCOREV2, SCOREV3, VECTOR, VECTORSTRING FROM NVD WHERE ID=\"{cveid}\""
 
-    c = conn.cursor()
-    cursor = c.execute(sql)
-    data = cursor.fetchone()
-    c.close()
-    conn.close()
+def read_recipe_source_info(deploy_dir: str) -> Any:
+    filepath = deploy_dir + "/all-source-info.json"
+    return cl.read_json(filepath)
 
-    cve["BINARY PACKAGE NAME"] = kernel_pkg_name,
-    cve["PACKAGE NAME"] = kernel_src_name
-    cve["VERSION"] = version
-    cve["CVE"] = cveid
 
-    if data is None:
-        # No CVE data but it may be reserved.
-        cve["CVE STATUS"] = status_name(False)
-        cve["CVE SUMMARY"] = ""
-        cve["CVSS v2 BASE SCORE"] = "0.0"
-        cve["CVSS v3 BASE SCORE"] = "0.0"
-        cve["VECTOR"] = "UNKNOWN"
-        cve["VECTOR STRING"] = "UNKNOWN"
-    else:
-        fixed = False
-        if data[0] == "Rejected":
-            cve["CVE STATUS"] = "Rejected"
-        else:
-            cve["CVE STATUS"] = status_name(fixed)
-        cve["CVE SUMMARY"] = data[1]
-        cve["CVSS v2 BASE SCORE"] = data[2]
-        cve["CVSS v3 BASE SCORE"] = data[3]
-        cve["VECTOR"] = data[4]
-        cve["VECTOR STRING"] = data[5]
-
-    cve["KEV"] = "None"
-    cve["MORE INFORMATION"] = f"https://nvd.nist.gov/vuln/detail/{cveid}"
-
-    return cve
-
-def check_kernel_cves_by_cip_kernel_sec(uniq_installed_pkgs, cves, kernel_src_dir, cip_kernel_sec_dir, db_file):
-    if "linux-cip" in uniq_installed_pkgs:
-        kernel_name = "linux-cip"
-    elif "linux-cip-rt" in uniq_installed_pkgs:
-        kernel_name = "linux-cip-rt"
-    else:
-        logger.debug("kernel name is not linux-cip or linux-cip-rt")
-        logger.debug("Skip kernel CVE check by cip-kernel-sec")
-        return cves
-
-    kernel_cves = cves[kernel_name]
-    pkgname = uniq_installed_pkgs[kernel_name]["package"]
-    pkg_full_version = str(uniq_installed_pkgs[kernel_name]["version"])
-    kver = pkg_full_version.split("+")[0]
-
-    cip_kernel_sec_result = kernel_cve.run_cip_kernel_sec(kernel_src_dir, kver, cip_kernel_sec_dir)
-
-    for patched_status in cip_kernel_sec_result:
-        cip_kernel_sec_cves = cip_kernel_sec_result[patched_status]
-        for cve in cip_kernel_sec_cves:
-            if not cve in kernel_cves:
-                cveinfo = recheck_kernel_cve(db_file, pkgname, kernel_name, pkg_full_version, cve)
-                kernel_cves[cve] = cveinfo
-
-            # Replace cve status by cip-kernel-sec result
-            if kernel_cves[cve]["CVE STATUS"] == "Rejected":
-                pass
-            elif kernel_cves[cve]["CVE STATUS"] == patched_status:
-                pass
-            else:
-                kernel_cves[cve]["CVE STATUS"] = patched_status
-
-    return cves
-
-def create_kev_data(kev_list):
-    kev_json = read_json(kev_list)
-
-    kev_data = {}
-    for kev in kev_json["vulnerabilities"]:
-        cve_id = kev["cveID"]
-        kev_data[cve_id] = kev
-
-    return kev_data
-
-def add_kev_info(cves, kev_list):
-    kev_data = create_kev_data(kev_list)
-
-    kev_cve_ids = kev_data.keys()
-
-    for pkg in cves:
-        pkg_cve_ids = cves[pkg].keys()
-        common_cves = list(set(pkg_cve_ids) & set(kev_cve_ids))
-        if len(common_cves) > 0:
-            for cveid in common_cves:
-                pkg_info = cves[pkg]
-                pkg_info[cveid]["KEV"] = "Found"
-                pkg_info[cveid]["KNOWN RANSOMWARE CAMPAIGN USE"] = kev_data[cveid]["knownRansomwareCampaignUse"]
-
-    return cves
-
-def create_cves_info(db_file, debian_cve_list, uniq_installed_pkgs, installed_pkgs, codename, cve_products, kernel_src_dir, cip_kernel_sec_dir, kev_list):
-    logger.info("Checking CVEs ...")
-
-    installed_pkgs_cves_by_debian_data, cve_not_in_debian = find_debian_pkg_cves(debian_cve_list, uniq_installed_pkgs)
-    installed_pkgs_cves_by_nvd_data = pkg_cve_fixed_check_by_nvd_data(uniq_installed_pkgs, installed_pkgs_cves_by_debian_data, db_file, cve_products)
-
-    cves = merge_cve_data(uniq_installed_pkgs, installed_pkgs_cves_by_debian_data, cve_not_in_debian, installed_pkgs_cves_by_nvd_data, codename)
-
-    cves = fill_cve_info(cves, cve_products, db_file)
-
-    cves = check_kernel_cves_by_cip_kernel_sec(uniq_installed_pkgs, cves, kernel_src_dir, cip_kernel_sec_dir, db_file)
-
-    cves = add_kev_info(cves, kev_list)
-    return cves
-
-def write_text(cves, output_dir, uniq_installed_pkgs):
-    filenames = []
-
-    for pkgname in cves:
-        if len(cves[pkgname]) == 0:
-            continue
-
-        filename = f"{output_dir}/{pkgname}"
-        filenames.append(filename)
-
-        with open(filename, "w") as f:
-            for cve in sorted(cves[pkgname]):
-                info = cves[pkgname][cve]
-                f.write(f"PACKAGE NAME: {info['PACKAGE NAME']}\n")
-                f.write(f"BINARY PACKAGE NAME: {' '.join(info['BINARY PACKAGE NAME'])}\n")
-                f.write(f"VERSION: {info['VERSION']}\n")
-                f.write(f"CVE: {info['CVE']}\n")
-                f.write(f"CVE STATUS: {info['CVE STATUS']}\n")
-                f.write(f"CVE SUMMARY: {info['CVE SUMMARY']}\n")
-                f.write(f"CVSS v2 BASE SCORE: {info['CVSS v2 BASE SCORE']}\n")
-                f.write(f"CVSS v3 BASE SCORE: {info['CVSS v3 BASE SCORE']}\n")
-                f.write(f"VECTOR: {info['VECTOR']}\n")
-                f.write(f"VECTOR STRING: {info['VECTOR STRING']}\n")
-                f.write(f"KEV: {info['KEV']}\n")
-                if info["KEV"] == "Found":
-                    f.write(f"KNOWN RANSOMWARE CAMPAIGN USE: {info['KNOWN RANSOMWARE CAMPAIGN USE']}\n")
-                f.write(f"MORE INFORMATION: {info['MORE INFORMATION']}\n")
-                f.write("\n")
-
-    return filenames
-
-def write_json(cves, output_dir, uniq_installed_pkgs, cve_products):
-    filenames = []
-
-    for pkgname in cves:
-        filename = f"{output_dir}/{pkgname}_cve.json"
-        filenames.append(filename)
-
-        info = cves[pkgname]
-        pkginfo = uniq_installed_pkgs[pkgname]
-
-        product = pkgname
-        if pkgname in cve_products:
-            product = cve_products[pkgname]["product"]
-
-        cvesInRecord = "Yes"
-        if len(info) == 0:
-            cvesInRecord = "No"
-            issues = []
-        else:
-            issues = []
-            for cve in sorted(cves[pkgname]):
-                issues.append(cves[pkgname][cve])
-
-        data = {
-            "version": "1",
-            "package": [
-                {
-                    "name": pkginfo["source"],
-                    "binary package name": pkginfo["bin_pkgs"],
-                    "version": str(pkginfo["version"]),
-                    "products": [
-                        {
-                            "product": product,
-                            "cvesInRecord": cvesInRecord,
-                        },
-                    ],
-                    "issue": issues,
-                },
-            ],
-        }
-
-        with open(filename, "w") as f:
-            json.dump(data, f, indent=4, sort_keys=False)
-
-    return sorted(filenames)
-
-def write_all_in_one_text(output_dir, image_name, text_filenames):
-    output_file = f"{output_dir}/{image_name}_cve"
-    with open(output_file, "w") as out:
-        for filename in text_filenames:
-            with open(filename, "r") as f:
-                out.write(f.read())
-        out.write("")
-
-def write_all_in_one_json(output_dir, image_name, json_filenames):
-    all_in_one_data = {
-        "version": "1",
-        "package": [],
-    }
-    
-    for filename in json_filenames:
-        with open(filename, "r") as f:
-            data = json.load(f)
-            all_in_one_data["package"].extend(data["package"])
-
-    output_file = f"{output_dir}/{image_name}_cve.json"
-    with open(output_file, "w") as f:
-        json.dump(all_in_one_data, f, indent=4, sort_keys=False)
-
-def create_directory(target):
-    if not os.path.exists(target):
-        os.makedirs(target)
-
-def main(args):
-    if args.verbose_output:
-       logger.setLevel(logging.DEBUG)
-
-    bitbakeinfo = bitbake_runner.get_bitbake_information(args.image_name)
-    
-    cve_data_dl_dir = f"{bitbakeinfo['dl_dir']}/CVE"
-    create_directory(cve_data_dl_dir)
-
-    predownload_url = None
-    if args.cve_db_predownload:
-        predownload_url = bitbakeinfo["cve_db_predownload"]
-        if predownload_url is None:
-            logger.error("CVE_DB_PREDOWNLOAD_URL variable should be defined in conf/local.conf")
-            exit(1)
-
-    update_result, db_file = nvd_cve.update_nvd_db(cve_data_dl_dir, args.nvd_api_key, predownload_url)
-    if not update_result:
-        logger.critical("Faied to fetch CVE database from NVD")
+def load_plugin(plugin_file: str) -> EmlCvePlugin:
+    path = pathlib.Path(plugin_file).resolve()
+    if not path.exists():
+        logger.error(f"Failed to find plugin {plugin_file}")
         exit(1)
+
+    spec = importlib.util.spec_from_file_location(path.stem, str(path))
+    if not spec or not spec.loader:
+        logger.error(f"Fail to load spec from {plugin_file}")
+        exit(1)
+
+    mod = importlib.util.module_from_spec(spec)
+    sys.modules[path.stem] = mod
+    try:
+        spec.loader.exec_module(mod)
+    except Exception as e:
+        logger.error(e)
+        traceback.print_exc()
+        exit(1)
+
+    for obj in vars(mod).values():
+        if (
+            isinstance(obj, type)
+            and issubclass(obj, EmlCvePlugin)
+            and obj is not EmlCvePlugin
+        ):
+            return obj
+
+    logger.info(f"Plugin is not found in {plugin_file}")
+
+    return None
+
+
+def load_plugins(plugin_files: list[str]):
+    plugins = []
+
+    for plugin_file in plugin_files:
+        logger.debug(f"loading {plugin_file}")
+        obj = load_plugin(plugin_file)
+        if obj:
+            plugins.append(obj)
+
+    return plugins
+
+
+# Plugin file name convention:
+# 1. Plugin file must be located in scripts/lib/python/cve/plugin directory
+# 2. Plugin file name must be start with eml_cve_ then ends with _plugin.py
+#    e.g. eml_cve_myplugin_plugin.py
+def find_plugins(disable_plugins: list[str]) -> list[str]:
+    layer_dirs = bitbake_runner.find_layers()
+    plugins = []
+
+    plugin_dir = "/scripts/lib/python/cve/plugin/"
+    for ld in layer_dirs:
+        d = ld + plugin_dir
+        pattern = f"{d}/eml_cve_*_plugin.py"
+        for plugin in glob.glob(pattern):
+            p = os.path.splitext(os.path.basename(plugin))[0]
+            if not p in disable_plugins:
+                plugins.append(plugin)
+            else:
+                logger.info(f"Plugin '{p}' is disabled")
+
+    return plugins
+
+
+def cve_check_worker(plugin: EmlCvePlugin, args: Any):
+    logger.debug(f"run {plugin.plugin_name}")
+
+    if not args.skip_update:
+        ret = plugin.update_database()
+        if not ret:
+            raise Exception(f"{plugin.plugin_name}: Failed to update datebase")
 
     if args.update_cve_databese_only:
-        logger.info("Finish CVE database update.")
+        return {}
+
+    return plugin.run_check()
+
+
+def fetch_kev_data(cve_data_dir: str) -> KevInfoList:
+    try:
+        kev_json = kev_cve.fetch_kev_data(cve_data_dir)
+        return KevInfoList(cl.read_json(kev_json))
+    except:
+        return KevInfoList({})
+
+
+def create_disable_plugins_list(user_given_plugins: str) -> list[str]:
+    if not user_given_plugins:
+        return []
+
+    disable_plugins = []
+
+    do_not_disable = ["eml_cve_nvd_plugin"]
+    disable_plugins_tmp = [p.strip() for p in user_given_plugins.split(",")]
+    for p in disable_plugins_tmp:
+        if p not in do_not_disable:
+            disable_plugins.append(p)
+        else:
+            logger.warning(f"Plugin '{p}' cannot be disabeld")
+
+    return disable_plugins
+
+
+def main(args: dict):
+    if args.verbose_output:
+        logger.setLevel(logging.DEBUG)
+
+    bitbakeinfo = bitbake_runner.get_bitbake_information(args.image_name)
+
+    disable_plugins = create_disable_plugins_list(args.disable_plugins)
+
+    dpkg_status_file = (
+        bitbakeinfo["dpkg_status"]
+        if not args.dpkg_status_file
+        else args.dpkg_status_file
+    )
+
+    debian_codename = args.debian_codename
+    if not debian_codename:
+        debian_codename = bitbakeinfo["image_distro"].split("-")[1]
+
+    installed_packages = None
+    cve_product_list = None
+
+    if args.update_cve_databese_only:
+        logger.info("Run on database update only mode.")
+    else:
+        if not os.path.exists(dpkg_status_file):
+            logger.error(f"File {dpkg_status_file} is not found.")
+            exit(1)
+
+        # Read dpkg file to get installed package information
+        installed_packages = PackageInfoHelper.parse_dpkg_status_file(
+            dpkg_status_file,
+            debian_codename,
+            target_source_package=args.target_source_package,
+        )
+
+        # Check recipe's source code provenance
+        recipe_source_info = read_recipe_source_info(bitbakeinfo["deploy_image_dir"])
+        installed_packages.merge_recipe_source_info(recipe_source_info)
+
+        # Read cve product list
+        cve_product_list = CveProductList()
+        cve_product_list.create_product_list(
+            installed_packages, bitbakeinfo["emlinux_layer_dir"], args.extra_cve_product
+        )
+
+        # Read ignore list
+        ignore_list = create_ignore_list(
+            bitbakeinfo["emlinux_layer_dir"],
+            installed_packages,
+            debian_codename,
+            args.extra_cve_check_ignore,
+        )
+
+    cve_data_dir = f"{bitbakeinfo['dl_dir']}/CVE"
+    cl.create_directory(cve_data_dir)
+
+    # Find and load plugins
+    plugin_files = find_plugins(disable_plugins)
+    plugin_objs = load_plugins(plugin_files)
+
+    # Create plugin instance
+    plugins = []
+    for obj in plugin_objs:
+        o = obj(cve_data_dir, args, bitbakeinfo, installed_packages, cve_product_list)
+        plugins.append(o)
+
+    check_results = []
+    max_workers = min(args.threads, len(plugins))
+
+    # Run all plugins
+    with ThreadPoolExecutor(max_workers=max_workers) as ex:
+        futures = [ex.submit(cve_check_worker, p, args) for p in plugins]
+        for f in as_completed(futures):
+            try:
+                check_results.append(f.result())
+            except Exception as e:
+                logger.error(f"error: {e}")
+                traceback.print_exc()
+                exit(1)
+
+    if args.update_cve_databese_only:
+        logger.info("Updating database finished.")
         exit(0)
 
-    debian_cve_list = debian_cve.fetch_cve_data(cve_data_dl_dir)
-    if debian_cve_list is None:
-        logger.critical("Failed to fetch CVE data from Debian")
-        exit(1)
+    # Sort CVE data by plugin priority
+    check_results = sorted(check_results, key=lambda d: d.priority)
 
-    kev_list = kev_cve.fetch_kev_data(cve_data_dl_dir)
-    if kev_list is None:
-        logger.critical("Failed to fetch KEV data from CISA")
-        exit(1)
+    # Merge CVE results
+    src_pkg_names = create_src_package_name_list_from_check_result(check_results)
 
-    cip_kernel_sec_dir = kernel_cve.fetch_cip_kernel_sec(cve_data_dl_dir)
-    if cip_kernel_sec_dir is None:
-        logger.critical("Failed to fetch kernel-cip-sec")
-        exit(1)
+    cve_check_merged_list = create_cve_check_merged_list(src_pkg_names, check_results)
 
-    installed_pkgs = debian_cve.parse_dpkg_status(bitbakeinfo["dpkg_status"])
-    uniq_installed_pkgs = create_unique_package(installed_pkgs)
-    cve_products = get_cve_products(args.extra_cve_product)
-    cve_ignore_list = get_cve_ignore(uniq_installed_pkgs, args.debian_codename, args.extra_cve_check_ignore)
+    cve_check_merged_list.apply_ignore_list_info(ignore_list)
 
-    linux_kernel_src_dir = os.path.abspath(bitbakeinfo["kernel_srcdir"])
-    cves = create_cves_info(db_file, debian_cve_list, uniq_installed_pkgs, installed_pkgs, args.debian_codename, cve_products, linux_kernel_src_dir, cip_kernel_sec_dir, kev_list)
+    # Load KEV data
+    kev_info_list = fetch_kev_data(cve_data_dir)
 
-    cves = update_ignored_cves_status(cves, cve_ignore_list)
+    # Create CVE report data
+    creator = NvdCveInfoListCreator(cve_data_dir, installed_packages, kev_info_list)
+    creator.create_cve_info_list(cve_check_merged_list)
 
-    output_base_dir = f"{bitbakeinfo['deploy_dir']}/cve/{bitbakeinfo['image_full_name']}"
+    cve_info_list = creator.get_nvd_info_list()
 
-    create_directory(output_base_dir)
+    # Write CVE report
+    output_base_dir = (
+        f"{bitbakeinfo['deploy_dir']}/cve/{bitbakeinfo['image_full_name']}"
+    )
 
-    formats = args.output_format.split(",")
-    for fmt in formats:
-        if fmt == "text":
-            text_output_dir = f"{output_base_dir}/text"
-            create_directory(text_output_dir)
-            text_filenames = write_text(cves, text_output_dir, uniq_installed_pkgs)
-            write_all_in_one_text(output_base_dir, bitbakeinfo["image_full_name"], text_filenames)
-        elif fmt == "json":
-            json_output_dir = f"{output_base_dir}/json"
-            create_directory(json_output_dir)
-            json_filenames = write_json(cves, json_output_dir, uniq_installed_pkgs, cve_products)
-            write_all_in_one_json(output_base_dir, bitbakeinfo["image_full_name"], json_filenames)
+    reporter = CveReporter(output_base_dir, bitbakeinfo["image_full_name"])
+    reporter.write_report(args.output_format, cve_info_list, installed_packages)
 
-    logger.info(f"CVE check finished. CVE check results are stored in {output_base_dir}")
 
 def parse_options():
     parser = argparse.ArgumentParser()
+    plugin_opts = parser.add_argument_group("arguments for plugins")
+    cve_check_opts = parser.add_argument_group("arguments for cve check")
 
-    parser.add_argument("--nvd-api-key", dest="nvd_api_key", help="API key for NVD API",
-            metavar="NVDAPIKEY")
-    parser.add_argument("--debian-codename", dest="debian_codename", help="debian codename(Debian 12 is bookworm)",
-            default="bookworm", metavar="DEBIANCODENAME")
-    parser.add_argument("--output-format", dest="output_format", help="output format. available formats are text, json. formats can be comma separated string(e.g. text,json)",
-            default="text", metavar="OUTPUTFORMAT")
-    parser.add_argument("--cve-product", dest="extra_cve_product", help="User defined cve-product file",
-            metavar="CVEPRODUCT")
-    parser.add_argument("--cve-ignore", dest="extra_cve_check_ignore", help="User defined cve-check-ignore file",
-            metavar="CVEPRODUCT")
-    parser.add_argument("--image-name", dest="image_name", help="EMLinux image name",
-            metavar="IMAGENAME", required=True)
-    parser.add_argument("--cve-db-predownload", dest="cve_db_predownload", action="store_true", help="Enable CVE database predownload.URL should be defined by CVE_DB_PREDOWNLOAD_URL in conf/local.conf.")
-    parser.add_argument("--update-cve-databese-only", dest="update_cve_databese_only", default=False, action="store_true",
-            help="Do not run cve check. Update CVE database only.")
-    parser.add_argument("--verbose", dest="verbose_output", help="Enable verbose output",
-            default=False, action="store_true")
+    # misc options
+    parser.add_argument(
+        "--verbose",
+        dest="verbose_output",
+        help="Enable verbose output",
+        default=False,
+        action="store_true",
+    )
 
+    # CVE check core options
+    cve_check_opts.add_argument(
+        "--debian-codename",
+        dest="debian_codename",
+        help="debian codename(bookworm, trixie, and etc)",
+        metavar="DEBIANCODENAME",
+    )
+    cve_check_opts.add_argument(
+        "--output-format",
+        dest="output_format",
+        help="output format. available formats are text, json. formats can be comma separated string(e.g. text,json)",
+        default="text",
+        metavar="OUTPUTFORMAT",
+    )
+    cve_check_opts.add_argument(
+        "--cve-product",
+        dest="extra_cve_product",
+        help="User defined cve-product file",
+        metavar="CVEPRODUCT",
+    )
+    cve_check_opts.add_argument(
+        "--cve-ignore",
+        dest="extra_cve_check_ignore",
+        help="User defined cve-check-ignore file",
+        metavar="CVEIGNORE",
+    )
+    cve_check_opts.add_argument(
+        "--image-name",
+        dest="image_name",
+        help="EMLinux image name(e.g. emlinux-image-base, emlinux-image-weston)",
+        metavar="IMAGENAME",
+        required=True,
+    )
+    cve_check_opts.add_argument(
+        "--target-source-package",
+        dest="target_source_package",
+        help="Only check given debian source package(e.g. bash, util-linux",
+        metavar="DEBIAN SOURCE PACKAGE NAME",
+    )
+    cve_check_opts.add_argument(
+        "--dpkg-status-file",
+        dest="dpkg_status_file",
+        help="Use specific dpkg_status file instead of default",
+        metavar="DPKG STATUS FILE",
+    )
+    cve_check_opts.add_argument(
+        "--threads", default=1, help="Number of thread for cve check"
+    )
+
+    # options for plugins
+    plugin_opts.add_argument(
+        "--nvd-api-key",
+        dest="nvd_api_key",
+        help="API key for NVD API",
+        metavar="NVDAPIKEY",
+    )
+    plugin_opts.add_argument(
+        "--cve-db-predownload",
+        dest="cve_db_predownload",
+        action="store_true",
+        help="Enable CVE database predownload.URL should be defined by CVE_DB_PREDOWNLOAD_URL in conf/local.conf.",
+    )
+    plugin_opts.add_argument(
+        "--update-cve-databese-only",
+        dest="update_cve_databese_only",
+        default=False,
+        action="store_true",
+        help="Do not run cve check. Update CVE database only.",
+    )
+    plugin_opts.add_argument(
+        "--skip-update",
+        default=False,
+        action="store_true",
+        help="Skip update CVE databases",
+    )
+    plugin_opts.add_argument(
+        "--disable-plugins",
+        help="List plugin names to be disabled without .py extension (comma separated). e.g. --disable-plugins eml_cve_debian_plugin,eml_cve_your_plugin",
+    )
     return parser.parse_args()
+
 
 if __name__ == "__main__":
     main(parse_options())
