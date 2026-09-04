@@ -6,6 +6,7 @@ services:
       dockerfile: Dockerfile
       args:
         uid: $host_user_id
+        gid: $host_group_id
         http_proxy: $http_proxy
         https_proxy: $https_proxy
         ftp_proxy: $ftp_proxy

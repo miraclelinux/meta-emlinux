@@ -3,6 +3,7 @@ ENV DEBIAN_FRONTEND=noninteractive
 ENV DEBCONF_NOWARNINGS yes
 
 ARG uid
+ARG gid
 ARG http_proxy
 ARG https_proxy
 ARG no_proxy
@@ -52,7 +53,8 @@ RUN apt-get install --fix-missing -y \
   python3-html5lib \
   python3-requests
 
-RUN useradd -s /bin/bash -m build -u $uid
+RUN groupadd -g $gid build
+RUN useradd -s /bin/bash -m build -u $uid -g $gid
 RUN echo "build ALL=(ALL) NOPASSWD: ALL" | tee -a /etc/sudoers
 RUN echo  "Defaults env_keep += \" http_proxy https_proxy no_proxy\"" | tee -a /etc/sudoers
 
