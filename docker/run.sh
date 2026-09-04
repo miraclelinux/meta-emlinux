@@ -19,8 +19,10 @@ if [ $# = 1 ]; then
 fi
 
 host_user_id=$(id -u)
+host_group_id=$(id -g)
 host_user_name=$(id -un)
 export host_user_id="${host_user_id}"
+export host_group_id="${host_group_id}"
 export host_user_name="${host_user_name}"
 
 cd ${script_dir}

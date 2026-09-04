@@ -6,6 +6,7 @@ services:
       dockerfile: Dockerfile
       args:
         uid: $host_user_id
+        gid: $host_group_id
         http_proxy: $http_proxy
         https_proxy: $https_proxy
         ftp_proxy: $ftp_proxy
@@ -26,6 +27,9 @@ services:
     configs:
       - source: host_netrc
         target: /home/build/.netrc
+        uid: $host_user_id
+        gid: $host_group_id
+        mode: 0600
 
 configs:
     host_netrc:
