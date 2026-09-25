@@ -12,7 +12,7 @@ SRC_URI = "apt://${PN}"
 
 DEB_BUILD_PROFILES += "nocheck"
 
-PACKAGES += "${PN}-syslogd"
+PACKAGES = "${PN} ${PN}-syslogd"
 
 do_prepare_build() {
     # Enable -delete option for find command.
