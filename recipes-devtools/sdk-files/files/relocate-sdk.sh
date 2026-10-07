@@ -45,6 +45,14 @@ if [ -z $(which patchelf 2>/dev/null) ]; then
 	exit 1
 fi
 
+# Use patchelf "--no-sort" option to avoid segfaults for long install directory
+# if the version is newer than 0.14.3 (eg. Debian 13).
+patchelf_opts=""
+patchelf_ver=$(patchelf --version | awk '{print $2}')
+if dpkg --compare-versions "${patchelf_ver}" "gt" "0.14.3"; then
+	patchelf_opts="--no-sort"
+fi
+
 echo -n "Adjusting path of SDK to '${new_sdkroot}'... "
 
 for binary in $(find ${sdkroot}/usr/bin ${sdkroot}/usr/sbin ${sdkroot}/usr/lib/gcc* -executable -type f,l -exec file -L {} \; | grep ELF | awk -F ':' '{ print $1 }'); do
@@ -52,7 +60,7 @@ for binary in $(find ${sdkroot}/usr/bin ${sdkroot}/usr/sbin ${sdkroot}/usr/lib/g
 	oldpath=${interpreter%/lib*/ld-linux*}
 	interpreter=${interpreter#${oldpath}}
 	if [ -n "${interpreter}" ]; then
-		patchelf --set-interpreter ${new_sdkroot}${interpreter} \
+		patchelf ${patchelf_opts} --set-interpreter ${new_sdkroot}${interpreter} \
 			--set-rpath ${new_sdkroot}/usr/lib:${new_sdkroot}/usr/lib/${arch}-linux-gnu \
 			--force-rpath \
 			$binary 2>/dev/null
@@ -62,7 +70,7 @@ done
 for library in $(find ${sdkroot}/usr/lib -type f,l -name "lib*.so*" -exec file -L {} \; | grep ELF | awk -F ':' '{ print $1 }'); do
 	rpath=$(patchelf --print-rpath ${library})
 	if [ -n "${library}" ]; then
-		patchelf --set-rpath ${new_sdkroot}/usr/lib:${new_sdkroot}/usr/lib/${arch}-linux-gnu \
+		patchelf ${patchelf_opts} --set-rpath ${new_sdkroot}/usr/lib:${new_sdkroot}/usr/lib/${arch}-linux-gnu \
 		--force-rpath \
 		$library 2>/dev/null
 	fi
@@ -79,7 +87,7 @@ for binary in $(cat $repatch_list ${new_sdkroot}/repatch.list); do
 		oldpath=${interpreter%/lib*/ld-linux*}
 		interpreter=${interpreter#${oldpath}}
 		if [ -n "${interpreter}" ]; then
-			patchelf --set-interpreter ${new_sdkroot}${interpreter} \
+			patchelf ${patchelf_opts} --set-interpreter ${new_sdkroot}${interpreter} \
 				--set-rpath ${new_sdkroot}/usr/lib:${new_sdkroot}/usr/lib/${arch}-linux-gnu \
 				--force-rpath \
 				$binary 2>/dev/null
@@ -87,7 +95,7 @@ for binary in $(cat $repatch_list ${new_sdkroot}/repatch.list); do
 	else
 		rpath=$(patchelf --print-rpath ${binary})
 		if [ -n "${rpath}" ]; then
-			patchelf --set-rpath ${new_sdkroot}/usr/lib:${new_sdkroot}/usr/lib/${arch}-linux-gnu \
+			patchelf ${patchelf_opts} --set-rpath ${new_sdkroot}/usr/lib:${new_sdkroot}/usr/lib/${arch}-linux-gnu \
 			--force-rpath \
 			$binary 2>/dev/null
 		fi
