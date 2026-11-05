@@ -11,7 +11,7 @@ inherit u-boot
 MAINTAINER = "Kazunori Kobayashi <kazunori.kobayashi@miraclelinux.com>"
 
 SRC_URI += " \
-    https://ftp.denx.de/pub/u-boot/u-boot-${PV}.tar.bz2"
+    https://git.u-boot-project.org/u-boot/u-boot/-/releases/v${PV}/downloads/u-boot-${PV}.tar.bz2"
 
 SRC_URI[sha256sum] = "e31cac91545ff41b71cec5d8c22afd695645cd6e2a442ccdacacd60534069341"
 
