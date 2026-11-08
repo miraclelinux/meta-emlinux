@@ -59,6 +59,7 @@ def get_bitbake_information(image):
         print(f"Cannot find image name {image} in build artifacts.")
         exit(1)
 
+    pattern_machine = r'\nMACHINE="([^"]*)"'
     pattern_deploy_image_dir = r'\nDEPLOY_DIR_IMAGE="([^"]*)"'
     pattern_deploy_dir = r'\nDEPLOY_DIR="([^"]*)"'
     pattern_image_full_name = r'\nIMAGE_FULLNAME="([^"]*)"'
@@ -68,10 +69,15 @@ def get_bitbake_information(image):
     pattern_distro_arch = r'\nDISTRO_ARCH="([^"]*)"'
     pattern_repo_isar_dir = r'\nREPO_ISAR_DIR="([^"]*)"'
     pattern_image_distro = r'\nDISTRO="([^"]*)"'
+    pattern_imager_bom = r'\nIMAGER_BOM="([^"]*)"'
+    pattern_image_install_pkgs = r'\nIMAGE_INSTALL="([^"]*)"'
+    pattern_image_fstypes = r'\nIMAGE_FSTYPES="([^"]*)"'
+    pattern_debdir = r'\nDEBDIR="([^"]*)"'
     pattern_cve_db_predownload = r'\nCVE_DB_PREDOWNLOAD_URL="([^"]*)"'
     pattern_cve_db_v2_predownload = r'\nCVE_DB_V2_PREDOWNLOAD_URL="([^"]*)"'
     pattern_layer_emlinux = r'\nLAYERDIR_emlinux="([^"]*)"'
-
+    
+    machine = re.findall(pattern_machine, output)[0]
     deploy_image_dir = re.findall(pattern_deploy_image_dir, output)[0]
     deploy_dir = re.findall(pattern_deploy_dir, output)[0]
     image_full_name = re.findall(pattern_image_full_name, output)[0]
@@ -82,6 +88,10 @@ def get_bitbake_information(image):
     distro_arch = re.findall(pattern_distro_arch, output)[0]
     repo_isar_dir = re.findall(pattern_repo_isar_dir, output)[0]
     image_distro = re.findall(pattern_image_distro, output)[0]
+    imager_bom = re.findall(pattern_imager_bom, output)[0]
+    image_install_pkgs = re.findall(pattern_image_install_pkgs, output)[0]
+    image_fstypes = re.findall(pattern_image_fstypes, output)[0]
+    debdir = re.findall(pattern_debdir, output)[0]
     emlinux_layer_dir = re.findall(pattern_layer_emlinux, output)[0]
 
     cve_db_url = re.findall(pattern_cve_db_predownload, output)
@@ -99,6 +109,7 @@ def get_bitbake_information(image):
 
     dpkg_status = f"{deploy_image_dir}/{image_full_name}.dpkg_status"
     return {
+        "machine": machine,
         "deploy_dir": deploy_dir,
         "deploy_image_dir": deploy_image_dir,
         "image_full_name": image_full_name,
@@ -109,6 +120,10 @@ def get_bitbake_information(image):
         "distro_arch": distro_arch,
         "repo_isar_dir": repo_isar_dir,
         "image_distro": image_distro,
+        "imager_bom": imager_bom,
+        "image_install_pkgs": image_install_pkgs,
+        "image_fstypes": image_fstypes,
+        "debdir": debdir,
         "cve_db_predownload": cve_db_predownload,
         "cve_db_v2_predownload": cve_db_v2_predownload,
         "emlinux_layer_dir": emlinux_layer_dir,

@@ -9,9 +9,55 @@ python do_collect_source_info() {
         # if EMLINUX_SOURCE_FROM is not set, we should set unknown to reduce false positive.
         source_info = "unknown"
 
+    license = d.getVar("LICENSE")
+    if license is None:
+        license = "NOASSERTION"
+
+    description = d.getVar("DESCRIPTION")
+    if description is None:
+        description = "no description"
+
+    maintainer = d.getVar("MAINTAINER")
+    if maintainer is None:
+        maintainer = "Unknown user"
+
+    pv = d.getVar("PV")
+    if pv is None:
+        pv = "Unknown version"
+
+    pn = d.getVar("PN")
+    if pn is None:
+        pn = "Unknown package name"
+
+    arch = d.getVar("DISTRO_ARCH")
+    if arch is None:
+        arch = "Unknown architecture"
+
+    provides = d.getVar("PROVIDES")
+    if provides is None:
+        provides = pn
+    else:
+        provides = provides.split()
+
+    section = d.getVar("SECTION")
+    if section is None:
+        section = "unknown"
+
+    homepage = d.getVar("HOMEPAGE")
+    if homepage is None:
+        homepage = "No Homepage"
+
     data = {
-        "source_package_name": d.getVar("PN"),
+        "source_package_name": pn,
         "source_from": source_info,
+        "maintainer": maintainer,
+        "license": license,
+        "description": description,
+        "version": pv,
+        "arch": arch,
+        "provides": provides,
+        "section": section,
+        "homepage": homepage,
     }
 
     with open(log_file, "w") as f:

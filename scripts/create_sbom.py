@@ -25,18 +25,16 @@ import bitbake_runner
 import sbom_cyclonedx
 import sbom_spdx
 import licensing
+import recipe_license_parser
+import manifest_parser
 
 # Only show critical error from debian copyright library
 copyright.logger.setLevel(logging.CRITICAL)
 
-
 def merge_package_data(installed_pkgs, packages_info):
     for pkg in installed_pkgs:
         if pkg in packages_info:
-            installed_pkgs[pkg]["sha256sum"] = packages_info[pkg]["sha256sum"]
-            installed_pkgs[pkg]["description"] = packages_info[pkg]["description"]
-
-    return installed_pkgs
+            installed_pkgs[pkg].update(packages_info[pkg])
 
 
 def find_deb_packages(dl_dir, repo_isar_dir, distro, image_distro):
@@ -53,60 +51,174 @@ def find_deb_packages(dl_dir, repo_isar_dir, distro, image_distro):
     return ret
 
 
-def get_package_info_from_control(
-    dl_dir, repo_isar_dir, distro, image_distro, distro_arch
+def parse_copyright_text(pkgname, copyright_text):
+    licenses = {}
+
+    try:
+        c = copyright.Copyright(io.StringIO(copyright_text), strict=False)
+    except Exception:
+        logger.debug(
+            f"Failed to parse copyright text for {pkgname}. May be this file uses old foromat."
+        )
+    else:
+        for p in c.all_files_paragraphs():
+            if p.license and p.license.synopsis:
+                licenses.setdefault("synopsis", []).append(p.license.synopsis)
+                if len(p.license.text) > 0:
+                    licenses.setdefault("text", {})[
+                        p.license.synopsis
+                    ] = p.license.text
+        for text in c.all_license_paragraphs():
+            if text.license:
+                licenses.setdefault("text", {})[
+                    text.license.synopsis
+                ] = text.license.text
+
+    return licenses
+
+
+def get_synopsis_and_copyright_text_from_copyright_text(pkgname, installed_pkgs, user_defined_licenses):
+    # When failed to parse copyright file or package name is in user defined license file,
+    # set license from license defined file
+    if not "licenses" in installed_pkgs[pkgname] or pkgname in user_defined_licenses:
+        logger.debug(f"Check user defined mapping file for {pkgname}")
+        if pkgname in user_defined_licenses:
+            logger.debug(f"found {pkgname} in user defined license file")
+            synopsis = user_defined_licenses[pkgname]["synopsis"]
+
+            installed_pkgs[pkgname]["licenses"] = {
+               "synopsis": synopsis,
+                "text": {},
+            }
+
+            for lic_name in user_defined_licenses[pkgname]["license_data"]:
+                lic_data = user_defined_licenses[pkgname]["license_data"][lic_name]
+                installed_pkgs[pkgname]["licenses"]["text"][lic_name] = lic_data["text"]
+
+    if not "licenses" in installed_pkgs[pkgname]:
+        installed_pkgs[pkgname]["licenses"] = {
+            "synopsis": ["NOASSERTION"], 
+            "text": {}
+        }
+    
+        return False
+
+    return True
+
+
+def parse_copyright_text_to_license_info(rootfs, installed_pkgs, user_defined_licenses, package_map):
+    rechecks = []
+
+    for pkg in installed_pkgs:
+        logger.debug(f"Checking copyright for {pkg}")
+
+        copyright_text = installed_pkgs[pkg]["copyright_text"]
+        if copyright_text:
+            licenses = parse_copyright_text(pkg, copyright_text)
+            if bool(licenses):
+                installed_pkgs[pkg]["licenses"] = licenses
+        # else:
+        #    logger.warning(f"Packge {pkg} does not contain copyright file")
+
+        if not get_synopsis_and_copyright_text_from_copyright_text(pkg, installed_pkgs, user_defined_licenses):
+            rechecks.append(pkg)
+
+    # Set license from same source package.
+    for pkg in rechecks:
+        srcpkg = installed_pkgs[pkg]["source"]
+        for p in package_map[srcpkg]:
+            if p in rechecks:
+                continue
+
+            installed_pkgs[pkg]["licenses"] = installed_pkgs[p]["licenses"]
+
+    for pkgname in installed_pkgs:
+        licenses = installed_pkgs[pkgname]["licenses"]
+        if "NOASSERTION" in licenses["synopsis"]:
+            logger.warning(f"Package {pkgname} contains NOASSERTION license please check correct license")
+ 
+def read_package_info_from_deb_file(debfile, distro_arch, 
+                                    imager_bom_src_pkgs,
+                                    imager_bom_bin_pkgs,
+                                    rootfs_pkgs):
+    pkgname = None
+    ret = {}
+
+    with debian.debfile.DebFile(debfile) as deb:
+        control = deb.debcontrol()
+
+        pkgname = control.get("Package", "Unknown")
+        version = control.get("Version", "Unknown")
+
+        installed_version = None
+        if pkgname in imager_bom_src_pkgs:
+            installed_version = imager_bom_src_pkgs[pkgname]["version"]
+        elif pkgname in imager_bom_bin_pkgs:
+            installed_version = imager_bom_bin_pkgs[pkgname]["version"]
+        elif pkgname in rootfs_pkgs:
+            installed_version = rootfs_pkgs[pkgname]["version"]
+
+        if not installed_version == version:
+            return None
+
+        arch = control.get("Architecture", "Unknown")
+        source = control.get("Source", None)
+        if source is None:
+            source = pkgname
+
+        desc = control.get("Description", "No description")
+        maintainer = control.get("Maintainer", "Unknown")
+        homepage = control.get("Homepage", "Unknown")
+        section = control.get("Section", "Unknown")
+
+        # Ignore packages which are not installed to rootfs or wic
+        if arch == distro_arch or arch == "all" \
+                or pkgname in imager_bom_src_pkgs \
+                or pkgname in imager_bom_bin_pkgs:
+
+            copyright_text = None
+            path = f"usr/share/doc/{pkgname}/copyright"
+            if deb.data.has_file(path):
+                copyright_text = deb.data.get_content(path).decode("utf-8")
+
+            sha256sum = None
+            sha256hash = hashlib.sha256()
+            with open(debfile, "rb") as f:
+                for block in iter(lambda: f.read(4096), b""):
+                    sha256hash.update(block)
+                    sha256sum = sha256hash.hexdigest()
+            ret[pkgname] = {
+                "package": pkgname,
+                "source": source,
+                "arch": arch,
+                "section": section,
+                "maintainer": maintainer,
+                "sha256sum": sha256sum,
+                "description": desc,
+                "version": version,
+                "copyright_text": copyright_text,
+            }
+
+    return ret
+
+
+def get_package_info_from_deb_file(
+    dl_dir, repo_isar_dir,
+    distro, image_distro,
+    distro_arch,
+    imager_bom_src_pkgs,
+    imager_bom_bin_pkgs,
+    rootfs_pkgs
 ):
     ret = {}
 
     debs = find_deb_packages(dl_dir, repo_isar_dir, distro, image_distro)
     for debfile in debs:
-        pkgname = None
-        with debian.debfile.DebFile(debfile) as deb:
-            control = deb.debcontrol()
-            pkgname = control.get("Package", "Unknown")
-            arch = control.get("Architecture", "Unknown")
-            desc = control.get("Description", "No description")
-
-            if arch == distro_arch or arch == "all":
-                sha256sum = None
-                sha256hash = hashlib.sha256()
-                with open(debfile, "rb") as f:
-                    for block in iter(lambda: f.read(4096), b""):
-                        sha256hash.update(block)
-                        sha256sum = sha256hash.hexdigest()
-                ret[pkgname] = {
-                    "sha256sum": sha256sum,
-                    "description": desc,
-                }
+        pkgdata = read_package_info_from_deb_file(debfile, distro_arch, imager_bom_src_pkgs, imager_bom_bin_pkgs, rootfs_pkgs)
+        if pkgdata:
+            ret.update(pkgdata)
 
     return ret
-
-
-def parse_copyright_file(copyright_file):
-    licenses = {}
-
-    with io.open(copyright_file, "rt", encoding="utf-8") as f:
-        try:
-            c = copyright.Copyright(f, strict=False)
-        except Exception:
-            logger.debug(
-                f"Read copyright file error for {copyright_file}. May be this file uses old foromat."
-            )
-        else:
-            for p in c.all_files_paragraphs():
-                if p.license and p.license.synopsis:
-                    licenses.setdefault("synopsis", []).append(p.license.synopsis)
-                    if len(p.license.text) > 0:
-                        licenses.setdefault("text", {})[
-                            p.license.synopsis
-                        ] = p.license.text
-            for text in c.all_license_paragraphs():
-                if text.license:
-                    licenses.setdefault("text", {})[
-                        text.license.synopsis
-                    ] = text.license.text
-
-    return licenses
 
 
 def parse_dpkg_status(dpkgstatus):
@@ -118,55 +230,18 @@ def parse_dpkg_status(dpkgstatus):
 
             d["package"] = pkg.get("Package")
             d["source"] = pkg.get("Source")
-            d["version"] = pkg.get("Version")
-            d["maintainer"] = pkg.get("Maintainer")
-            d["section"] = pkg.get("Section")
-            d["homepage"] = pkg.get("Homepage", "No Homepage")
-            d["arch"] = pkg.get("Architecture")
             if d["source"] is None:
                 d["source"] = d["package"]
-            d["description"] = pkg.get("Description", "No description")
+            d["version"] = pkg.get("Version")
+            #d["maintainer"] = pkg.get("Maintainer")
+            #d["section"] = pkg.get("Section")
+            #d["homepage"] = pkg.get("Homepage", "No Homepage")
+            #d["arch"] = pkg.get("Architecture")
+            #d["description"] = pkg.get("Description", "No description")
             
             ret[d["package"]] = d
 
     return ret
-
-
-def read_copyright_files(rootfs, installed_pkgs, user_defined_licenses):
-    for pkg in installed_pkgs:
-        logger.debug(f"Checking copyright for {pkg}")
-        path = f"{rootfs}/usr/share/doc/{installed_pkgs[pkg]['package']}/copyright"
-
-        if os.path.exists(path):
-            licenses = parse_copyright_file(path)
-            if bool(licenses):
-                installed_pkgs[pkg]["licenses"] = licenses
-        # else:
-        #    logger.warning(f"Packge {pkg} does not contain copyright file")
-
-        # When failed to parse copyright file or package name is in user defined license file,
-        # set license from license defined file
-        if not "licenses" in installed_pkgs[pkg] or pkg in user_defined_licenses:
-            logger.debug(f"Check user defined mapping file for {pkg}")
-            if pkg in user_defined_licenses:
-                logger.debug(f"found {pkg} in user defined license file")
-                synopsis = user_defined_licenses[pkg]["synopsis"]
-
-                installed_pkgs[pkg]["licenses"] = {
-                    "synopsis": synopsis,
-                    "text": {},
-                }
-
-                for lic_name in user_defined_licenses[pkg]["license_data"]:
-                    lic_data = user_defined_licenses[pkg]["license_data"][lic_name]
-                    installed_pkgs[pkg]["licenses"]["text"][lic_name] = lic_data["text"]
-
-        if not "licenses" in installed_pkgs[pkg]:
-            logger.warning(
-                f"{pkg}: Cannot get licenses from Copyright file and user defined license mapping file. So, set NOASSERTION as license."
-            )
-            installed_pkgs[pkg]["licenses"] = {"synopsis": ["NOASSERTION"], "text": {}}
-
 
 def make_user_defined_license_data(yml_file_name):
     license_data = {}
@@ -353,6 +428,74 @@ def create_license_data(installed_pkgs, license_mapping):
         installed_pkgs[pkg]["license_id_text"] = license_id_text
 
 
+def create_license_data_for_recipe_build_package(target_pkgs, license_mapping):
+     for pkg in target_pkgs:
+        licenses = recipe_license_parser.split_license_for_imager_bom_pkgs(target_pkgs[pkg]["license"])
+        normalized_text = recipe_license_parser.normalize_licese_field(licenses, license_mapping)
+        target_pkgs[pkg]["normalized_license"] = normalized_text
+        synopsis = recipe_license_parser.parse_to_license_array(normalized_text)
+
+        target_pkgs[pkg]["licenses"] = {
+            "synopsis": synopsis,
+            "text": {},
+        }
+        del target_pkgs[pkg]["license"]
+
+
+def convert_source_info_to_package_data(pkgname, data):
+    d = {}
+
+    package = pkgname
+    try:
+        idx = data["provides"].index(pkgname)
+        package = data["provides"][idx]
+    except:
+        pass
+
+    d["package"] = package
+    d["source"] = data["source_package_name"]
+    d["version"] = data["version"]
+    d["maintainer"] = data["maintainer"]
+    d["section"] = data["section"]
+    d["homepage"] = data["homepage"]
+    d["arch"] = data["arch"]
+    d["source"] = pkgname
+    d["description"] = data["description"]
+    d["license"] = data["license"]
+
+    return d
+
+def get_build_from_reciepe_packages(srcinfo_json):
+    srcinfo = {}
+    with open(srcinfo_json) as f:
+        srcinfo = json.load(f)
+
+    return srcinfo
+
+
+def get_build_package_data(target_pkgs, srcinfo_pkgs):
+    srcinfo_keys = set([k for k in srcinfo_pkgs.keys()])
+    pkgs = set(target_pkgs.strip().split(" "))
+
+    pkg_names = pkgs & srcinfo_keys
+
+    pkgs = {}
+    for name in pkg_names:
+        pkgs[name] = convert_source_info_to_package_data(name, srcinfo_pkgs[name])
+
+    return pkgs
+
+
+def create_package_map(installed_pkgs):
+    pkg_map = {}
+
+    for pkgname in installed_pkgs:
+        p = installed_pkgs[pkgname]
+        source = p["source"]
+        pkg_map.setdefault(source, []).append(pkgname)
+
+    return pkg_map
+
 def main(args):
     if args.verbose_output:
         logger.setLevel(logging.DEBUG)
@@ -361,11 +504,14 @@ def main(args):
     rootfs = bitbakeinfo["rootfs_dir"]
     dpkg_status = bitbakeinfo["dpkg_status"]
 
+    imager_bom = bitbakeinfo["imager_bom"]
+    image_install_pkgs = bitbakeinfo["image_install_pkgs"]
+
     distro = args.distro
     if not distro:
         distro = bitbakeinfo["image_distro"].split("-")[1]
 
-    installed_pkgs = parse_dpkg_status(dpkg_status)
+    rootfs_pkgs = parse_dpkg_status(dpkg_status)
 
     layers = bitbake_runner.find_layers()
     user_defined_licenses = read_license_files(layers, args.user_defined_licenses)
@@ -373,18 +519,44 @@ def main(args):
         layers, args.user_defined_license_mapping
     )
 
-    packages_info = get_package_info_from_control(
+    image_deploy_dir = f"{bitbakeinfo['deploy_dir']}/images/{bitbakeinfo['machine']}"
+    srcinfo_json = f"{image_deploy_dir}/all-source-info.json"
+    srcinfo_pkgs = get_build_from_reciepe_packages(srcinfo_json)
+
+    imager_bom_src_pkgs = get_build_package_data(imager_bom, srcinfo_pkgs)
+    image_install_build_pkgs = get_build_package_data(image_install_pkgs, srcinfo_pkgs)
+
+    image_manifests = manifest_parser.find_manifest_files(image_deploy_dir, bitbakeinfo["image_full_name"], bitbakeinfo["image_fstypes"])
+    imager_bom_bin_pkgs = manifest_parser.collect_packages(image_manifests, imager_bom)
+
+    create_license_data_for_recipe_build_package(imager_bom_src_pkgs, license_mapping)
+    create_license_data_for_recipe_build_package(image_install_build_pkgs, license_mapping)
+
+    packages_info = get_package_info_from_deb_file(
         bitbakeinfo["dl_dir"],
         bitbakeinfo["repo_isar_dir"],
         distro,
         bitbakeinfo["image_distro"],
         bitbakeinfo["distro_arch"],
+        imager_bom_src_pkgs,
+        imager_bom_bin_pkgs,
+        rootfs_pkgs,
     )
 
-    installed_pkgs = merge_package_data(installed_pkgs, packages_info)
+    installed_pkgs = {}
+    installed_pkgs.update(rootfs_pkgs)
+    installed_pkgs.update(imager_bom_bin_pkgs)
+    installed_pkgs.update(imager_bom_src_pkgs)
+    installed_pkgs.update(image_install_build_pkgs)
+    
+    merge_package_data(installed_pkgs, packages_info)
 
-    read_copyright_files(rootfs, installed_pkgs, user_defined_licenses)
+    package_map = create_package_map(installed_pkgs)
+
+    parse_copyright_text_to_license_info(rootfs, installed_pkgs, user_defined_licenses, package_map)
+    
     create_license_data(installed_pkgs, license_mapping)
+
 
     output_dir = f"{bitbakeinfo['deploy_dir']}/sbom/{bitbakeinfo['image_full_name']}"
     if not os.path.exists(output_dir):

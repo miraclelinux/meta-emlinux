@@ -25,18 +25,22 @@ def split_synopsis(synopsis):
     s = re.sub(r",\s+and\s+", " AND ", s, flags=re.IGNORECASE)
     s = re.sub(r",\s+or\s+", " OR ", s, flags=re.IGNORECASE)
 
-    return re.split(
+    tmp = re.split(
         r"(\s+\bAND\b\s+|\s+\bOR\b\s+|\s+\band\b\s+|\s+\bor\s+|\s*,\s*)",
         s,
         flags=re.IGNORECASE,
     )
 
+    return [
+        re.sub(r'[()]', '', t.strip())
+        for t in tmp
+    ]
 
 def split_synopsis_tokens_only(synopsis):
     raw_tokens = split_synopsis(synopsis)
 
     tokens = [
-        t.strip()
+        re.sub(r'[()]', '', t.strip())
         for t in raw_tokens
         if t and t.strip() and t.strip().upper() not in ["AND", "OR", ","]
     ]
@@ -163,3 +167,5 @@ def create_single_line_license_id_text(licenses):
             ret = f"{ret} AND {synopsis}"
 
     return ret
+
+
