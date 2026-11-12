@@ -90,4 +90,4 @@ do_install_source_package() {
     sudo rm ${ROOTFSDIR}/apt_status.tar.gz
 }
 
-addtask install_source_package before do_rootfs_finalize after do_generate_initramfs
+addtask install_source_package before do_rootfs_finalize after do_rootfs_install
