@@ -82,9 +82,6 @@ blt:
 debian-archive-keyring:
   licenses:
     - GPL-2.0-or-later
-emlinux-customization:
-  licenses:
-    - MIT
 fontconfig:
   licenses:
     - HPND-sell-variant
