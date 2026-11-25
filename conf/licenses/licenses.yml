@@ -752,6 +752,12 @@ liborc-0.4-0t64:
   licenses:
     - BSD-2-Clause
     - BSD-3-Clause
+libpciaccess0:
+  licenses:
+    - MIT
+    - ISC
+    - X11
+    - GPL-1.0-or-later
 libpixman-1-0:
   licenses:
     - MIT
