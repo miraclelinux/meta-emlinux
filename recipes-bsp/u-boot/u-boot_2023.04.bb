@@ -15,6 +15,7 @@ SRC_URI += " \
 
 SRC_URI[sha256sum] = "e31cac91545ff41b71cec5d8c22afd695645cd6e2a442ccdacacd60534069341"
 
+LICENSE = "GPL-2.0-or-later"
 DEBIAN_BUILD_DEPENDS .= ",\
     libssl-dev, \
     libssl-dev:native"
