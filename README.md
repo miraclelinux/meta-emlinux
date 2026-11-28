@@ -153,6 +153,42 @@ Supported machines	qemu-amd64, qemu-arm64, qemu-arm
 
 Any distro and image can be specified according to the image to run.
 ```
+### Check emlinux-image-weston GUI via VNC
+
+If you want to check the emlinux-image-weston GUI using VNC, follow the steps below.
+
+#### Run weston image by qemu
+```
+$ runqemu <machine> <distro> emlinux-image-weston
+```
+##### Case 1: Build host with a display
+
+Connect to the VNC server
+```
+e.g.) $ vncviewer <CONTAINER-IP-ADDRESS>
+```
+
+##### Case 2: Headless build host from a local PC
+
+1. Port forwarding setup
+
+If running QEMU inside a Docker container on a headless build host, set up port forwarding on your client PC to access the container from your VNC client via the build host. (runqemu uses port 5900 by default.)
+
+```
+e.g.) Client-PC$ ssh -i <path_to_private_key> -L 15900:<CONTAINER-IP-ADDRESS>:5900 <username>@<IP_address>
+```
+- 15900: Local port on the client PC
+- CONTAINER-IP-ADDRESS: IP address of the Docker container (e.g. 172.18.0.2)
+- 5900: VNC server port
+- \<username>@<IP_address>: Build host running the Docker container
+
+2. Connect to the VNC server
+
+
+Since SSH port forwarding is configured, connect to localhost on the client PC using the forwarded port.
+```
+e.g.) Client-PC$ vncviewer localhost:15900
+```
 
 ## Supported machines
 
